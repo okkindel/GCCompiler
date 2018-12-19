@@ -1,32 +1,9 @@
 %{
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <stdarg.h>
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <map>
-#include <vector>
-#include <algorithm>
-using namespace std;
+#include "compiler.hpp"
 
-// STRUKTURY
-
-int yylex();
+extern int yylex();
 extern int yylineno;
 int yyerror(const string str);
-
-// insert single command
-void insert(string str);
-// insert single command with registry
-void insert(string str, string reg);
-// insert double command with registry and number
-void insert(string str, string reg, long long int num);
-
-
 %}
 
 %define parse.error verbose
@@ -49,20 +26,20 @@ void insert(string str, string reg, long long int num);
 %%
 program:
 
-    _declare declarations _in commands _end { insert("HALT"); }
+    _declare declarations _in commands _end                             { insert("HALT"); }
     ;
 
 declarations:
 
-    declarations _identifier _sem                                 { cout << "declaration" << endl; }
-    | declarations _identifier _lb _number _col _number _rb _sem  { cout << "tab ( num : num )" << endl; }
+    declarations _identifier _sem                                       { cout << "declaration" << endl; }
+    | declarations _identifier _lb _number _col _number _rb _sem        { cout << "tab ( num : num )" << endl; }
     |
     ;
 
 commands:
 
-    commands command
-    | command
+    commands command                                                    { }
+    | command                                                           { }
     ;
 
 command:
@@ -91,7 +68,7 @@ for:
 expression:
 
     value                                           { cout << "value" << endl; }
-    | value _add value                              { cout << "add" << endl; }
+    | value _add value                              { cout << "add" << endl; __add($1, $3); }
     | value _sub value                              { cout << "sub" << endl; }
     | value _mul value                              { cout << "mul" << endl; }
     | value _div value                              { cout << "div" << endl; }
@@ -122,17 +99,6 @@ identifier:
     ;
 
 %%
-
-void insert(string str) {
-    cout << str << endl;
-}
-void insert(string str, string reg) {
-    cout << str << reg << endl;
-}
-
-void insert(string str, string reg, long long int num) {
-    cout << str << reg << num << endl;
-}
 
 void parser(long long int argv, char* argc[]) {
 	yyparse();

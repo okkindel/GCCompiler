@@ -4,6 +4,7 @@
 extern int yylex();
 extern int yylineno;
 int yyerror(const string str);
+
 %}
 
 %define parse.error verbose
@@ -31,7 +32,7 @@ program:
 
 declarations:
 
-    declarations _identifier _sem                                       { cout << "declaration" << endl; }
+    declarations _identifier _sem                                       { __declareIde($2, yylineno); }
     | declarations _identifier _lb _number _col _number _rb _sem        { cout << "tab ( num : num )" << endl; }
     |
     ;
@@ -67,8 +68,8 @@ for:
 
 expression:
 
-    value                                           { cout << "value" << endl; }
-    | value _add value                              { cout << "add" << endl; __add($1, $3); }
+    value                                           { __declareVal($1, yylineno); }
+    | value _add value                              { __add($1, $3); }
     | value _sub value                              { cout << "sub" << endl; }
     | value _mul value                              { cout << "mul" << endl; }
     | value _div value                              { cout << "div" << endl; }
@@ -87,13 +88,13 @@ condition:
 
 value:
 
-    _number                                         { cout << "num" << endl; }
+    _number                                         { __declareNum($1, yylineno); }
     | identifier
     ;
 
 identifier:
 
-    _identifier                                     { cout << "ide" << endl; }
+    _identifier                                     { cout << "ide -> "; }
     | _identifier _lb _identifier _rb               { cout << "ide ( ide )" << endl; }
     | _identifier _lb _number _rb                   { cout << "ide ( num )" << endl; }
     ;

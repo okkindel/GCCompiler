@@ -1,5 +1,6 @@
 DECLARE
     a;
+    b;
 IN
     a := 2 + 3;
 END

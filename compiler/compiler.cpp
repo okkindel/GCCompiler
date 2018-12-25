@@ -75,6 +75,10 @@ void __add (char* a, char* b) {
         loadRegister("B", ide2.mem);
         insert("ADD", "B", "C");
         removeIde(ide1.name);
+    } else if (ide1.type == "VAR" && ide2.type == "VAR") {
+        loadRegister("B", ide1.mem);
+        loadRegister("C", ide2.mem);
+        insert("ADD", "B", "C");
     }
     cout << "   Dodawanie: " << ide1.name << ": " << ide1.type << " + " << ide2.name << ": " << ide2.type << endl;
 }

@@ -8,7 +8,6 @@ int yyerror(const string str);
 %}
 
 %define parse.error verbose
-%define parse.lac full
 
 %union {
     char* str;
@@ -112,7 +111,7 @@ int main(int argv, char* argc[]) {
 }
 
 int yyerror(string err) {
-    cout << "\e[1mGeneralnie, to zjebałeś na całej lini " << yylineno << \
+    cout << "\e[1mBłąd na lini " << yylineno << \
     ", konkretnie: \e[1m\x1B[31m" << err << ".\e[0m\n" << endl;
     exit(1);
 }

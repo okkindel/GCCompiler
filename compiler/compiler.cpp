@@ -71,10 +71,12 @@ void __add (char* a, char* b) {
         removeIde(ide2.name);
     } else if (ide1.type == "VAR" && ide2.type == "NUM") {
         setRegister("C", stoll(ide2.name));
+        loadRegister("B", ide1.mem);
         insert("ADD", "B", "C");
         removeIde(ide2.name);
     } else if (ide1.type == "NUM" && ide2.type == "VAR") {
         setRegister("C", stoll(ide1.name));
+        loadRegister("B", ide2.mem);
         insert("ADD", "B", "C");
         removeIde(ide1.name);
     }

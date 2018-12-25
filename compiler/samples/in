@@ -1,6 +1,7 @@
 DECLARE
-    a; b;
+    a; b; c;
 IN
     a := 2;
+    c := 3;
     b := 5 + a;
 END

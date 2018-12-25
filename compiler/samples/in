@@ -1,6 +1,6 @@
 DECLARE
-    a;
-    b;
+    b; a;
 IN
-    a := 2 + 3;
+    a := 2;
+    b := 6 + 5;
 END

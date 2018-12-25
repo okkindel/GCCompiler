@@ -9,15 +9,15 @@
 
 %}
 
-%x COMM
+%x COMMENT
 %option noyywrap
 
 %%
 
-"["             { BEGIN(COMM); }
-<COMM>"]"       { BEGIN(INITIAL); }
-<COMM>(\n|.)
-<COMM><<EOF>>   { printf("Error: infinice comment.\n"); yyterminate(); }
+"["             { BEGIN(COMMENT); }
+<COMMENT>"]"       { BEGIN(INITIAL); }
+<COMMENT>(\n|.)
+<COMMENT><<EOF>>   { printf("Error: infinite comment.\n"); yyterminate(); }
 
 "DECLARE"		return _declare;
 "IN"		    return _in;

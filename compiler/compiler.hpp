@@ -7,9 +7,9 @@
 
 using namespace std;
 
-/////////////////////////////////////
-// Structures
-/////////////////////////////////////
+//////////////////////////////////
+//          Structures          //
+//////////////////////////////////
 
 typedef struct {
 	string name;
@@ -21,26 +21,28 @@ typedef struct {
   	long long int tableSize;
 } Identifier;
 
-/////////////////////////////////////
-// Variables
-/////////////////////////////////////
+//////////////////////////////////
+//          Variables           //
+//////////////////////////////////
 
 extern map<string, Identifier> identifiers;
 extern long long int memIndex;
 
-/////////////////////////////////////
-// Token functions
-/////////////////////////////////////
+//////////////////////////////////
+//      Token functions         //
+//////////////////////////////////
 
 void __add (char* a, char* b);
 void __declareIde (char* a, int yylineno);
 void __declareVal(char* a, int yylineno);
 void __declareNum(char* a, int yylineno);
 
-/////////////////////////////////////
-// Compiler functions
-/////////////////////////////////////
+//////////////////////////////////
+//      Compiler functions      //
+//////////////////////////////////
 
+// stores number
+void storeNum(string number);
 // create identyfier
 void createIde(Identifier *s, string name, long long int isArray, string type);
 // insert identyfier
@@ -53,5 +55,7 @@ void insert(string str);
 void insert(string str, string reg);
 // insert double command with registry and number
 void insert(string str, string reg, long long int num);
+// prints stack
+void print();
 // throws errors
 void error(char* a, int yylineno, char const* msg);

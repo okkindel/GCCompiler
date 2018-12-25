@@ -50,7 +50,7 @@ command:
     | _do commands _while condition _enddo          { cout << "do" << endl; }
     | _for _identifier _from value for
     | _read identifier _sem                         { cout << "read" << endl; }
-    | _write value _sem                             { cout << "write" << endl; }
+    | _write value _sem                             { __write($2, yylineno); }
     ;
 
 if:

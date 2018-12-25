@@ -42,6 +42,8 @@ void __expressionVal(char* a, int yylineno);
 void __ide(char* a, int yylineno);
 // assign to variable
 void __assing(char* a, int yylineno);
+// write register
+void __write(char* a, int yylineno);
 
 //////////////////////////////////
 //      Register functions      //

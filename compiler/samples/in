@@ -4,4 +4,7 @@ IN
     a := 2;
     b := 5 + a;
     c := b + a;
+    WRITE a;
+    WRITE b;
+    WRITE c;
 END

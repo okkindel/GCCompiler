@@ -84,12 +84,20 @@ void __add (char* a, char* b) {
 }
 
 void __assing(char* a, int yylineno) {
-    Identifier assign;
-    if(identifiers.at(a).tableSize == 0) {
-        assign = identifiers.at(a);
+    Identifier ide = identifiers.at(a);
+    storeRegister("B", ide.mem);
+    cout << "Przyporządkowano klucz do zmiennej: " << ide.name << " na miejscu: " << ide.mem << endl;
+}
+
+void __write(char* a, int yylineno) {
+    if(identifiers.find(a) == identifiers.end()) {
+        error(a, yylineno, "Zmienna nie została zadeklarowana:");
+        exit(1);
     }
-    storeRegister("B", assign.mem);
-    cout << "Przyporządkowano klucz do zmiennej: " << assign.name << " na miejscu: " << assign.mem << endl;
+    Identifier ide = identifiers.at(a);
+    cout << "Wczytywanie klucza: " << ide.name << " z miejsca w pamięci: " << ide.mem << endl;
+    loadRegister("B", ide.mem);
+    insert("PUT", "B");
 }
 
 //////////////////////////////////

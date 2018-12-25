@@ -33,7 +33,7 @@ void __expressionVal(char* a, int yylineno) {
         removeIde(ide.name);
     }
     else if(ide.type == "VAR") {
-        loadRegister("B", ide.mem);
+        loadRegister("B", ide.memory);
     } else {
         // TODO: TAB
         cout << "value TAB" << endl;
@@ -67,26 +67,26 @@ void __add (char* a, char* b) {
         removeIde(ide2.name);
     } else if (ide1.type == "VAR" && ide2.type == "NUM") {
         setRegister("C", stoll(ide2.name));
-        loadRegister("B", ide1.mem);
+        loadRegister("B", ide1.memory);
         insert("ADD", "B", "C");
         removeIde(ide2.name);
     } else if (ide1.type == "NUM" && ide2.type == "VAR") {
         setRegister("C", stoll(ide1.name));
-        loadRegister("B", ide2.mem);
+        loadRegister("B", ide2.memory);
         insert("ADD", "B", "C");
         removeIde(ide1.name);
     } else if (ide1.type == "VAR" && ide2.type == "VAR") {
-        loadRegister("B", ide1.mem);
-        loadRegister("C", ide2.mem);
+        loadRegister("B", ide1.memory);
+        loadRegister("C", ide2.memory);
         insert("ADD", "B", "C");
     }
     cout << "   Dodawanie: " << ide1.name << ": " << ide1.type << " + " << ide2.name << ": " << ide2.type << endl;
 }
 
-void __assing(char* a, int yylineno) {
+void __assign(char* a, int yylineno) {
     Identifier ide = identifiers.at(a);
-    storeRegister("B", ide.mem);
-    cout << "Przyporządkowano klucz do zmiennej: " << ide.name << " na miejscu: " << ide.mem << endl;
+    storeRegister("B", ide.memory);
+    cout << "Przyporządkowano klucz do zmiennej: " << ide.name << " na miejscu: " << ide.memory << endl;
 }
 
 void __write(char* a, int yylineno) {
@@ -95,8 +95,8 @@ void __write(char* a, int yylineno) {
         exit(1);
     }
     Identifier ide = identifiers.at(a);
-    cout << "Wczytywanie klucza: " << ide.name << " z miejsca w pamięci: " << ide.mem << endl;
-    loadRegister("B", ide.mem);
+    cout << "Wczytywanie klucza: " << ide.name << " z miejsca w pamięci: " << ide.memory << endl;
+    loadRegister("B", ide.memory);
     insert("PUT", "B");
 }
 
@@ -126,12 +126,12 @@ void resetRegister(string reg) {
 }
 
 //////////////////////////////////
-//      Compiler functions      //
+//    Identifiers functions     //
 //////////////////////////////////
 
 void createIde(Identifier *ide, string name, long long int isArray, string type) {
     ide->name = name;
-    ide->mem = memIndex;
+    ide->memory = memIndex;
     ide->type = type;
     if(isArray) {
         ide->tableSize = isArray;
@@ -165,6 +165,10 @@ void removeIde(string key) {
     }
     cout << "Usunięto z pamięci klucz: " << key << endl;
 }
+
+//////////////////////////////////
+//      Compiler functions      //
+//////////////////////////////////
 
 void insert(string cmd) {
     commands.push_back(cmd);

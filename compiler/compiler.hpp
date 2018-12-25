@@ -16,7 +16,7 @@ typedef struct {
 	string name;
     string type; //NUM, VAR, ARR
     int counter;
-	long long int mem;
+	long long int memory;
   	long long int tableSize;
 } Identifier;
 
@@ -42,7 +42,7 @@ void __expressionVal(char* a, int yylineno);
 // identifier
 void __ide(char* a, int yylineno);
 // assign to variable
-void __assing(char* a, int yylineno);
+void __assign(char* a, int yylineno);
 // write register
 void __write(char* a, int yylineno);
 
@@ -60,7 +60,7 @@ void loadRegister(string reg, long long int mem);
 void resetRegister(string reg);
 
 //////////////////////////////////
-//      Compiler functions      //
+//    Identifiers functions     //
 //////////////////////////////////
 
 // create identyfier
@@ -69,6 +69,11 @@ void createIde(Identifier *s, string name, long long int isArray, string type);
 void insertIde(string key, Identifier i);
 // remove identifier
 void removeIde(string key);
+
+//////////////////////////////////
+//      Compiler functions      //
+//////////////////////////////////
+
 // insert single command
 void insert(string str);
 // insert single command with registry

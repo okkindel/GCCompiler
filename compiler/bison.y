@@ -44,11 +44,11 @@ commands:
 
 command:
 
-    identifier _assign expression _sem              { __assing($1, yylineno); }
-    | _if condition _then commands if               
+    identifier _assign expression _sem              { __assign($1, yylineno); }
+    | _if condition _then commands if               { cout << "if" << endl; }             
     | _while condition _do commands _endwhile       { cout << "while" << endl; }
     | _do commands _while condition _enddo          { cout << "do" << endl; }
-    | _for _identifier _from value for
+    | _for _identifier _from value for              { cout << "for" << endl; }
     | _read identifier _sem                         { cout << "read" << endl; }
     | _write value _sem                             { __write($2, yylineno); }
     ;

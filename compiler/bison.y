@@ -27,7 +27,7 @@ int yyerror(const string str);
 %%
 program:
 
-    _declare declarations _in commands _end                             { insert("HALT"); print(); }
+    _declare declarations _in commands _end                             { insert("HALT"); }
     ;
 
 declarations:
@@ -45,7 +45,7 @@ commands:
 
 command:
 
-    identifier _assign expression _sem              { cout << "asign" << endl; }
+    identifier _assign expression _sem              { __assing(yylineno); }
     | _if condition _then commands if               
     | _while condition _do commands _endwhile       { cout << "while" << endl; }
     | _do commands _while condition _enddo          { cout << "do" << endl; }
@@ -68,7 +68,7 @@ for:
 
 expression:
 
-    value                                           { __declareVal($1, yylineno); }
+    value                                           { __expressionVal($1, yylineno); }
     | value _add value                              { __add($1, $3); }
     | value _sub value                              { cout << "sub" << endl; }
     | value _mul value                              { cout << "mul" << endl; }
@@ -88,13 +88,13 @@ condition:
 
 value:
 
-    _number                                         { __declareNum($1, yylineno); }
+    _number                                         { __valueNum($1, yylineno); }
     | identifier
     ;
 
 identifier:
 
-    _identifier                                     { cout << "ide -> "; }
+    _identifier                                     { __ide($1, yylineno); }
     | _identifier _lb _identifier _rb               { cout << "ide ( ide )" << endl; }
     | _identifier _lb _number _rb                   { cout << "ide ( num )" << endl; }
     ;
@@ -103,6 +103,7 @@ identifier:
 
 void parser(long long int argv, char* argc[]) {
 	yyparse();
+    print();
 }
 
 int main(int argv, char* argc[]) {

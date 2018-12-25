@@ -7,13 +7,14 @@
 long long int memIndex = 0;
 vector<string> commands;
 map<string, Identifier> identifiers;
+Identifier assign;
 
 //////////////////////////////////
 //      Token functions         //
 //////////////////////////////////
 
 void __declareIde (char* a, int yylineno) { 
-    cout << "declaration: " << a << " -> ";     
+    cout << "Zadeklarowano zmienną: " << a << endl;     
     if(identifiers.find(a) != identifiers.end()) {
         error(a, yylineno, "kolejna deklaracja zmiennej");
         exit(1);
@@ -25,45 +26,95 @@ void __declareIde (char* a, int yylineno) {
     }
 }
 
-void __declareVal(char* a, int yylineno) {
-    cout << "value -> ";
+void __expressionVal(char* a, int yylineno) {
     Identifier ide = identifiers.at(a);
-    cout << ide.name << ": " << ide.type << endl;    
+    cout << "WYRAŻENIE: wartość zmiennej: " << ide.name << ": " << ide.type << endl;
+    if(ide.type == "NUM") {
+        setRegister("B", stoll(ide.name));
+        removeIde(ide.name);
+    }
+    else if(ide.type == "VAR") {
+        loadRegister("B", ide.mem);
+    } else {
+        // TODO: TAB
+        cout << "value TAB" << endl;
+    }
 }
 
-void __declareNum(char* a, int yylineno) {
-    // TODO: Próba przypisania do stałej
-    cout << "number: " << a << " -> ";
+void __valueNum(char* a, int yylineno) {
+    // TODO: próba przypisania do stałej
+    cout << "Znaleziono stałą o wartości: " << a << endl;
     Identifier ide;
     createIde(&ide, a, 0, "NUM");
     insertIde(a, ide);
 }
 
+void __ide(char* a, int yylineno) {
+    if(identifiers.find(a) == identifiers.end()) {
+        error(a, yylineno, "Zmienna nie została zadeklarowana:");
+        exit(1);
+    }
+    if(identifiers.at(a).tableSize == 0) {
+        assign = identifiers.at(a);
+    }
+    cout << "Znaleziono klucz: " << assign.name << " o typie: " << assign.type << endl;
+}
+
 void __add (char* a, char* b) {
-    cout << "add -> ";
     Identifier ide1 = identifiers.at(a);
     Identifier ide2 = identifiers.at(b);
 
     if(ide1.type == "NUM" && ide2.type == "NUM") {
         long long int val = stoll(ide1.name) + stoll(ide2.name);
-        // setRegister(to_string(val));
+        setRegister("B", val);
         removeIde(ide1.name);
         removeIde(ide2.name);
+    } else if (ide1.type == "VAR" && ide2.type == "NUM") {
+        setRegister("C", stoll(ide2.name));
+        insert("ADD", "B", "C");
+        removeIde(ide2.name);
+    } else if (ide1.type == "NUM" && ide2.type == "VAR") {
+        setRegister("C", stoll(ide1.name));
+        insert("ADD", "B", "C");
+        removeIde(ide1.name);
     }
-    cout << ide1.name << ": " << ide1.type << ", " << ide2.name << ": " << ide2.type << endl;
+    cout << "   Dodawanie: " << ide1.name << ": " << ide1.type << " + " << ide2.name << ": " << ide2.type << endl;
+}
+
+void __assing(int yylineno) {
+    storeRegister("B", assign.mem);
+    identifiers.at(assign.name).initialized = 1;
+    cout << "Przyporządkowano klucz do zmiennej: " << assign.name << " na miejscu: " << assign.mem << endl;
+}
+
+//////////////////////////////////
+//      Register functions      //
+//////////////////////////////////
+
+void setRegister(string reg, long long int num) {
+    resetRegister(reg);
+	for (long long int i = 0; i < num; ++i) {
+        insert("INC", reg);
+    }
+}
+
+void storeRegister(string reg, long long int mem) {
+    setRegister("A", mem);
+    insert("STORE", reg);
+}
+
+void loadRegister(string reg, long long int mem) {
+    setRegister("A", mem);
+	insert("LOAD", reg);
+}
+
+void resetRegister(string reg) {
+    insert("SUB", reg, reg);
 }
 
 //////////////////////////////////
 //      Compiler functions      //
 //////////////////////////////////
-
-void storeRegister(long long int memory) {
-    insert("STORE");
-}
-
-void resetRegister(){
-
-}
 
 void createIde(Identifier *ide, string name, long long int isArray, string type) {
     ide->name = name;
@@ -87,7 +138,7 @@ void insertIde(string key, Identifier ide) {
     else {
         identifiers.at(key).counter = identifiers.at(key).counter + 1;
     }
-    cout << "identifier added: " << key << ", type: " << ide.type << ", at index: " << memIndex - 1 << endl;
+    cout << "   Dodano do pamięci klucz: " << key << ", typu: " << ide.type << ", na miejscu: " << memIndex - 1 << endl;
 }
 
 void removeIde(string key) {
@@ -100,7 +151,7 @@ void removeIde(string key) {
             memIndex--;
         }
     }
-    cout << "identifier removed: " << key << endl;
+    cout << "Usunięto z pamięci klucz: " << key << endl;
 }
 
 void insert(string cmd) {
@@ -113,6 +164,11 @@ void insert(string cmd, string reg)
     commands.push_back(cmd);
 }
 
+void insert(string cmd, string reg1, string reg2) {
+    cmd = cmd + " " + reg1 + " " + reg2;
+    commands.push_back(cmd);
+}
+
 void insert(string cmd, string reg, long long int num) {
     cmd = cmd + " " + reg + " " + to_string(num);
     commands.push_back(cmd);
@@ -120,11 +176,11 @@ void insert(string cmd, string reg, long long int num) {
 
 void print() {
 	long long int pos;
+    cout << endl;
 	for(pos = 0; pos < commands.size(); pos++)
         cout << commands.at(pos) << endl;
 }
 
 void error(char* a, int yylineno, char const* msg) {
-    cout << "\e[1mGeneralnie, to zjebałeś na całej lini " << yylineno << \
-    ", konkretnie: \e[1m\x1B[31m" << msg << " " << a << ".\e[0m\n" << endl;
+    cout << "\e[1mBłąd na lini " << yylineno << ", konkretnie: \e[1m\x1B[31m" << msg << " " << a << ".\e[0m\n" << endl;
 }

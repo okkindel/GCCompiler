@@ -17,7 +17,6 @@ typedef struct {
     int initialized;
     int counter;
 	long long int mem;
-	long long int local;
   	long long int tableSize;
 } Identifier;
 
@@ -32,17 +31,36 @@ extern long long int memIndex;
 //      Token functions         //
 //////////////////////////////////
 
+// adds two numbers
 void __add (char* a, char* b);
+// declare identifier
 void __declareIde (char* a, int yylineno);
-void __declareVal(char* a, int yylineno);
-void __declareNum(char* a, int yylineno);
+// constant number
+void __valueNum(char* a, int yylineno);
+// expression value
+void __expressionVal(char* a, int yylineno);
+// identifier
+void __ide(char* a, int yylineno);
+// assign to variable
+void __assing(int yylineno);
+
+//////////////////////////////////
+//      Register functions      //
+//////////////////////////////////
+
+// sets number to register
+void setRegister(string reg, long long int num);
+// stores register
+void storeRegister(string reg, long long int mem);
+// loads register
+void loadRegister(string reg, long long int mem);
+// resets register
+void resetRegister(string reg);
 
 //////////////////////////////////
 //      Compiler functions      //
 //////////////////////////////////
 
-// stores number
-void storeNum(string number);
 // create identyfier
 void createIde(Identifier *s, string name, long long int isArray, string type);
 // insert identyfier
@@ -53,6 +71,8 @@ void removeIde(string key);
 void insert(string str);
 // insert single command with registry
 void insert(string str, string reg);
+// insert double command with registry and register
+void insert(string str, string reg1, string reg2);
 // insert double command with registry and number
 void insert(string str, string reg, long long int num);
 // prints stack

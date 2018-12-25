@@ -14,7 +14,6 @@ using namespace std;
 typedef struct {
 	string name;
     string type; //NUM, VAR, ARR
-    int initialized;
     int counter;
 	long long int mem;
   	long long int tableSize;
@@ -42,7 +41,7 @@ void __expressionVal(char* a, int yylineno);
 // identifier
 void __ide(char* a, int yylineno);
 // assign to variable
-void __assing(int yylineno);
+void __assing(char* a, int yylineno);
 
 //////////////////////////////////
 //      Register functions      //

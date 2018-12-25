@@ -44,7 +44,7 @@ commands:
 
 command:
 
-    identifier _assign expression _sem              { __assing(yylineno); }
+    identifier _assign expression _sem              { __assing($1, yylineno); }
     | _if condition _then commands if               
     | _while condition _do commands _endwhile       { cout << "while" << endl; }
     | _do commands _while condition _enddo          { cout << "do" << endl; }

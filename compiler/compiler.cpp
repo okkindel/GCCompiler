@@ -7,7 +7,6 @@
 long long int memIndex = 0;
 vector<string> commands;
 map<string, Identifier> identifiers;
-Identifier assign;
 
 //////////////////////////////////
 //      Token functions         //
@@ -54,10 +53,7 @@ void __ide(char* a, int yylineno) {
         error(a, yylineno, "Zmienna nie została zadeklarowana:");
         exit(1);
     }
-    if(identifiers.at(a).tableSize == 0) {
-        assign = identifiers.at(a);
-    }
-    cout << "Znaleziono klucz: " << assign.name << " o typie: " << assign.type << endl;
+    cout << "Znaleziono klucz: " << a << endl;
 }
 
 void __add (char* a, char* b) {
@@ -83,9 +79,12 @@ void __add (char* a, char* b) {
     cout << "   Dodawanie: " << ide1.name << ": " << ide1.type << " + " << ide2.name << ": " << ide2.type << endl;
 }
 
-void __assing(int yylineno) {
+void __assing(char* a, int yylineno) {
+    Identifier assign;
+    if(identifiers.at(a).tableSize == 0) {
+        assign = identifiers.at(a);
+    }
     storeRegister("B", assign.mem);
-    identifiers.at(assign.name).initialized = 1;
     cout << "Przyporządkowano klucz do zmiennej: " << assign.name << " na miejscu: " << assign.mem << endl;
 }
 
@@ -122,7 +121,6 @@ void createIde(Identifier *ide, string name, long long int isArray, string type)
     ide->name = name;
     ide->mem = memIndex;
     ide->type = type;
-    ide->initialized = 0;
     if(isArray) {
         ide->tableSize = isArray;
     }

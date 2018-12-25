@@ -189,8 +189,15 @@ void insert(string cmd, string reg, long long int num) {
 void print() {
 	long long int pos;
     cout << endl;
-	for(pos = 0; pos < commands.size(); pos++)
+
+    ofstream file;
+    file.open ("samples/out");
+
+	for(pos = 0; pos < commands.size(); pos++) {
         cout << commands.at(pos) << endl;
+        file << commands.at(pos) << endl;
+    }
+    file.close();
 }
 
 void error(char* a, int yylineno, char const* msg) {

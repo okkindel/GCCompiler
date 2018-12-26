@@ -106,9 +106,9 @@ int main(int argv, char* argc[]) {
         cerr << "\e[1m\x1B[31mUSAGE:\e[0m ./compiler input output" << endl;
         return -1;
     }
-    yyin = fopen(argc[2], "r");
+    yyin = fopen(argc[1], "r");
 	yyparse();
-    print(argc[1]);
+    print(argc[2]);
 	return 0;
 }
 

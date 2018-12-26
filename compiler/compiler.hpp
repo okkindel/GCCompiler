@@ -27,6 +27,7 @@ typedef struct {
 	string type; //NUM, VAR, ARR
 	int counter;
 	int memory;
+	bool initialized;
 } Identifier;
 
 //////////////////////////////////

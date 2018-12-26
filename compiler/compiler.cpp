@@ -15,10 +15,8 @@ map<string, Identifier> identifiers;
 
 void __declareIde (char* a, int yylineno) { 
     DEBUG_MSG("Zadeklarowano zmienną: " << a);     
-    if(identifiers.find(a) != identifiers.end()) {
+    if (identifiers.find(a) != identifiers.end())
         error(a, yylineno, "kolejna deklaracja zmiennej");
-        exit(1);
-    }
     else {
         Identifier ide;
         createIde(&ide, a, "VAR");
@@ -28,28 +26,24 @@ void __declareIde (char* a, int yylineno) {
 
 void __cmdAssign(char* a, int yylineno) {
     Identifier ide = identifiers.at(a);
+    identifiers.at(a).initialized = true;
     storeRegister("B", ide.memory);
-    DEBUG_MSG("Przyporządkowano klucz do zmiennej: " << ide.name << " na miejscu: " << ide.memory);
+    DEBUG_MSG("Przyporządkowano klucz do zmiennej: " << ide.name << " na miejscu: " << ide.memory << " i jest zainicjowany: " << ide.initialized);
 }
 
 void __cmdWrite(char* a, int yylineno) {
-    if(identifiers.find(a) == identifiers.end()) {
-        error(a, yylineno, "Zmienna nie została zadeklarowana:");
-        exit(1);
-    }
     Identifier ide = identifiers.at(a);
+    if (ide.initialized == false)
+        error(a, yylineno, "Próba użycia niezainicjalizowanej zmiennej:");
     loadRegister("B", ide.memory);
     insert("PUT", "B");
     DEBUG_MSG("Wczytywanie klucza: " << ide.name << " z miejsca w pamięci: " << ide.memory);
 }
 
 void __cmdRead(char* a, int yylineno) {
-    if(identifiers.find(a) == identifiers.end()) {
-        error(a, yylineno, "Zmienna nie została zadeklarowana:");
-        exit(1);
-    }
-    insert("GET", "B");
     Identifier ide = identifiers.at(a);
+    identifiers.at(a).initialized = true;
+    insert("GET", "B");
     storeRegister("B", ide.memory);
     DEBUG_MSG("Zapisywanie klucza: " << ide.name << " do miejsca w pamięci: " << ide.memory);
 }
@@ -57,11 +51,13 @@ void __cmdRead(char* a, int yylineno) {
 void __expressionVal(char* a, int yylineno) {
     Identifier ide = identifiers.at(a);
     DEBUG_MSG("WYRAŻENIE: wartość zmiennej: " << ide.name << ": " << ide.type);
-    if(ide.type == "NUM") {
+    if (ide.type == "NUM") {
         setRegister("B", stoll(ide.name));
         removeIde(ide.name);
     }
-    else if(ide.type == "VAR") {
+    else if (ide.type == "VAR") {
+        if (ide.initialized == false)
+            error(a, yylineno, "Próba użycia niezainicjalizowanej zmiennej:");
         loadRegister("B", ide.memory);
     } else {
         // TODO: TAB
@@ -73,7 +69,7 @@ void __expressionAdd (char* a, char* b) {
     Identifier ide1 = identifiers.at(a);
     Identifier ide2 = identifiers.at(b);
 
-    if(ide1.type == "NUM" && ide2.type == "NUM") {
+    if (ide1.type == "NUM" && ide2.type == "NUM") {
         long long int val = stoll(ide1.name) + stoll(ide2.name);
         setRegister("B", val);
         removeIde(ide1.name);
@@ -100,7 +96,7 @@ void __expressionSub (char* a, char* b) {
     Identifier ide1 = identifiers.at(a);
     Identifier ide2 = identifiers.at(b);
 
-    if(ide1.type == "NUM" && ide2.type == "NUM") {
+    if (ide1.type == "NUM" && ide2.type == "NUM") {
 
         long long int val = stoll(ide1.name) - stoll(ide2.name);
         if (val < 0)
@@ -290,11 +286,9 @@ void __valueNum(char* a, int yylineno) {
 }
 
 void __ideIdetifier(char* a, int yylineno) {
-    if(identifiers.find(a) == identifiers.end()) {
+    if (identifiers.find(a) == identifiers.end())
         error(a, yylineno, "Zmienna nie została zadeklarowana:");
-        exit(1);
-    }
-    DEBUG_MSG("Znaleziono klucz: " << a);
+    DEBUG_MSG("Znaleziono klucz: " << identifiers.at(a).name << " i jest zainicjowany: " << identifiers.at(a).initialized);
 }
 
 //////////////////////////////////
@@ -354,10 +348,11 @@ void createIde(Identifier *ide, string name, string type) {
     ide->name = name;
     ide->memory = memIndex;
     ide->type = type;
+    ide->initialized = false;
 }
 
 void insertIde(string key, Identifier ide) {
-    if(identifiers.count(key) == 0) {
+    if (identifiers.count(key) == 0) {
         identifiers.insert(make_pair(key, ide));
         identifiers.at(key).counter = 0;
         memIndex++;
@@ -365,12 +360,12 @@ void insertIde(string key, Identifier ide) {
     else {
         identifiers.at(key).counter = identifiers.at(key).counter + 1;
     }
-    DEBUG_MSG("   Dodano do pamięci klucz: " << key << ", typu: " << ide.type << ", na miejscu: " << memIndex - 1);
+    DEBUG_MSG("Dodano do pamięci klucz: " << key << ", typu: " << ide.type << ", na miejscu: " << memIndex - 1);
 }
 
 void removeIde(string key) {
-    if(identifiers.count(key) > 0) {
-        if(identifiers.at(key).counter > 0) {
+    if (identifiers.count(key) > 0) {
+        if (identifiers.at(key).counter > 0) {
             identifiers.at(key).counter = identifiers.at(key).counter - 1;
         }
         else {
@@ -429,5 +424,6 @@ void print(char* out) {
 }
 
 void error(char* a, int yylineno, char const* msg) {
-    cout << "\e[1mBłąd na lini " << yylineno << ", konkretnie: \e[1m\x1B[31m" << msg << " " << a << ".\e[0m\n" << endl;
+    cout << "\e[1mBłąd na lini " << yylineno << ": \e[1m\x1B[31m" << msg << " " << a << ".\e[0m\n" << endl;
+    exit(1);
 }

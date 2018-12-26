@@ -71,8 +71,8 @@ void __add (char* a, char* b) {
         insert("ADD", "B", "C");
         removeIde(ide2.name);
     } else if (ide1.type == "NUM" && ide2.type == "VAR") {
-        setRegister("C", stoll(ide1.name));
-        loadRegister("B", ide2.memory);
+        setRegister("B", stoll(ide1.name));
+        loadRegister("C", ide2.memory);
         insert("ADD", "B", "C");
         removeIde(ide1.name);
     } else if (ide1.type == "VAR" && ide2.type == "VAR") {
@@ -88,7 +88,7 @@ void __sub (char* a, char* b) {
     Identifier ide2 = identifiers.at(b);
 
     if(ide1.type == "NUM" && ide2.type == "NUM") {
-        
+
         long long int val = stoll(ide1.name) - stoll(ide2.name);
         if (val < 0)
             val = 0;
@@ -102,8 +102,8 @@ void __sub (char* a, char* b) {
         insert("SUB", "B", "C");
         removeIde(ide2.name);
     } else if (ide1.type == "NUM" && ide2.type == "VAR") {
-        setRegister("C", stoll(ide1.name));
-        loadRegister("B", ide2.memory);
+        setRegister("B", stoll(ide1.name));
+        loadRegister("C", ide2.memory);
         insert("SUB", "B", "C");
         removeIde(ide1.name);
     } else if (ide1.type == "VAR" && ide2.type == "VAR") {
@@ -129,6 +129,17 @@ void __write(char* a, int yylineno) {
     cout << "Wczytywanie klucza: " << ide.name << " z miejsca w pamięci: " << ide.memory << endl;
     loadRegister("B", ide.memory);
     insert("PUT", "B");
+}
+
+void __read(char* a, int yylineno) {
+    if(identifiers.find(a) == identifiers.end()) {
+        error(a, yylineno, "Zmienna nie została zadeklarowana:");
+        exit(1);
+    }
+    insert("GET", "B");
+    Identifier ide = identifiers.at(a);
+    storeRegister("B", ide.memory);
+    cout << "Zapisywanie klucza: " << ide.name << " do miejsca w pamięci: " << ide.memory << endl;
 }
 
 //////////////////////////////////
@@ -226,7 +237,7 @@ void print() {
     cout << endl;
 
     ofstream file;
-    file.open ("./programs/out");
+    file.open ("./out/out");
 
 	for(pos = 0; pos < commands.size(); pos++) {
         cout << commands.at(pos) << endl;

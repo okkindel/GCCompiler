@@ -49,7 +49,7 @@ command:
     | _while condition _do commands _endwhile       { cout << "while" << endl; }
     | _do commands _while condition _enddo          { cout << "do" << endl; }
     | _for _identifier _from value for              
-    | _read identifier _sem                         { cout << "read" << endl; }
+    | _read identifier _sem                         { __read($2, yylineno); }
     | _write value _sem                             { __write($2, yylineno); }
     ;
 

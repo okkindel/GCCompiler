@@ -46,8 +46,10 @@ void __expressionVal(char* a, int yylineno);
 void __ide(char* a, int yylineno);
 // assign to variable
 void __assign(char* a, int yylineno);
-// write register
+// write from register to stdin
 void __write(char* a, int yylineno);
+// read from stdout to register
+void __read(char* a, int yylineno);
 
 //////////////////////////////////
 //      Register functions      //

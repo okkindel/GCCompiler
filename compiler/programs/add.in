@@ -1,0 +1,13 @@
+[ expected 1, 2, 3, 4 ]
+DECLARE
+    a; b; c; d;
+IN
+    a := 1;
+    b := 1 + a;
+    c := b + a;
+    d := 2 + 2;
+    WRITE a;
+    WRITE b;
+    WRITE c;
+    WRITE d;
+END

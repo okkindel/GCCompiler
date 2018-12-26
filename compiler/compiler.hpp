@@ -1,4 +1,3 @@
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -8,6 +7,16 @@
 #include <map>
 
 using namespace std;
+
+//////////////////////////////////
+//            Debug             //
+//////////////////////////////////
+
+#ifdef DEBUG
+#define DEBUG_MSG(str) do { std::cout << str << std::endl; } while( false )
+#else
+#define DEBUG_MSG(str) do { } while ( false )
+#endif
 
 //////////////////////////////////
 //          Structures          //

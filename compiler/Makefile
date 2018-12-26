@@ -1,3 +1,6 @@
+CC = g++
+CFLAGS = -std=c++11 -DDEBUG
+SRC = ./out/compiler
 
 all: compiler
 
@@ -9,7 +12,7 @@ lexer: lexer.l
 
 compiler: lexer bison
 	mkdir -p out
-	g++ -std=c++11 -lm -o ./out/compiler lex.yy.c bison.tab.c compiler.cpp
+	$(CC) $(CFLAGS) -o $(SRC) lex.yy.c bison.tab.c compiler.cpp
 	make clean
 
 interpreter:

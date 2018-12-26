@@ -128,10 +128,40 @@ void __expressionSub (char* a, char* b) {
 }
 
 void __expressionMul (char* a, char* b) {
+    Identifier ide1 = identifiers.at(a);
+    Identifier ide2 = identifiers.at(b);
+
+    if ((ide1.type == "NUM" && ide1.name == "0") || (ide2.type == "NUM" && ide2.name == "0")) {
+        setRegister("B", 0);
+        if (ide1.type == "NUM")
+            removeIde(ide1.name);
+        if (ide2.type == "NUM")
+            removeIde(ide2.name);
+    } else if (ide1.type == "NUM" && ide2.type == "NUM") {
+        long long int val = stoll(ide1.name) * stoll(ide2.name);
+        setRegister("B", val);
+        removeIde(ide1.name);
+        removeIde(ide2.name);
+    }
     DEBUG_MSG("mul");
 }
 
 void __expressionDiv (char* a, char* b) {
+    Identifier ide1 = identifiers.at(a);
+    Identifier ide2 = identifiers.at(b);
+
+    if ((ide1.type == "NUM" && ide1.name == "0") || (ide2.type == "NUM" && ide2.name == "0")) {
+        setRegister("B", 0);
+        if (ide1.type == "NUM")
+            removeIde(ide1.name);
+        if (ide2.type == "NUM")
+            removeIde(ide2.name);
+    } else if (ide1.type == "NUM" && ide2.type == "NUM") {
+        long long int val = stoll(ide1.name) / stoll(ide2.name);
+        setRegister("B", val);
+        removeIde(ide1.name);
+        removeIde(ide2.name);
+    }
     DEBUG_MSG("div");
 }
 

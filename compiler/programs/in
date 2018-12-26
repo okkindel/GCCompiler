@@ -1,10 +1,12 @@
 DECLARE
-    a; b; c;
+    a; b; c; d;
 IN
-    a := 2;
-    b := 5 + a;
+    a := 1;
+    b := a + 1;
     c := b + a;
+    d := 2 - 10;
     WRITE a;
     WRITE b;
     WRITE c;
+    WRITE d;
 END

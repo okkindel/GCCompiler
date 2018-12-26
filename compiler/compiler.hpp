@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <algorithm>
 #include <fstream>
 #include <vector>
 #include <map>
@@ -16,8 +17,8 @@ typedef struct {
 	string name;
     string type; //NUM, VAR, ARR
     int counter;
-	long long int memory;
-  	long long int tableSize;
+	int memory;
+  	int tableSize;
 } Identifier;
 
 //////////////////////////////////
@@ -33,6 +34,8 @@ extern long long int memIndex;
 
 // adds two numbers
 void __add (char* a, char* b);
+// subs two numbers
+void __sub (char* a, char* b);
 // declare identifier
 void __declareIde (char* a, int yylineno);
 // constant number
@@ -51,11 +54,11 @@ void __write(char* a, int yylineno);
 //////////////////////////////////
 
 // sets number to register
-void setRegister(string reg, long long int num);
+void setRegister(string reg, int num);
 // stores register
-void storeRegister(string reg, long long int mem);
+void storeRegister(string reg, int mem);
 // loads register
-void loadRegister(string reg, long long int mem);
+void loadRegister(string reg, int mem);
 // resets register
 void resetRegister(string reg);
 
@@ -64,7 +67,7 @@ void resetRegister(string reg);
 //////////////////////////////////
 
 // create identyfier
-void createIde(Identifier *s, string name, long long int isArray, string type);
+void createIde(Identifier *s, string name, int isArray, string type);
 // insert identyfier
 void insertIde(string key, Identifier i);
 // remove identifier

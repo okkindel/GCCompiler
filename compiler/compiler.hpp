@@ -13,7 +13,7 @@ using namespace std;
 //////////////////////////////////
 
 #ifdef DEBUG
-#define DEBUG_MSG(str) do { std::cout << str << std::endl; } while( false )
+#define DEBUG_MSG(str) do { cout << str << endl; } while( false )
 #else
 #define DEBUG_MSG(str) do { } while ( false )
 #endif
@@ -24,10 +24,9 @@ using namespace std;
 
 typedef struct {
 	string name;
-    string type; //NUM, VAR, ARR
-    int counter;
+	string type; //NUM, VAR, ARR
+	int counter;
 	int memory;
-  	int tableSize;
 } Identifier;
 
 //////////////////////////////////
@@ -56,6 +55,10 @@ void __expressionVal(char* a, int yylineno);
 void __expressionAdd (char* a, char* b);
 // subs two numbers
 void __expressionSub (char* a, char* b);
+// multiples two numbers
+void __expressionMul (char* a, char* b);
+// divides two numbers
+void __expressionDiv (char* a, char* b);
 // constant number
 void __valueNum(char* a, int yylineno);
 // simple identifier
@@ -65,22 +68,22 @@ void __ideIdetifier(char* a, int yylineno);
 //      Register functions      //
 //////////////////////////////////
 
-// sets number to register
+// sets register to given number
 void setRegister(string reg, long long int num);
-// stores register
+// stores register to memory
 void storeRegister(string reg, int mem);
-// loads register
+// loads memory to register
 void loadRegister(string reg, int mem);
-// resets register
+// zero register
 void resetRegister(string reg);
 
 //////////////////////////////////
 //    Identifiers functions     //
 //////////////////////////////////
 
-// create identyfier
-void createIde(Identifier *s, string name, int isArray, string type);
-// insert identyfier
+// create identifier
+void createIde(Identifier *s, string name, string type);
+// insert identifier
 void insertIde(string key, Identifier i);
 // remove identifier
 void removeIde(string key);
@@ -96,7 +99,7 @@ void insert(string str, string reg);
 // insert double command with registry and register
 void insert(string str, string reg1, string reg2);
 // insert double command with registry and number
-void insert(string str, string reg, long long int num);
+void insert(string str, string reg, int index);
 // prints stack
 void print();
 // throws errors

@@ -70,8 +70,8 @@ expression:
     value                                           { __expressionVal($1, yylineno); }
     | value _add value                              { __expressionAdd($1, $3); }
     | value _sub value                              { __expressionSub($1, $3); }
-    | value _mul value                              { cout << "mul" << endl; }
-    | value _div value                              { cout << "div" << endl; }
+    | value _mul value                              { __expressionMul($1, $3); }
+    | value _div value                              { __expressionDiv($1, $3); }
     | value _mod value                              { cout << "mod" << endl; }
     ;
 

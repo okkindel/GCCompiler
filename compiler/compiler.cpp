@@ -21,7 +21,7 @@ void __declareIde (char* a, int yylineno) {
     }
     else {
         Identifier ide;
-        createIde(&ide, a, 0, "VAR");
+        createIde(&ide, a, "VAR");
         insertIde(a, ide);
     }
 }
@@ -93,7 +93,7 @@ void __expressionAdd (char* a, char* b) {
         loadRegister("C", ide2.memory);
         insert("ADD", "B", "C");
     }
-    DEBUG_MSG("   Dodawanie: " << ide1.name << ": " << ide1.type << " + " << ide2.name << ": " << ide2.type);
+    DEBUG_MSG("Dodawanie: " << ide1.name << ": " << ide1.type << " + " << ide2.name << ": " << ide2.type);
 }
 
 void __expressionSub (char* a, char* b) {
@@ -124,14 +124,22 @@ void __expressionSub (char* a, char* b) {
         loadRegister("C", ide2.memory);
         insert("SUB", "B", "C");
     }
-    DEBUG_MSG("   Usuwanie: " << ide1.name << ": " << ide1.type << " + " << ide2.name << ": " << ide2.type);
+    DEBUG_MSG("Odejmowanie: " << ide1.name << ": " << ide1.type << " - " << ide2.name << ": " << ide2.type);
+}
+
+void __expressionMul (char* a, char* b) {
+    DEBUG_MSG("mul");
+}
+
+void __expressionDiv (char* a, char* b) {
+    DEBUG_MSG("div");
 }
 
 void __valueNum(char* a, int yylineno) {
     // TODO: próba przypisania do stałej
     DEBUG_MSG("Znaleziono stałą o wartości: " << a);
     Identifier ide;
-    createIde(&ide, a, 0, "NUM");
+    createIde(&ide, a, "NUM");
     insertIde(a, ide);
 }
 
@@ -150,6 +158,7 @@ void __ideIdetifier(char* a, int yylineno) {
 void setRegister(string reg, long long int num) {
     resetRegister(reg);
 
+    // some optimization here, we can also increment in loop
     if (num < 10) {
     	for (long long int i = 0; i < num; ++i) {
             insert("INC", reg);
@@ -195,16 +204,10 @@ void resetRegister(string reg) {
 //    Identifiers functions     //
 //////////////////////////////////
 
-void createIde(Identifier *ide, string name, int isArray, string type) {
+void createIde(Identifier *ide, string name, string type) {
     ide->name = name;
     ide->memory = memIndex;
     ide->type = type;
-    if(isArray) {
-        ide->tableSize = isArray;
-    }
-    else {
-        ide->tableSize = 0;
-    }
 }
 
 void insertIde(string key, Identifier ide) {
@@ -254,21 +257,21 @@ void insert(string cmd, string reg1, string reg2) {
     cmdIndex ++;
 }
 
-void insert(string cmd, string reg, long long int num) {
-    cmd = cmd + " " + reg + " " + to_string(num);
+void insert(string cmd, string reg, int index) {
+    cmd = cmd + " " + reg + " " + to_string(index);
     commands.push_back(cmd);
     cmdIndex ++;
 }
 
 void print() {
-	long long int pos;
+	long long int cmd;
     ofstream file;
     file.open ("./out/out");
     DEBUG_MSG(""/*endl*/"");
 
-	for(pos = 0; pos < commands.size(); pos++) {
-        DEBUG_MSG(commands.at(pos));
-        file << commands.at(pos) << endl;
+	for(cmd = 0; cmd < commands.size(); cmd++) {
+        DEBUG_MSG(cmd << ":\t" << commands.at(cmd));
+        file << commands.at(cmd) << endl;
     }
     file.close();
 }

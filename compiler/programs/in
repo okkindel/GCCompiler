@@ -2,8 +2,8 @@
 DECLARE
     a; b; c;
 IN
-    a := 545745;
-    b := 42344;
+    a := 5;
+    b := 4;
     c := a - b;
     WRITE a;
     WRITE b;

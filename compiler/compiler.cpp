@@ -142,8 +142,22 @@ void __expressionMul (char* a, char* b) {
         setRegister("B", val);
         removeIde(ide1.name);
         removeIde(ide2.name);
+    } else if (ide1.type == "NUM" && ide2.type == "VAR") {
+        loadRegister("C", ide2.memory);
+        resetRegister("B");
+        for (long long int i = 0; i < stoll(ide1.name); ++i) {
+            insert("ADD", "B", "C");
+        }
+        removeIde(ide1.name);
+    } else if (ide1.type == "VAR" && ide2.type == "NUM") {
+        loadRegister("C", ide1.memory);
+        resetRegister("B");
+        for (long long int i = 0; i < stoll(ide2.name); ++i) {
+            insert("ADD", "B", "C");
+        }
+        removeIde(ide2.name);
     }
-    DEBUG_MSG("mul");
+    DEBUG_MSG("Mnożenie: " << ide1.name << ": " << ide1.type << " * " << ide2.name << ": " << ide2.type);
 }
 
 void __expressionDiv (char* a, char* b) {
@@ -162,7 +176,7 @@ void __expressionDiv (char* a, char* b) {
         removeIde(ide1.name);
         removeIde(ide2.name);
     }
-    DEBUG_MSG("div");
+    DEBUG_MSG("Dzielenie: " << ide1.name << ": " << ide1.type << " / " << ide2.name << ": " << ide2.type);
 }
 
 void __valueNum(char* a, int yylineno) {

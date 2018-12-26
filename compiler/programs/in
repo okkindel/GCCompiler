@@ -2,9 +2,9 @@
 DECLARE
     a; b; c;
 IN
-    a := 5;
-    b := 4;
-    c := 11 / 10;
+    a := 3 * 5;
+    b := 4 * a;
+    c := a * 2;
     WRITE a;
     WRITE b;
     WRITE c;

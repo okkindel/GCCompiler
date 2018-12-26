@@ -202,16 +202,20 @@ void __expressionDiv (char* a, char* b) {
 
         // counter
         resetRegister("D");
+
+        // if b == 0
+        insert("JZERO", "C", cmdIndex + 9);
         
+        insert("COPY", "E", "B");
         insert("SUB", "B", "C");
+
         // if a <= b
         insert("JZERO", "B", cmdIndex + 4);
         insert("INC", "D");
-        insert("JZERO", "B", cmdIndex + 6);
-        insert("JUMP", cmdIndex - 4);
+        insert("JZERO", "B", cmdIndex + 4);
+        insert("JUMP", cmdIndex - 5);
 
         // if a >= b
-        insert("COPY", "E", "B");
         insert("SUB", "C", "E");
         insert("JZERO", "C", cmdIndex + 3);
 

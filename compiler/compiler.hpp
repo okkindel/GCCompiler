@@ -96,8 +96,10 @@ void removeIde(string key);
 void insert(string str);
 // insert single command with registry
 void insert(string str, string reg);
-// insert double command with registry and register
+// insert double command with registry and registry
 void insert(string str, string reg1, string reg2);
+// insert single command with registry and number
+void insert(string cmd, int index);
 // insert double command with registry and number
 void insert(string str, string reg, int index);
 // prints stack

@@ -175,6 +175,45 @@ void __expressionDiv (char* a, char* b) {
         setRegister("B", val);
         removeIde(ide1.name);
         removeIde(ide2.name);
+    } else {
+        if (ide1.type == "NUM" && ide2.type == "VAR") {
+            setRegister("B", stoll(ide1.name));
+            loadRegister("C", ide2.memory);
+        } else if (ide1.type == "VAR" && ide2.type == "NUM") {
+            loadRegister("B", ide1.memory);
+            setRegister("C", stoll(ide2.name));
+        } else if (ide1.type == "VAR" && ide2.type =="VAR") {
+            loadRegister("B", ide1.memory);
+            loadRegister("C", ide2.memory);
+        }
+
+        // counter
+        resetRegister("D");
+        insert("SUB", "B", "C");
+
+        // if a - b <= 0
+        insert("JZERO", "B", cmdIndex + 6);
+        insert("JUMP", cmdIndex + 2);
+
+        int currentCmd = cmdIndex;
+        insert("SUB", "B", "C");
+        insert("INC", "D");
+        
+        // negation
+        resetRegister("E");
+        insert("INC", "E");
+        insert("SUB", "E", "B");
+
+        // jump if not zero
+        insert("JZERO", "E", cmdIndex - 5);
+
+        // TODO if a == b
+
+        insert("COPY", "B", "D");
+        if (ide1.type == "NUM")
+            removeIde(ide1.name);
+        if (ide2.type == "NUM")
+            removeIde(ide2.name);
     }
     DEBUG_MSG("Dzielenie: " << ide1.name << ": " << ide1.type << " / " << ide2.name << ": " << ide2.type);
 }
@@ -303,6 +342,12 @@ void insert(string cmd, string reg1, string reg2) {
 
 void insert(string cmd, string reg, int index) {
     cmd = cmd + " " + reg + " " + to_string(index);
+    commands.push_back(cmd);
+    cmdIndex ++;
+}
+
+void insert(string cmd, int index) {
+    cmd = cmd + " " + to_string(index);
     commands.push_back(cmd);
     cmdIndex ++;
 }

@@ -74,20 +74,22 @@ void __expressionAdd (char* a, char* b) {
         setRegister("B", val);
         removeIde(ide1.name);
         removeIde(ide2.name);
-    } else if (ide1.type == "VAR" && ide2.type == "NUM") {
-        setRegister("C", stoll(ide2.name));
-        loadRegister("B", ide1.memory);
+    } else {
+        if (ide1.type == "NUM" && ide2.type == "VAR") {
+            setRegister("B", stoll(ide1.name));
+            loadRegister("C", ide2.memory);
+        } else if (ide1.type == "VAR" && ide2.type == "NUM") {
+            loadRegister("B", ide1.memory);
+            setRegister("C", stoll(ide2.name));
+        } else if (ide1.type == "VAR" && ide2.type =="VAR") {
+            loadRegister("B", ide1.memory);
+            loadRegister("C", ide2.memory);
+        }
         insert("ADD", "B", "C");
-        removeIde(ide2.name);
-    } else if (ide1.type == "NUM" && ide2.type == "VAR") {
-        setRegister("B", stoll(ide1.name));
-        loadRegister("C", ide2.memory);
-        insert("ADD", "B", "C");
-        removeIde(ide1.name);
-    } else if (ide1.type == "VAR" && ide2.type == "VAR") {
-        loadRegister("B", ide1.memory);
-        loadRegister("C", ide2.memory);
-        insert("ADD", "B", "C");
+        if (ide1.type == "NUM")
+            removeIde(ide1.name);
+        if (ide2.type == "NUM")
+            removeIde(ide2.name);
     }
     DEBUG_MSG("Dodawanie: " << ide1.name << ": " << ide1.type << " + " << ide2.name << ": " << ide2.type);
 }
@@ -105,20 +107,22 @@ void __expressionSub (char* a, char* b) {
         setRegister("B", val);
         removeIde(ide1.name);
         removeIde(ide2.name);
-    } else if (ide1.type == "VAR" && ide2.type == "NUM") {
-        setRegister("C", stoll(ide2.name));
-        loadRegister("B", ide1.memory);
+    } else {
+        if (ide1.type == "NUM" && ide2.type == "VAR") {
+            setRegister("B", stoll(ide1.name));
+            loadRegister("C", ide2.memory);
+        } else if (ide1.type == "VAR" && ide2.type == "NUM") {
+            loadRegister("B", ide1.memory);
+            setRegister("C", stoll(ide2.name));
+        } else if (ide1.type == "VAR" && ide2.type =="VAR") {
+            loadRegister("B", ide1.memory);
+            loadRegister("C", ide2.memory);
+        }
         insert("SUB", "B", "C");
-        removeIde(ide2.name);
-    } else if (ide1.type == "NUM" && ide2.type == "VAR") {
-        setRegister("B", stoll(ide1.name));
-        loadRegister("C", ide2.memory);
-        insert("SUB", "B", "C");
-        removeIde(ide1.name);
-    } else if (ide1.type == "VAR" && ide2.type == "VAR") {
-        loadRegister("B", ide1.memory);
-        loadRegister("C", ide2.memory);
-        insert("SUB", "B", "C");
+        if (ide1.type == "NUM")
+            removeIde(ide1.name);
+        if (ide2.type == "NUM")
+            removeIde(ide2.name);
     }
     DEBUG_MSG("Odejmowanie: " << ide1.name << ": " << ide1.type << " - " << ide2.name << ": " << ide2.type);
 }

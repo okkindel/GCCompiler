@@ -59,6 +59,8 @@ void __expressionSub (char* a, char* b);
 void __expressionMul (char* a, char* b);
 // divides two numbers
 void __expressionDiv (char* a, char* b);
+// modulo from two numbers
+void __expressionMod (char* a, char* b);
 // constant number
 void __valueNum(char* a, int yylineno);
 // simple identifier

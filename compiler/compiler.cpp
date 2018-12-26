@@ -188,15 +188,12 @@ void __expressionDiv (char* a, char* b) {
     } else {
         if (ide1.type == "NUM" && ide2.type == "VAR") {
             setRegister("B", stoll(ide1.name));
-            setRegister("E", stoll(ide1.name));
             loadRegister("C", ide2.memory);
         } else if (ide1.type == "VAR" && ide2.type == "NUM") {
             loadRegister("B", ide1.memory);
-            loadRegister("E", ide1.memory);
             setRegister("C", stoll(ide2.name));
         } else if (ide1.type == "VAR" && ide2.type =="VAR") {
             loadRegister("B", ide1.memory);
-            loadRegister("E", ide1.memory);
             loadRegister("C", ide2.memory);
         }
 
@@ -224,6 +221,56 @@ void __expressionDiv (char* a, char* b) {
 
         insert("INC", "D");
         insert("JUMP", cmdIndex - 3);
+
+        if (ide1.type == "NUM")
+            removeIde(ide1.name);
+        if (ide2.type == "NUM")
+            removeIde(ide2.name);
+    }
+    DEBUG_MSG("Dzielenie: " << ide1.name << ": " << ide1.type << " / " << ide2.name << ": " << ide2.type);
+}
+
+void __expressionMod (char* a, char* b) {
+    Identifier ide1 = identifiers.at(a);
+    Identifier ide2 = identifiers.at(b);
+
+    if ((ide1.type == "NUM" && ide1.name == "0") || (ide2.type == "NUM" && ide2.name == "0")) {
+        setRegister("B", 0);
+        if (ide1.type == "NUM")
+            removeIde(ide1.name);
+        if (ide2.type == "NUM")
+            removeIde(ide2.name);
+    } else if (ide1.type == "NUM" && ide2.type == "NUM") {
+        long long int val = stoll(ide1.name) % stoll(ide2.name);
+        setRegister("B", val);
+        removeIde(ide1.name);
+        removeIde(ide2.name);
+    } else {
+        if (ide1.type == "NUM" && ide2.type == "VAR") {
+            setRegister("B", stoll(ide1.name));
+            loadRegister("C", ide2.memory);
+        } else if (ide1.type == "VAR" && ide2.type == "NUM") {
+            loadRegister("B", ide1.memory);
+            setRegister("C", stoll(ide2.name));
+        } else if (ide1.type == "VAR" && ide2.type =="VAR") {
+            loadRegister("B", ide1.memory);
+            loadRegister("C", ide2.memory);
+        }
+
+        // if b == 0
+        insert("JZERO", "C", cmdIndex + 6);
+        
+        insert("COPY", "D", "B");
+        insert("SUB", "B", "C");
+
+        insert("JZERO", "B", cmdIndex + 2);
+        insert("JUMP", cmdIndex - 3);
+
+        insert("SUB", "C", "D");
+        insert("JZERO", "C", cmdIndex + 3);
+        insert("COPY", "B", "D");
+        insert("JUMP", cmdIndex + 2);
+        insert("COPY", "B", "C");
 
         if (ide1.type == "NUM")
             removeIde(ide1.name);

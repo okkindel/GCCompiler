@@ -35,37 +35,38 @@ typedef struct {
 //////////////////////////////////
 
 extern map<string, Identifier> identifiers;
-extern long long int memIndex;
+extern int memIndex;
+extern int cmdIndex;
 
 //////////////////////////////////
 //      Token functions         //
 //////////////////////////////////
 
-// adds two numbers
-void __add (char* a, char* b);
-// subs two numbers
-void __sub (char* a, char* b);
 // declare identifier
 void __declareIde (char* a, int yylineno);
-// constant number
-void __valueNum(char* a, int yylineno);
+// assign to variable
+void __cmdAssign(char* a, int yylineno);
+// write from register to stdin
+void __cmdWrite(char* a, int yylineno);
+// read from stdout to register
+void __cmdRead(char* a, int yylineno);
 // expression value
 void __expressionVal(char* a, int yylineno);
-// identifier
-void __ide(char* a, int yylineno);
-// assign to variable
-void __assign(char* a, int yylineno);
-// write from register to stdin
-void __write(char* a, int yylineno);
-// read from stdout to register
-void __read(char* a, int yylineno);
+// adds two numbers
+void __expressionAdd (char* a, char* b);
+// subs two numbers
+void __expressionSub (char* a, char* b);
+// constant number
+void __valueNum(char* a, int yylineno);
+// simple identifier
+void __ideIdetifier(char* a, int yylineno);
 
 //////////////////////////////////
 //      Register functions      //
 //////////////////////////////////
 
 // sets number to register
-void setRegister(string reg, int num);
+void setRegister(string reg, long long int num);
 // stores register
 void storeRegister(string reg, int mem);
 // loads register

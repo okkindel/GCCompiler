@@ -4,7 +4,8 @@
 //          Variables           //
 //////////////////////////////////
 
-long long int memIndex = 0;
+int memIndex = 0;
+int cmdIndex = 0;
 vector<string> commands;
 map<string, Identifier> identifiers;
 
@@ -25,6 +26,34 @@ void __declareIde (char* a, int yylineno) {
     }
 }
 
+void __cmdAssign(char* a, int yylineno) {
+    Identifier ide = identifiers.at(a);
+    storeRegister("B", ide.memory);
+    DEBUG_MSG("Przyporządkowano klucz do zmiennej: " << ide.name << " na miejscu: " << ide.memory);
+}
+
+void __cmdWrite(char* a, int yylineno) {
+    if(identifiers.find(a) == identifiers.end()) {
+        error(a, yylineno, "Zmienna nie została zadeklarowana:");
+        exit(1);
+    }
+    Identifier ide = identifiers.at(a);
+    loadRegister("B", ide.memory);
+    insert("PUT", "B");
+    DEBUG_MSG("Wczytywanie klucza: " << ide.name << " z miejsca w pamięci: " << ide.memory);
+}
+
+void __cmdRead(char* a, int yylineno) {
+    if(identifiers.find(a) == identifiers.end()) {
+        error(a, yylineno, "Zmienna nie została zadeklarowana:");
+        exit(1);
+    }
+    insert("GET", "B");
+    Identifier ide = identifiers.at(a);
+    storeRegister("B", ide.memory);
+    DEBUG_MSG("Zapisywanie klucza: " << ide.name << " do miejsca w pamięci: " << ide.memory);
+}
+
 void __expressionVal(char* a, int yylineno) {
     Identifier ide = identifiers.at(a);
     DEBUG_MSG("WYRAŻENIE: wartość zmiennej: " << ide.name << ": " << ide.type);
@@ -40,23 +69,7 @@ void __expressionVal(char* a, int yylineno) {
     }
 }
 
-void __valueNum(char* a, int yylineno) {
-    // TODO: próba przypisania do stałej
-    DEBUG_MSG("Znaleziono stałą o wartości: " << a);
-    Identifier ide;
-    createIde(&ide, a, 0, "NUM");
-    insertIde(a, ide);
-}
-
-void __ide(char* a, int yylineno) {
-    if(identifiers.find(a) == identifiers.end()) {
-        error(a, yylineno, "Zmienna nie została zadeklarowana:");
-        exit(1);
-    }
-    DEBUG_MSG("Znaleziono klucz: " << a);
-}
-
-void __add (char* a, char* b) {
+void __expressionAdd (char* a, char* b) {
     Identifier ide1 = identifiers.at(a);
     Identifier ide2 = identifiers.at(b);
 
@@ -83,7 +96,7 @@ void __add (char* a, char* b) {
     DEBUG_MSG("   Dodawanie: " << ide1.name << ": " << ide1.type << " + " << ide2.name << ": " << ide2.type);
 }
 
-void __sub (char* a, char* b) {
+void __expressionSub (char* a, char* b) {
     Identifier ide1 = identifiers.at(a);
     Identifier ide2 = identifiers.at(b);
 
@@ -114,43 +127,54 @@ void __sub (char* a, char* b) {
     DEBUG_MSG("   Usuwanie: " << ide1.name << ": " << ide1.type << " + " << ide2.name << ": " << ide2.type);
 }
 
-void __assign(char* a, int yylineno) {
-    Identifier ide = identifiers.at(a);
-    storeRegister("B", ide.memory);
-    DEBUG_MSG("Przyporządkowano klucz do zmiennej: " << ide.name << " na miejscu: " << ide.memory);
+void __valueNum(char* a, int yylineno) {
+    // TODO: próba przypisania do stałej
+    DEBUG_MSG("Znaleziono stałą o wartości: " << a);
+    Identifier ide;
+    createIde(&ide, a, 0, "NUM");
+    insertIde(a, ide);
 }
 
-void __write(char* a, int yylineno) {
+void __ideIdetifier(char* a, int yylineno) {
     if(identifiers.find(a) == identifiers.end()) {
         error(a, yylineno, "Zmienna nie została zadeklarowana:");
         exit(1);
     }
-    Identifier ide = identifiers.at(a);
-    loadRegister("B", ide.memory);
-    insert("PUT", "B");
-    DEBUG_MSG("Wczytywanie klucza: " << ide.name << " z miejsca w pamięci: " << ide.memory);
-}
-
-void __read(char* a, int yylineno) {
-    if(identifiers.find(a) == identifiers.end()) {
-        error(a, yylineno, "Zmienna nie została zadeklarowana:");
-        exit(1);
-    }
-    insert("GET", "B");
-    Identifier ide = identifiers.at(a);
-    storeRegister("B", ide.memory);
-    DEBUG_MSG("Zapisywanie klucza: " << ide.name << " do miejsca w pamięci: " << ide.memory);
+    DEBUG_MSG("Znaleziono klucz: " << a);
 }
 
 //////////////////////////////////
 //      Register functions      //
 //////////////////////////////////
 
-void setRegister(string reg, int num) {
+void setRegister(string reg, long long int num) {
     resetRegister(reg);
-	for (long long int i = 0; i < num; ++i) {
-        insert("INC", reg);
-    }
+
+    if (num < 10) {
+    	for (long long int i = 0; i < num; ++i) {
+            insert("INC", reg);
+        }
+    } else {
+        for (long long int i = 0; i < 10; ++i) {
+            insert("INC", reg);
+        }
+
+        long long int counter = 10;
+        while (2 * counter < num) {
+            insert("ADD", reg, reg);
+            counter *= 2;
+        }
+        if (num - counter < 2 * counter - num) {
+            for (long long int i = 0; i < num - counter; ++i) {
+                insert("INC", reg);
+            }
+        } else {
+            insert("ADD", reg, reg);
+            for (long long int i = 0; i < 2 * counter - num; ++i) {
+                insert("DEC", reg);
+            }
+        }
+    }    
 }
 
 void storeRegister(string reg, int mem) {
@@ -214,22 +238,26 @@ void removeIde(string key) {
 
 void insert(string cmd) {
     commands.push_back(cmd);
+    cmdIndex ++;
 }
 
 void insert(string cmd, string reg) 
 {
     cmd = cmd + " " + reg;
     commands.push_back(cmd);
+    cmdIndex ++;
 }
 
 void insert(string cmd, string reg1, string reg2) {
     cmd = cmd + " " + reg1 + " " + reg2;
     commands.push_back(cmd);
+    cmdIndex ++;
 }
 
 void insert(string cmd, string reg, long long int num) {
     cmd = cmd + " " + reg + " " + to_string(num);
     commands.push_back(cmd);
+    cmdIndex ++;
 }
 
 void print() {

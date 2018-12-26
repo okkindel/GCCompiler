@@ -44,13 +44,13 @@ commands:
 
 command:
 
-    identifier _assign expression _sem              { __assign($1, yylineno); }
+    identifier _assign expression _sem              { __cmdAssign($1, yylineno); }
     | _if condition _then commands if                       
     | _while condition _do commands _endwhile       { cout << "while" << endl; }
     | _do commands _while condition _enddo          { cout << "do" << endl; }
     | _for _identifier _from value for              
-    | _read identifier _sem                         { __read($2, yylineno); }
-    | _write value _sem                             { __write($2, yylineno); }
+    | _read identifier _sem                         { __cmdRead($2, yylineno); }
+    | _write value _sem                             { __cmdWrite($2, yylineno); }
     ;
 
 if:
@@ -68,8 +68,8 @@ for:
 expression:
 
     value                                           { __expressionVal($1, yylineno); }
-    | value _add value                              { __add($1, $3); }
-    | value _sub value                              { __sub($1, $3); }
+    | value _add value                              { __expressionAdd($1, $3); }
+    | value _sub value                              { __expressionSub($1, $3); }
     | value _mul value                              { cout << "mul" << endl; }
     | value _div value                              { cout << "div" << endl; }
     | value _mod value                              { cout << "mod" << endl; }
@@ -93,7 +93,7 @@ value:
 
 identifier:
 
-    _identifier                                     { __ide($1, yylineno); }
+    _identifier                                     { __ideIdetifier($1, yylineno); }
     | _identifier _lb _identifier _rb               { cout << "ide ( ide )" << endl; }
     | _identifier _lb _number _rb                   { cout << "ide ( num )" << endl; }
     ;

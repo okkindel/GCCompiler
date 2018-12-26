@@ -21,7 +21,7 @@ interpreter:
 
 debug: compiler
 	test -f ../interpreter/maszyna-rejestrowa || make interpreter
-	./out/compiler < programs/in
+	./out/compiler out/out ./programs/in
 	../interpreter/maszyna-rejestrowa ./out/out
 
 clean:

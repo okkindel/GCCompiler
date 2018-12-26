@@ -3,6 +3,7 @@
 
 extern int yylex();
 extern int yylineno;
+extern FILE *yyin;
 int yyerror(const string str);
 
 %}
@@ -101,8 +102,13 @@ identifier:
 %%
 
 int main(int argv, char* argc[]) {
+    if( argv != 3 ) {
+        cerr << "\e[1m\x1B[31mUSAGE:\e[0m ./compiler input output" << endl;
+        return -1;
+    }
+    yyin = fopen(argc[2], "r");
 	yyparse();
-    print();
+    print(argc[1]);
 	return 0;
 }
 

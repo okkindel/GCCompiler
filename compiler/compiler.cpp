@@ -266,6 +266,7 @@ void __expressionMod (char* a, char* b) {
         insert("JZERO", "B", cmdIndex + 2);
         insert("JUMP", cmdIndex - 3);
 
+        // if a == b
         insert("SUB", "C", "D");
         insert("JZERO", "C", cmdIndex + 3);
         insert("COPY", "B", "D");
@@ -414,10 +415,10 @@ void insert(string cmd, int index) {
     cmdIndex ++;
 }
 
-void print() {
+void print(char* out) {
 	long long int cmd;
     ofstream file;
-    file.open ("./out/out");
+    file.open(out);
     DEBUG_MSG(""/*endl*/"");
 
 	for(cmd = 0; cmd < commands.size(); cmd++) {

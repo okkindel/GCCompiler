@@ -105,6 +105,6 @@ void insert(string cmd, int index);
 // insert double command with registry and number
 void insert(string str, string reg, int index);
 // prints stack
-void print();
+void print(char* output);
 // throws errors
 void error(char* a, int yylineno, char const* msg);

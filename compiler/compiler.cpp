@@ -156,6 +156,16 @@ void __expressionMul (char* a, char* b) {
             insert("ADD", "B", "C");
         }
         removeIde(ide2.name);
+    } else if (ide1.type == "VAR" && ide2.type == "VAR") {
+        loadRegister("B", ide1.memory);
+        loadRegister("C", ide2.memory);
+        insert("JZERO", "C", cmdIndex + 7);
+        insert("COPY", "D", "B");
+        insert("DEC", "C");
+        insert("ADD", "B", "D");
+        insert("DEC", "C");
+        insert("JZERO", "C", cmdIndex + 2);
+        insert("JUMP", cmdIndex - 3);        
     }
     DEBUG_MSG("Mnożenie: " << ide1.name << ": " << ide1.type << " * " << ide2.name << ": " << ide2.type);
 }
@@ -178,38 +188,39 @@ void __expressionDiv (char* a, char* b) {
     } else {
         if (ide1.type == "NUM" && ide2.type == "VAR") {
             setRegister("B", stoll(ide1.name));
+            setRegister("E", stoll(ide1.name));
             loadRegister("C", ide2.memory);
         } else if (ide1.type == "VAR" && ide2.type == "NUM") {
             loadRegister("B", ide1.memory);
+            loadRegister("E", ide1.memory);
             setRegister("C", stoll(ide2.name));
         } else if (ide1.type == "VAR" && ide2.type =="VAR") {
             loadRegister("B", ide1.memory);
+            loadRegister("E", ide1.memory);
             loadRegister("C", ide2.memory);
         }
 
         // counter
         resetRegister("D");
-        insert("SUB", "B", "C");
-
-        // if a - b <= 0
-        insert("JZERO", "B", cmdIndex + 6);
-        insert("JUMP", cmdIndex + 2);
-
-        int currentCmd = cmdIndex;
-        insert("SUB", "B", "C");
-        insert("INC", "D");
         
-        // negation
-        resetRegister("E");
-        insert("INC", "E");
-        insert("SUB", "E", "B");
+        insert("SUB", "B", "C");
+        // if a <= b
+        insert("JZERO", "B", cmdIndex + 4);
+        insert("INC", "D");
+        insert("JZERO", "B", cmdIndex + 6);
+        insert("JUMP", cmdIndex - 4);
 
-        // jump if not zero
-        insert("JZERO", "E", cmdIndex - 5);
-
-        // TODO if a == b
+        // if a >= b
+        insert("COPY", "E", "B");
+        insert("SUB", "C", "E");
+        insert("JZERO", "C", cmdIndex + 3);
 
         insert("COPY", "B", "D");
+        insert("JUMP", cmdIndex + 3);
+
+        insert("INC", "D");
+        insert("JUMP", cmdIndex - 3);
+
         if (ide1.type == "NUM")
             removeIde(ide1.name);
         if (ide2.type == "NUM")

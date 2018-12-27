@@ -45,16 +45,16 @@ commands:
 
 command:
 
-    identifier _assign expression _sem                              { __cmdAssign($1, yylineno); }
+    identifier _assign expression _sem                                  { __cmdAssign($1, yylineno); }
     | _if condition _then commands if                       
-    | _while condition _do commands _endwhile                       { cout << "while" << endl; }
-    | _do commands _while condition _enddo                          { cout << "do" << endl; }
-    | _for _identifier _from value _downto value _do                { __for($2, $4, $6, yylineno); } 
-        commands _endfor                                            { __end_down_for(); }
-    | _for _identifier _from value _to value _do                    { __for($2, $4, $6, yylineno); } 
-        commands _endfor                                            { __end_up_for(); }
-    | _read identifier _sem                                         { __cmdRead($2, yylineno); }
-    | _write value _sem                                             { __cmdWrite($2, yylineno); }
+    | _while condition _do commands _endwhile                           { cout << "while" << endl; }
+    | _do commands _while condition _enddo                              { cout << "do" << endl; }
+    | _for _identifier _from value _downto value _do                    { __for($2, $4, $6, yylineno); } 
+        commands _endfor                                                { __end_down_for(); }
+    | _for _identifier _from value _to value _do                        { __for($2, $4, $6, yylineno); } 
+        commands _endfor                                                { __end_up_for(); }
+    | _read identifier _sem                                             { __cmdRead($2, yylineno); }
+    | _write value _sem                                                 { __cmdWrite($2, yylineno); }
     ;
 
 if:

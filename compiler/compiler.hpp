@@ -6,6 +6,14 @@
 #include <vector>
 #include <map>
 
+//////////////////////////////////
+// A - memory register			//
+// B - attribution register		//
+// C D E F - temporary register //
+// G - condition register		//
+// H - iterator register		//
+//////////////////////////////////
+
 using namespace std;
 
 //////////////////////////////////
@@ -24,7 +32,7 @@ using namespace std;
 
 typedef struct {
 	string name;
-	string type; //NUM, VAR, ARR
+	string type;
 	int counter;
 	int memory;
 	bool initialized;
@@ -114,6 +122,8 @@ void removeIde(string key);
 void createLoop(Loop* loop, Identifier iterator, Identifier condition, int index);
 // insert loop
 void insertLoop(Loop loop);
+// remove loop
+void removeLoop();
 
 //////////////////////////////////
 //      Compiler functions      //

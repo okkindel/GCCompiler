@@ -77,7 +77,7 @@ void __end_down_for() {
     insert("DEC H");
     storeRegister("H", loop.iterator.memory);
     insert("JUMP", loop.index);
-    loopIndex --;
+    removeLoop();
 }
 
 void __end_up_for() {
@@ -97,7 +97,7 @@ void __end_up_for() {
     insert("INC H");
     storeRegister("H", loop.iterator.memory);
     insert("JUMP", loop.index);
-    loopIndex --;
+    removeLoop();
 }
 
 void __cmdWrite(char* a, int yylineno) {
@@ -119,7 +119,7 @@ void __cmdRead(char* a, int yylineno) {
 
 void __expressionVal(char* a, int yylineno) {
     Identifier ide = identifiers.at(a);
-    DEBUG_MSG("WYRAŻENIE: wartość zmiennej: " << ide.name << ": " << ide.type);
+    DEBUG_MSG("Wyrażenie: wartość zmiennej: " << ide.name << ": " << ide.type);
     if (ide.type == "NUM") {
         setRegister("B", stoll(ide.name));
         removeIde(ide.name);
@@ -468,7 +468,7 @@ void removeIde(string key) {
 //////////////////////////////////
 
 void createLoop(Loop* loop, Identifier iterator, Identifier condition, int index) {
-    DEBUG_MSG("WARUNEK PĘTLI: " << condition.name << ", typu: " << condition.type);
+    DEBUG_MSG("Warunek pętli: " << condition.name << ", typu: " << condition.type);
     loop->depth = loopIndex;
     loop->iterator = iterator;
     loop->condition = condition;
@@ -478,7 +478,13 @@ void createLoop(Loop* loop, Identifier iterator, Identifier condition, int index
 void insertLoop(Loop loop) {
     loops.insert(make_pair(loopIndex, loop));
     loopIndex++;
-    DEBUG_MSG("Dodano do pamięci pętle na miejscu: " << loopIndex - 1);
+    DEBUG_MSG("Dodano do pamięci pętlę o id: " << loopIndex - 1);
+}
+
+void removeLoop() {
+    loops.erase(loopIndex - 1);
+    loopIndex--;
+    DEBUG_MSG("Usunięto z pamięci pętlę o id: " << loopIndex);
 }
 
 //////////////////////////////////

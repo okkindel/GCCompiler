@@ -97,9 +97,9 @@ void __expressionDiv(char* a, char* b);
 // modulo from two numbers
 void __expressionMod(char* a, char* b);
 // condition equal
-void __condEq(char* a, char* b);
+void __condEq(char* a, char* b, int yylineno);
 // condition not equal
-void __condNe(char* a, char* b);
+void __condNe(char* a, char* b, int yylineno);
 // constant number
 void __valueNum(char* a, int yylineno);
 // simple identifier
@@ -167,6 +167,8 @@ void insert(string str, string reg1, string reg2);
 void insert(string cmd, int index);
 // insert double command with registry and number
 void insert(string str, string reg, int index);
+// check for initialized error
+void initError(Identifier ide, char* a, int yylineno);
 // prints stack
 void print(char* output);
 // throws errors

@@ -115,8 +115,7 @@ void __end_up_for() {
 
 void __cmdWrite(char* a, int yylineno) {
     Identifier ide = identifiers.at(a);
-    if (ide.type != "NUM" && ide.initialized == false)
-        error(a, yylineno, "Próba użycia niezainicjalizowanej zmiennej:");
+    initError(ide, a, yylineno);    
     assignRegister("B", ide);
     insert("PUT", "B");
     DEBUG_MSG("Wczytywanie klucza: " << ide.name << " z miejsca w pamięci: " << ide.memory);
@@ -138,8 +137,7 @@ void __expressionVal(char* a, int yylineno) {
         removeIde(ide.name);
     }
     else if (ide.type == "VAR") {
-        if (ide.initialized == false)
-            error(a, yylineno, "Próba użycia niezainicjalizowanej zmiennej:");
+        initError(ide, a, yylineno);
         loadRegister("B", ide.memory);
     } else {
         // TODO: TAB
@@ -332,9 +330,11 @@ void __expressionMod (char* a, char* b) {
     DEBUG_MSG("Dzielenie: " << ide1.name << ": " << ide1.type << " / " << ide2.name << ": " << ide2.type);
 }
 
-void __condEq(char* a, char* b) {
+void __condEq(char* a, char* b, int yylineno) {
     Identifier ide1 = identifiers.at(a);
     Identifier ide2 = identifiers.at(b);
+    initError(ide1, a, yylineno);
+    initError(ide2, b, yylineno);
 
     resetRegister("G");
     assignRegister("C", ide1, "D", ide2);
@@ -355,9 +355,12 @@ void __condEq(char* a, char* b) {
     DEBUG_MSG("Porównano: " << ide1.name << " == " << ide2.name);
 }
 
-void __condNe(char* a, char* b) {
+void __condNe(char* a, char* b, int yylineno) {
     Identifier ide1 = identifiers.at(a);
     Identifier ide2 = identifiers.at(b);
+    initError(ide1, a, yylineno);
+    initError(ide2, b, yylineno);
+
 
     resetRegister("G");
     assignRegister("C", ide1, "D", ide2);
@@ -576,6 +579,11 @@ void insert(string cmd, int index) {
     cmd = cmd + " " + to_string(index);
     commands.push_back(cmd);
     cmdIndex ++;
+}
+
+void initError(Identifier ide, char* a, int yylineno) {
+    if (ide.type != "NUM" && ide.initialized == false)
+        error(a, yylineno, "Próba użycia niezainicjalizowanej zmiennej:");
 }
 
 void print(char* out) {

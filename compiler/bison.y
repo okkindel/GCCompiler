@@ -71,8 +71,8 @@ expression:
 
 condition:
 
-    value _eq value                                 { __condEq($1, $3); }
-    | value _ne value                               { __condNe($1, $3); }
+    value _eq value                                 { __condEq($1, $3, yylineno); }
+    | value _ne value                               { __condNe($1, $3, yylineno); }
     | value _l value                                { cout << "low" << endl; }
     | value _g value                                { cout << "gre" << endl; }
     | value _le value                               { cout << "le" << endl; }

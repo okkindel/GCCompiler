@@ -9,9 +9,8 @@ int cmdIndex = 0;
 int loopIndex = 0;
 vector<string> commands;
 map<string, Identifier> identifiers;
+stack<int> mem_bookmarks;
 map<int, Loop> loops;
-int bookmark;
-int endif;
 
 //////////////////////////////////
 //      Token functions         //
@@ -37,12 +36,12 @@ void __cmdAssign(char* a, int yylineno) {
     DEBUG_MSG("Przyporządkowano klucz do zmiennej: " << ide.name << " na miejscu: " << ide.memory << " i jest zainicjowany: " << ide.initialized);
 }
 
-void __endIf() {
-    insert("PUT", "G");
-    insert("JZERO", "G", cmdIndex + 3);
-    resetRegister("G");
-    insert("JUMP", bookmark);
+void __cmdIf() {
+    // CODE SHITTY AF
+    replace(commands.at(mem_bookmarks.top() - 1), "$bookmark", to_string(cmdIndex));
+    cout << "\t" << commands.at(mem_bookmarks.top() - 1) << endl;
     DEBUG_MSG("Zakończono warunek if");
+    mem_bookmarks.pop();
 }
 
 void __for(char* i, char* a, char* b, int yylineno) {
@@ -66,7 +65,6 @@ void __for(char* i, char* a, char* b, int yylineno) {
 
     assignRegister("F", start);
     storeRegister("F", iterator.memory);
-
     assignRegister("F", finish);
     storeRegister("F", condition.memory);
 
@@ -344,7 +342,8 @@ void __condEq(char* a, char* b) {
     insert("JUMP", cmdIndex + 2);
     insert("INC", "G");
 
-    bookmark = cmdIndex;
+    insert("JZERO", "G", "$bookmark");
+    mem_bookmarks.push(cmdIndex);
     DEBUG_MSG("Porównano: " << ide1.name << " i " << ide2.name);
 }
 
@@ -538,4 +537,14 @@ void print(char* out) {
 void error(char* a, int yylineno, char const* msg) {
     cout << "\e[1mBłąd na lini " << yylineno << ": \e[1m\x1B[31m" << msg << " " << a << ".\e[0m\n" << endl;
     exit(1);
+}
+
+void replace(string& str, const string& from, const string& to) {
+    if(from.empty())
+        return;
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length();
+    }
 }

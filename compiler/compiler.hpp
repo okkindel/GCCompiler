@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <fstream>
 #include <vector>
+#include <stack>
 #include <map>
 
 //////////////////////////////////
@@ -50,6 +51,7 @@ typedef struct {
 //////////////////////////////////
 
 extern map<string, Identifier> identifiers;
+extern stack<int> mem_bookmarks;
 extern map<int, Loop> loops;
 extern int memIndex;
 extern int loopIndex;
@@ -63,8 +65,8 @@ extern int cmdIndex;
 void __declareIde (char* a, int yylineno);
 // assign to variable
 void __cmdAssign(char* a, int yylineno);
-// end if
-void __endIf();
+// just if
+void __cmdIf();
 // for loop
 void __for(char* i, char* a, char* b, int yylineno);
 // end donwto for
@@ -151,3 +153,5 @@ void insert(string str, string reg, int index);
 void print(char* output);
 // throws errors
 void error(char* a, int yylineno, char const* msg);
+// replace string
+void replace(string& str, const string& from, const string& to);

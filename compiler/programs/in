@@ -2,15 +2,10 @@
 DECLARE
     a; b;
 IN
-    b := 10;
     a := 1;
+    b := 1;
 
     IF a=b THEN
         WRITE 3;
     ENDIF
-
-    FOR i FROM 1 TO b DO
-        b := b + 1;
-        WRITE i;
-    ENDFOR
 END

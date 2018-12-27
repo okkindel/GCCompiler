@@ -46,7 +46,7 @@ commands:
 command:
 
     identifier _assign expression _sem                                  { __cmdAssign($1, yylineno); }
-    | _if condition _then commands _endif                               { __endIf(); }
+    | _if condition _then commands _endif                               { __cmdIf(); }
     | _if condition _then commands _else commands _endif                   
     | _while condition _do commands _endwhile                           { cout << "while" << endl; }
     | _do commands _while condition _enddo                              { cout << "do" << endl; }

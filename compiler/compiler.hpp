@@ -30,12 +30,21 @@ typedef struct {
 	bool initialized;
 } Identifier;
 
+typedef struct {
+	int index;
+	int depth;
+	Identifier iterator;
+	Identifier condition;
+} Loop;
+
 //////////////////////////////////
 //          Variables           //
 //////////////////////////////////
 
 extern map<string, Identifier> identifiers;
+extern map<int, Loop> loops;
 extern int memIndex;
+extern int loopIndex;
 extern int cmdIndex;
 
 //////////////////////////////////
@@ -46,6 +55,12 @@ extern int cmdIndex;
 void __declareIde (char* a, int yylineno);
 // assign to variable
 void __cmdAssign(char* a, int yylineno);
+// for loop
+void __for(char* i, char* a, char* b, int yylineno);
+// end donwto for
+void __end_down_for();
+// end upto for
+void __end_up_for();
 // write from register to stdin
 void __cmdWrite(char* a, int yylineno);
 // read from stdout to register
@@ -90,6 +105,15 @@ void createIde(Identifier *s, string name, string type);
 void insertIde(string key, Identifier i);
 // remove identifier
 void removeIde(string key);
+
+//////////////////////////////////
+//        Loop functions        //
+//////////////////////////////////
+
+// create loop
+void createLoop(Loop* loop, Identifier iterator, Identifier condition, int index);
+// insert loop
+void insertLoop(Loop loop);
 
 //////////////////////////////////
 //      Compiler functions      //

@@ -1,4 +1,4 @@
-[ expected 1, 2, 3, 4 ]
+[ expected 1, 2, 3, 4, 5, 6 ]
 DECLARE
     a; b; c; d;
 IN
@@ -9,5 +9,9 @@ IN
     WRITE a;
     WRITE b;
     WRITE c;
+    WRITE d;
+    d := d + 1;
+    WRITE d;
+    d := 1 + d;
     WRITE d;
 END

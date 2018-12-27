@@ -6,8 +6,10 @@
 
 int memIndex = 0;
 int cmdIndex = 0;
+int loopIndex = 0;
 vector<string> commands;
 map<string, Identifier> identifiers;
+map<int, Loop> loops;
 
 //////////////////////////////////
 //      Token functions         //
@@ -29,6 +31,73 @@ void __cmdAssign(char* a, int yylineno) {
     identifiers.at(a).initialized = true;
     storeRegister("B", ide.memory);
     DEBUG_MSG("Przyporządkowano klucz do zmiennej: " << ide.name << " na miejscu: " << ide.memory << " i jest zainicjowany: " << ide.initialized);
+}
+
+void __for(char* i, char* a, char* b, int yylineno) {
+    
+    DEBUG_MSG("Zadeklarowano zmienną: " << a);     
+    if (identifiers.find(i) != identifiers.end())
+        error(i, yylineno, "kolejna deklaracja zmiennej");
+
+    Identifier iterator;
+    createIde(&iterator, i, "VAR");
+    insertIde(i, iterator);
+
+    identifiers.at(i).initialized = true;
+    Identifier start = identifiers.at(a);
+    Identifier finish = identifiers.at(b);
+
+    if (start.type == "NUM") {
+        setRegister("F", stoll(start.name));
+    } else if (start.type == "VAR") {
+        loadRegister("F", start.memory);
+    }
+
+    storeRegister("F", iterator.memory);
+
+    Loop loop;
+    createLoop(&loop, iterator, finish, cmdIndex);
+    insertLoop(loop);
+}
+
+void __end_down_for() {
+
+    Loop loop = loops.at(loopIndex - 1);
+
+    if (loop.condition.type == "NUM") {
+        setRegister("G", stoll(loop.condition.name));
+    } else if (loop.condition.type == "VAR") {
+        loadRegister("G", loop.condition.memory);
+    }
+    loadRegister("H", loop.iterator.memory);
+
+    insert("COPY", "F", "H");
+    insert("SUB", "F", "G");
+    insert("JZERO", "F", cmdIndex + loop.iterator.memory + 5);
+    insert("DEC H");
+    storeRegister("H", loop.iterator.memory);
+    insert("JUMP", loop.index);
+    loopIndex --;
+}
+
+void __end_up_for() {
+
+    Loop loop = loops.at(loopIndex - 1);
+
+    if (loop.condition.type == "NUM") {
+        setRegister("G", stoll(loop.condition.name));
+    } else if (loop.condition.type == "VAR") {
+        loadRegister("G", loop.condition.memory);
+    }
+    loadRegister("H", loop.iterator.memory);
+
+    insert("COPY", "F", "H");
+    insert("SUB", "F", "G");
+    insert("JZERO", "F", cmdIndex + loop.iterator.memory + 5);
+    insert("DEC H");
+    storeRegister("H", loop.iterator.memory);
+    insert("JUMP", loop.index);
+    loopIndex --;
 }
 
 void __cmdWrite(char* a, int yylineno) {
@@ -73,6 +142,20 @@ void __expressionAdd (char* a, char* b) {
         long long int val = stoll(ide1.name) + stoll(ide2.name);
         setRegister("B", val);
         removeIde(ide1.name);
+        removeIde(ide2.name);
+    } else if (ide1.type == "NUM" && ide1.name == "1") {
+        if (ide2.type == "VAR")
+            loadRegister("B", ide2.memory);
+        if (ide2.type == "NUM")
+            setRegister("B", stoll(ide2.name));
+        insert("INC", "B");
+        removeIde(ide1.name);
+    } else if (ide2.type == "NUM" && ide2.name == "1") {
+        if (ide1.type == "VAR")
+            loadRegister("B", ide1.memory);
+        if (ide1.type == "NUM")
+            setRegister("B", stoll(ide1.name));
+        insert("INC", "B");
         removeIde(ide2.name);
     } else {
         if (ide1.type == "NUM" && ide2.type == "VAR") {
@@ -378,6 +461,24 @@ void removeIde(string key) {
         }
     }
     DEBUG_MSG("Usunięto z pamięci klucz: " << key);
+}
+
+//////////////////////////////////
+//        Loop functions        //
+//////////////////////////////////
+
+void createLoop(Loop* loop, Identifier iterator, Identifier condition, int index) {
+    DEBUG_MSG("WARUNEK PĘTLI: " << condition.name << ", typu: " << condition.type);
+    loop->depth = loopIndex;
+    loop->iterator = iterator;
+    loop->condition = condition;
+    loop->index = index;
+}
+
+void insertLoop(Loop loop) {
+    loops.insert(make_pair(loopIndex, loop));
+    loopIndex++;
+    DEBUG_MSG("Dodano do pamięci pętle na miejscu: " << loopIndex - 1);
 }
 
 //////////////////////////////////

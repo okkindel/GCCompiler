@@ -66,7 +66,7 @@ void __declareIde (char* a, int yylineno);
 // assign to variable
 void __cmdAssign(char* a, int yylineno);
 // just if
-void __cmdIf();
+void __end_if();
 // for loop
 void __for(char* i, char* a, char* b, int yylineno);
 // end donwto for
@@ -91,6 +91,8 @@ void __expressionDiv(char* a, char* b);
 void __expressionMod(char* a, char* b);
 // condition equal
 void __condEq(char* a, char* b);
+// condition not equal
+void __condNe(char* a, char* b);
 // constant number
 void __valueNum(char* a, int yylineno);
 // simple identifier

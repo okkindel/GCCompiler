@@ -2,10 +2,16 @@
 DECLARE
     a; b;
 IN
-    a := 1;
-    b := 1;
+    a := 2;
+    b := 2;
 
-    IF a=b THEN
+    IF a != 1 THEN
+        WRITE 1;
+    ENDIF
+    IF 1 != b THEN
+        WRITE 2;
+    ENDIF
+    IF a != b THEN
         WRITE 3;
     ENDIF
 END

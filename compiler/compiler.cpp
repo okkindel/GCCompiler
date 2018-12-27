@@ -36,12 +36,10 @@ void __cmdAssign(char* a, int yylineno) {
     DEBUG_MSG("Przyporządkowano klucz do zmiennej: " << ide.name << " na miejscu: " << ide.memory << " i jest zainicjowany: " << ide.initialized);
 }
 
-void __cmdIf() {
-    // CODE SHITTY AF
+void __end_if() {
     replace(commands.at(mem_bookmarks.top() - 1), "$bookmark", to_string(cmdIndex));
-    cout << "\t" << commands.at(mem_bookmarks.top() - 1) << endl;
-    DEBUG_MSG("Zakończono warunek if");
     mem_bookmarks.pop();
+    DEBUG_MSG("Zakończono warunek if");
 }
 
 void __for(char* i, char* a, char* b, int yylineno) {
@@ -328,7 +326,6 @@ void __condEq(char* a, char* b) {
     Identifier ide1 = identifiers.at(a);
     Identifier ide2 = identifiers.at(b);
 
-    // condition reg
     resetRegister("G");
     assignRegister("C", ide1, "D", ide2);
     // eq if a <= b && b >= a
@@ -344,7 +341,28 @@ void __condEq(char* a, char* b) {
 
     insert("JZERO", "G", "$bookmark");
     mem_bookmarks.push(cmdIndex);
-    DEBUG_MSG("Porównano: " << ide1.name << " i " << ide2.name);
+    DEBUG_MSG("Porównano: " << ide1.name << " == " << ide2.name);
+}
+
+void __condNe(char* a, char* b) {
+    Identifier ide1 = identifiers.at(a);
+    Identifier ide2 = identifiers.at(b);
+
+    resetRegister("G");
+    assignRegister("C", ide1, "D", ide2);
+    insert("COPY", "E", "C");
+    insert("SUB", "E", "D");
+    insert("JZERO", "E", cmdIndex + 2);
+    insert("INC", "G");
+
+    insert("COPY", "E", "D");
+    insert("SUB", "E", "C"); 
+    insert("JZERO", "E", cmdIndex + 2);
+    insert("INC", "G");
+
+    insert("JZERO", "G", "$bookmark");
+    mem_bookmarks.push(cmdIndex);
+    DEBUG_MSG("Porównano: " << ide1.name << " != " << ide2.name);
 }
 
 void __valueNum(char* a, int yylineno) {

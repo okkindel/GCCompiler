@@ -10,6 +10,8 @@ int loopIndex = 0;
 vector<string> commands;
 map<string, Identifier> identifiers;
 map<int, Loop> loops;
+int bookmark;
+int endif;
 
 //////////////////////////////////
 //      Token functions         //
@@ -18,7 +20,7 @@ map<int, Loop> loops;
 void __declareIde (char* a, int yylineno) { 
     DEBUG_MSG("Zadeklarowano zmienną: " << a);     
     if (identifiers.find(a) != identifiers.end())
-        error(a, yylineno, "kolejna deklaracja zmiennej");
+        error(a, yylineno, "Kolejna deklaracja zmiennej");
     else {
         Identifier ide;
         createIde(&ide, a, "VAR");
@@ -28,9 +30,19 @@ void __declareIde (char* a, int yylineno) {
 
 void __cmdAssign(char* a, int yylineno) {
     Identifier ide = identifiers.at(a);
+    if (ide.type == "ITE")
+        error(a, yylineno, "Modyfikacja iteratora pętli:");
     identifiers.at(a).initialized = true;
     storeRegister("B", ide.memory);
     DEBUG_MSG("Przyporządkowano klucz do zmiennej: " << ide.name << " na miejscu: " << ide.memory << " i jest zainicjowany: " << ide.initialized);
+}
+
+void __endIf() {
+    insert("PUT", "G");
+    insert("JZERO", "G", cmdIndex + 3);
+    resetRegister("G");
+    insert("JUMP", bookmark);
+    DEBUG_MSG("Zakończono warunek if");
 }
 
 void __for(char* i, char* a, char* b, int yylineno) {
@@ -40,23 +52,26 @@ void __for(char* i, char* a, char* b, int yylineno) {
         error(i, yylineno, "kolejna deklaracja zmiennej");
 
     Identifier iterator;
-    createIde(&iterator, i, "VAR");
+    createIde(&iterator, i, "ITE");
     insertIde(i, iterator);
-
     identifiers.at(i).initialized = true;
+
+    Identifier condition;
+    createIde(&condition, b, "VAR");
+    insertIde(b, condition);
+    identifiers.at(b).initialized = true;
+
     Identifier start = identifiers.at(a);
     Identifier finish = identifiers.at(b);
 
-    if (start.type == "NUM") {
-        setRegister("F", stoll(start.name));
-    } else if (start.type == "VAR") {
-        loadRegister("F", start.memory);
-    }
-
+    assignRegister("F", start);
     storeRegister("F", iterator.memory);
 
+    assignRegister("F", finish);
+    storeRegister("F", condition.memory);
+
     Loop loop;
-    createLoop(&loop, iterator, finish, cmdIndex);
+    createLoop(&loop, iterator, condition, cmdIndex);
     insertLoop(loop);
 }
 
@@ -64,11 +79,7 @@ void __end_down_for() {
 
     Loop loop = loops.at(loopIndex - 1);
 
-    if (loop.condition.type == "NUM") {
-        setRegister("G", stoll(loop.condition.name));
-    } else if (loop.condition.type == "VAR") {
-        loadRegister("G", loop.condition.memory);
-    }
+    assignRegister("G", loop.condition);
     loadRegister("H", loop.iterator.memory);
 
     insert("COPY", "F", "H");
@@ -84,11 +95,7 @@ void __end_up_for() {
 
     Loop loop = loops.at(loopIndex - 1);
 
-    if (loop.condition.type == "NUM") {
-        setRegister("G", stoll(loop.condition.name));
-    } else if (loop.condition.type == "VAR") {
-        loadRegister("G", loop.condition.memory);
-    }
+    assignRegister("G", loop.condition);
     loadRegister("H", loop.iterator.memory);
 
     insert("COPY", "F", "G");
@@ -102,9 +109,9 @@ void __end_up_for() {
 
 void __cmdWrite(char* a, int yylineno) {
     Identifier ide = identifiers.at(a);
-    if (ide.initialized == false)
+    if (ide.type != "NUM" && ide.initialized == false)
         error(a, yylineno, "Próba użycia niezainicjalizowanej zmiennej:");
-    loadRegister("B", ide.memory);
+    assignRegister("B", ide);
     insert("PUT", "B");
     DEBUG_MSG("Wczytywanie klucza: " << ide.name << " z miejsca w pamięci: " << ide.memory);
 }
@@ -144,30 +151,15 @@ void __expressionAdd (char* a, char* b) {
         removeIde(ide1.name);
         removeIde(ide2.name);
     } else if (ide1.type == "NUM" && ide1.name == "1") {
-        if (ide2.type == "VAR")
-            loadRegister("B", ide2.memory);
-        if (ide2.type == "NUM")
-            setRegister("B", stoll(ide2.name));
+        assignRegister("B", ide2);
         insert("INC", "B");
         removeIde(ide1.name);
     } else if (ide2.type == "NUM" && ide2.name == "1") {
-        if (ide1.type == "VAR")
-            loadRegister("B", ide1.memory);
-        if (ide1.type == "NUM")
-            setRegister("B", stoll(ide1.name));
+        assignRegister("B", ide1);
         insert("INC", "B");
         removeIde(ide2.name);
     } else {
-        if (ide1.type == "NUM" && ide2.type == "VAR") {
-            setRegister("B", stoll(ide1.name));
-            loadRegister("C", ide2.memory);
-        } else if (ide1.type == "VAR" && ide2.type == "NUM") {
-            loadRegister("B", ide1.memory);
-            setRegister("C", stoll(ide2.name));
-        } else if (ide1.type == "VAR" && ide2.type =="VAR") {
-            loadRegister("B", ide1.memory);
-            loadRegister("C", ide2.memory);
-        }
+        assignRegister("B", ide1, "C", ide2);
         insert("ADD", "B", "C");
         if (ide1.type == "NUM")
             removeIde(ide1.name);
@@ -182,7 +174,6 @@ void __expressionSub (char* a, char* b) {
     Identifier ide2 = identifiers.at(b);
 
     if (ide1.type == "NUM" && ide2.type == "NUM") {
-
         long long int val = stoll(ide1.name) - stoll(ide2.name);
         if (val < 0)
             val = 0;
@@ -191,16 +182,7 @@ void __expressionSub (char* a, char* b) {
         removeIde(ide1.name);
         removeIde(ide2.name);
     } else {
-        if (ide1.type == "NUM" && ide2.type == "VAR") {
-            setRegister("B", stoll(ide1.name));
-            loadRegister("C", ide2.memory);
-        } else if (ide1.type == "VAR" && ide2.type == "NUM") {
-            loadRegister("B", ide1.memory);
-            setRegister("C", stoll(ide2.name));
-        } else if (ide1.type == "VAR" && ide2.type =="VAR") {
-            loadRegister("B", ide1.memory);
-            loadRegister("C", ide2.memory);
-        }
+        assignRegister("B", ide1, "C", ide2);
         insert("SUB", "B", "C");
         if (ide1.type == "NUM")
             removeIde(ide1.name);
@@ -269,17 +251,7 @@ void __expressionDiv (char* a, char* b) {
         removeIde(ide1.name);
         removeIde(ide2.name);
     } else {
-        if (ide1.type == "NUM" && ide2.type == "VAR") {
-            setRegister("B", stoll(ide1.name));
-            loadRegister("C", ide2.memory);
-        } else if (ide1.type == "VAR" && ide2.type == "NUM") {
-            loadRegister("B", ide1.memory);
-            setRegister("C", stoll(ide2.name));
-        } else if (ide1.type == "VAR" && ide2.type =="VAR") {
-            loadRegister("B", ide1.memory);
-            loadRegister("C", ide2.memory);
-        }
-
+        assignRegister("B", ide1, "C", ide2);
         // counter
         resetRegister("D");
 
@@ -329,17 +301,7 @@ void __expressionMod (char* a, char* b) {
         removeIde(ide1.name);
         removeIde(ide2.name);
     } else {
-        if (ide1.type == "NUM" && ide2.type == "VAR") {
-            setRegister("B", stoll(ide1.name));
-            loadRegister("C", ide2.memory);
-        } else if (ide1.type == "VAR" && ide2.type == "NUM") {
-            loadRegister("B", ide1.memory);
-            setRegister("C", stoll(ide2.name));
-        } else if (ide1.type == "VAR" && ide2.type =="VAR") {
-            loadRegister("B", ide1.memory);
-            loadRegister("C", ide2.memory);
-        }
-
+        assignRegister("B", ide1, "C", ide2);
         // if b == 0
         insert("JZERO", "C", cmdIndex + 6);
         
@@ -364,8 +326,29 @@ void __expressionMod (char* a, char* b) {
     DEBUG_MSG("Dzielenie: " << ide1.name << ": " << ide1.type << " / " << ide2.name << ": " << ide2.type);
 }
 
+void __condEq(char* a, char* b) {
+    Identifier ide1 = identifiers.at(a);
+    Identifier ide2 = identifiers.at(b);
+
+    // condition reg
+    resetRegister("G");
+    assignRegister("C", ide1, "D", ide2);
+    // eq if a <= b && b >= a
+    insert("COPY", "E", "C");
+    insert("SUB", "E", "D");
+    insert("JZERO", "E", cmdIndex + 2);
+    insert("JUMP", cmdIndex + 6);
+    insert("COPY", "E", "D");
+    insert("SUB", "E", "C"); 
+    insert("JZERO", "E", cmdIndex + 2);
+    insert("JUMP", cmdIndex + 2);
+    insert("INC", "G");
+
+    bookmark = cmdIndex;
+    DEBUG_MSG("Porównano: " << ide1.name << " i " << ide2.name);
+}
+
 void __valueNum(char* a, int yylineno) {
-    // TODO: próba przypisania do stałej
     DEBUG_MSG("Znaleziono stałą o wartości: " << a);
     Identifier ide;
     createIde(&ide, a, "NUM");
@@ -421,6 +404,24 @@ void storeRegister(string reg, int mem) {
 void loadRegister(string reg, int mem) {
     setRegister("A", mem);
 	insert("LOAD", reg);
+}
+
+void assignRegister(string r, Identifier i) {
+    if (i.type == "NUM")
+        setRegister(r, stoll(i.name));
+    else if (i.type == "VAR" || i.type == "ITE")
+        loadRegister(r, i.memory);
+}
+
+void assignRegister(string r1, Identifier i1, string r2, Identifier i2) {
+    if (i1.type == "NUM")
+        setRegister(r1, stoll(i1.name));
+    else if (i1.type == "VAR" || i1.type == "ITE")
+        loadRegister(r1, i1.memory);
+    if (i2.type == "NUM")
+        setRegister(r2, stoll(i2.name));
+    else if (i2.type == "VAR" || i2.type == "ITE")
+        loadRegister(r2, i2.memory);    
 }
 
 void resetRegister(string reg) {

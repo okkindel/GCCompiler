@@ -63,6 +63,8 @@ extern int cmdIndex;
 void __declareIde (char* a, int yylineno);
 // assign to variable
 void __cmdAssign(char* a, int yylineno);
+// end if
+void __endIf();
 // for loop
 void __for(char* i, char* a, char* b, int yylineno);
 // end donwto for
@@ -76,15 +78,17 @@ void __cmdRead(char* a, int yylineno);
 // expression value
 void __expressionVal(char* a, int yylineno);
 // adds two numbers
-void __expressionAdd (char* a, char* b);
+void __expressionAdd(char* a, char* b);
 // subs two numbers
-void __expressionSub (char* a, char* b);
+void __expressionSub(char* a, char* b);
 // multiples two numbers
-void __expressionMul (char* a, char* b);
+void __expressionMul(char* a, char* b);
 // divides two numbers
-void __expressionDiv (char* a, char* b);
+void __expressionDiv(char* a, char* b);
 // modulo from two numbers
-void __expressionMod (char* a, char* b);
+void __expressionMod(char* a, char* b);
+// condition equal
+void __condEq(char* a, char* b);
 // constant number
 void __valueNum(char* a, int yylineno);
 // simple identifier
@@ -100,6 +104,10 @@ void setRegister(string reg, long long int num);
 void storeRegister(string reg, int mem);
 // loads memory to register
 void loadRegister(string reg, int mem);
+// assign one identifier to register
+void assignRegister(string r, Identifier i);
+// assign two identifiers to registers
+void assignRegister(string r1, Identifier i1, string r2, Identifier i2);
 // zero register
 void resetRegister(string reg);
 

@@ -46,7 +46,8 @@ commands:
 command:
 
     identifier _assign expression _sem                                  { __cmdAssign($1, yylineno); }
-    | _if condition _then commands if                       
+    | _if condition _then commands _endif                               { __endIf(); }
+    | _if condition _then commands _else commands _endif                   
     | _while condition _do commands _endwhile                           { cout << "while" << endl; }
     | _do commands _while condition _enddo                              { cout << "do" << endl; }
     | _for _identifier _from value _downto value _do                    { __for($2, $4, $6, yylineno); } 
@@ -55,12 +56,6 @@ command:
         commands _endfor                                                { __end_up_for(); }
     | _read identifier _sem                                             { __cmdRead($2, yylineno); }
     | _write value _sem                                                 { __cmdWrite($2, yylineno); }
-    ;
-
-if:
-
-    _else commands _endif                           { cout << "if 1" << endl; }
-    | _endif                                        { cout << "if 2" << endl; }
     ;
 
 expression:
@@ -75,7 +70,7 @@ expression:
 
 condition:
 
-    value _eq value                                 { cout << "eq" << endl; }
+    value _eq value                                 { __condEq($1, $3); }
     | value _ne value                               { cout << "ne" << endl; }
     | value _l value                                { cout << "low" << endl; }
     | value _g value                                { cout << "gre" << endl; }

@@ -2,13 +2,15 @@
 DECLARE
     a; b;
 IN
-    a := 2;
-    b := 5;
+    b := 10;
+    a := 1;
 
-    FOR i FROM a TO b DO
+    IF a=b THEN
+        WRITE 3;
+    ENDIF
+
+    FOR i FROM 1 TO b DO
+        b := b + 1;
         WRITE i;
-        FOR j FROM b DOWNTO 2 DO
-            WRITE j;
-        ENDFOR
     ENDFOR
 END

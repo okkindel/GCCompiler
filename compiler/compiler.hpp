@@ -70,7 +70,9 @@ extern int cmdIndex;
 void __declareIde (char* a, int yylineno);
 // assign to variable
 void __cmdAssign(char* a, int yylineno);
-// just if
+// else
+void __if_else();
+// end if
 void __end_if();
 // for loop
 void __for(char* i, char* a, char* b, int yylineno);

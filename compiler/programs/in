@@ -3,15 +3,12 @@ DECLARE
     a; b;
 IN
     a := 2;
-    b := 2;
+    b := 4;
 
-    IF a != 1 THEN
+    IF a = 1 THEN
         WRITE 1;
-    ENDIF
-    IF 1 != b THEN
+    ELSE
         WRITE 2;
-    ENDIF
-    IF a != b THEN
-        WRITE 3;
+        IF b = 2 THEN WRITE 3; ELSE WRITE 4; ENDIF
     ENDIF
 END

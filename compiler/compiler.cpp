@@ -36,6 +36,16 @@ void __cmdAssign(char* a, int yylineno) {
     DEBUG_MSG("Przyporządkowano klucz do zmiennej: " << ide.name << " na miejscu: " << ide.memory << " i jest zainicjowany: " << ide.initialized);
 }
 
+void __if_else() {
+    replace(commands.at(conditions.top().index - 1), "$bookmark", to_string(cmdIndex));
+    assignRegister("G", conditions.top().value);
+    removeCond();
+    insert("JZERO", "G", cmdIndex + 2);
+    insert("JUMP", "$bookmark");
+    createCond();
+    DEBUG_MSG("Rozpoczęto procedurę else");
+}
+
 void __end_if() {
     replace(commands.at(conditions.top().index - 1), "$bookmark", to_string(cmdIndex));
     removeCond();

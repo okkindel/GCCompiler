@@ -91,10 +91,10 @@ void __end_up_for() {
     }
     loadRegister("H", loop.iterator.memory);
 
-    insert("COPY", "F", "H");
-    insert("SUB", "F", "G");
+    insert("COPY", "F", "G");
+    insert("SUB", "F", "H");
     insert("JZERO", "F", cmdIndex + loop.iterator.memory + 5);
-    insert("DEC H");
+    insert("INC H");
     storeRegister("H", loop.iterator.memory);
     insert("JUMP", loop.index);
     loopIndex --;

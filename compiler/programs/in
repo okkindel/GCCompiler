@@ -5,10 +5,9 @@ IN
     a := 2;
     b := 4;
 
-    IF a = 1 THEN
+    IF 2 > 2 THEN
         WRITE 1;
     ELSE
-        WRITE 2;
-        IF b = 2 THEN WRITE 3; ELSE WRITE 4; ENDIF
+        WRITE 0;
     ENDIF
 END

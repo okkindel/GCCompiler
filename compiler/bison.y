@@ -72,11 +72,11 @@ expression:
 condition:
 
     value _eq value                                 { __condEq($1, $3, yylineno); }
-    | value _ne value                               { __condNe($1, $3, yylineno); }
-    | value _l value                                { cout << "low" << endl; }
-    | value _g value                                { cout << "gre" << endl; }
-    | value _le value                               { cout << "le" << endl; }
-    | value _ge value                               { cout << "ge" << endl; }
+    | value _ne value                               { __condNotEq($1, $3, yylineno); }
+    | value _l value                                { __condLow($1, $3, yylineno); }
+    | value _g value                                { __condGre($1, $3, yylineno); }
+    | value _le value                               { __condLowEq($1, $3, yylineno); }
+    | value _ge value                               { __condGreEq($1, $3, yylineno); }
     ;
 
 value:

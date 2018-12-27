@@ -99,7 +99,15 @@ void __expressionMod(char* a, char* b);
 // condition equal
 void __condEq(char* a, char* b, int yylineno);
 // condition not equal
-void __condNe(char* a, char* b, int yylineno);
+void __condNotEq(char* a, char* b, int yylineno);
+// condition lower
+void __condLow(char* a, char* b, int yylineno);
+// condition greater
+void __condGre(char* a, char* b, int yylineno);
+// condition lower or equal
+void __condLowEq(char* a, char* b, int yylineno);
+// condition greater or equal
+void __condGreEq(char* a, char* b, int yylineno);
 // constant number
 void __valueNum(char* a, int yylineno);
 // simple identifier

@@ -46,12 +46,17 @@ typedef struct {
 	Identifier condition;
 } Loop;
 
+typedef struct {
+	int index;
+	Identifier value;
+} Condition;
+
 //////////////////////////////////
 //          Variables           //
 //////////////////////////////////
 
 extern map<string, Identifier> identifiers;
-extern stack<int> mem_bookmarks;
+extern stack<Condition> conditions;
 extern map<int, Loop> loops;
 extern int memIndex;
 extern int loopIndex;
@@ -136,6 +141,15 @@ void createLoop(Loop* loop, Identifier iterator, Identifier condition, int index
 void insertLoop(Loop loop);
 // remove loop
 void removeLoop();
+
+//////////////////////////////////
+//     Condition functions      //
+//////////////////////////////////
+
+// create condition
+void createCond();
+// remove condition
+void removeCond();
 
 //////////////////////////////////
 //      Compiler functions      //

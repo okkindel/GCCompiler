@@ -9,7 +9,7 @@ int cmdIndex = 0;
 int loopIndex = 0;
 vector<string> commands;
 map<string, Identifier> identifiers;
-stack<int> mem_bookmarks;
+stack<Condition> conditions;
 map<int, Loop> loops;
 
 //////////////////////////////////
@@ -37,8 +37,8 @@ void __cmdAssign(char* a, int yylineno) {
 }
 
 void __end_if() {
-    replace(commands.at(mem_bookmarks.top() - 1), "$bookmark", to_string(cmdIndex));
-    mem_bookmarks.pop();
+    replace(commands.at(conditions.top().index - 1), "$bookmark", to_string(cmdIndex));
+    removeCond();
     DEBUG_MSG("Zakończono warunek if");
 }
 
@@ -54,9 +54,9 @@ void __for(char* i, char* a, char* b, int yylineno) {
     identifiers.at(i).initialized = true;
 
     Identifier condition;
-    createIde(&condition, b, "VAR");
-    insertIde(b, condition);
-    identifiers.at(b).initialized = true;
+    createIde(&condition, "C", "VAR");
+    insertIde("C", condition);
+    identifiers.at("C").initialized = true;
 
     Identifier start = identifiers.at(a);
     Identifier finish = identifiers.at(b);
@@ -340,7 +340,8 @@ void __condEq(char* a, char* b) {
     insert("INC", "G");
 
     insert("JZERO", "G", "$bookmark");
-    mem_bookmarks.push(cmdIndex);
+    createCond();
+
     DEBUG_MSG("Porównano: " << ide1.name << " == " << ide2.name);
 }
 
@@ -361,7 +362,8 @@ void __condNe(char* a, char* b) {
     insert("INC", "G");
 
     insert("JZERO", "G", "$bookmark");
-    mem_bookmarks.push(cmdIndex);
+    createCond();
+
     DEBUG_MSG("Porównano: " << ide1.name << " != " << ide2.name);
 }
 
@@ -500,9 +502,36 @@ void insertLoop(Loop loop) {
 }
 
 void removeLoop() {
+    removeIde(loops.at(loopIndex - 1).iterator.name);
+    removeIde(loops.at(loopIndex - 1).condition.name);
     loops.erase(loopIndex - 1);
     loopIndex--;
     DEBUG_MSG("Usunięto z pamięci pętlę o id: " << loopIndex);
+}
+
+//////////////////////////////////
+//     Condition functions      //
+//////////////////////////////////
+
+void createCond() {
+    DEBUG_MSG("Nowy warunek");
+
+    int index = cmdIndex;
+    Identifier value;
+    createIde(&value, "V", "VAR");
+    insertIde("V", value);
+    identifiers.at("V").initialized = true;
+    storeRegister("G", value.memory);
+    Condition cond;
+    cond.index = index;
+    cond.value = value;
+    conditions.push(cond);
+}
+
+void removeCond() {
+    removeIde(conditions.top().value.name);
+    conditions.pop();
+    DEBUG_MSG("Usunięto z pamięci warunek");
 }
 
 //////////////////////////////////

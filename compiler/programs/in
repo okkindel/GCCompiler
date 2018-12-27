@@ -2,12 +2,11 @@
 DECLARE
     a; b;
 IN
-    a := 2;
-    b := 4;
+    a := 20;
+    
+    WHILE a > 5 DO
+        WRITE a;
+        a := a - 1;
+    ENDWHILE
 
-    IF 2 > 2 THEN
-        WRITE 1;
-    ELSE
-        WRITE 0;
-    ENDIF
 END

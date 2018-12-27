@@ -58,8 +58,9 @@ typedef struct {
 extern map<string, Identifier> identifiers;
 extern stack<Condition> conditions;
 extern map<int, Loop> loops;
-extern int memIndex;
+extern stack<int> hooks;
 extern int loopIndex;
+extern int memIndex;
 extern int cmdIndex;
 
 //////////////////////////////////
@@ -74,6 +75,10 @@ void __cmdAssign(char* a, int yylineno);
 void __if_else();
 // end if
 void __end_if();
+// begin while
+void __begin_while();
+// end while
+void __end_while();
 // for loop
 void __for(char* i, char* a, char* b, int yylineno);
 // end donwto for

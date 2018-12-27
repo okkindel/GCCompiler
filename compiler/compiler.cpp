@@ -11,6 +11,7 @@ vector<string> commands;
 map<string, Identifier> identifiers;
 stack<Condition> conditions;
 map<int, Loop> loops;
+stack<int> hooks;
 
 //////////////////////////////////
 //      Token functions         //
@@ -49,6 +50,20 @@ void __if_else() {
 void __end_if() {
     replace(commands.at(conditions.top().index - 1), "$bookmark", to_string(cmdIndex));
     removeCond();
+    DEBUG_MSG("Zakończono warunek if");
+}
+
+void __begin_while() {
+    hooks.push(cmdIndex);
+}
+
+void __end_while() {
+    replace(commands.at(conditions.top().index - 1), "$bookmark", to_string(conditions.top().index));
+    assignRegister("G", conditions.top().value);
+    removeCond();
+    insert("JZERO", "G", cmdIndex + 2);
+    insert("JUMP", hooks.top());
+    hooks.pop();
     DEBUG_MSG("Zakończono warunek if");
 }
 

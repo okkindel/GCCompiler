@@ -39,17 +39,23 @@ void __cmdAssign(char* a, int yylineno) {
 
 void __if_else() {
     replace(commands.at(conditions.top().index), "$bookmark", to_string(cmdIndex));
-    assignRegister("H", conditions.top().value);
+    assignRegister("G", conditions.top().value);
+
+    // negation
+    Identifier ide;
+    createIde(&ide, "1", "NUM");
+    insertIde("1", ide);
+    loadRegister("H", ide.memory);
+    insert("SUB", "H", "G");
+
     removeCond();
     createCond();
-    insert("JZERO", "H", cmdIndex + 2);
-    insert("JUMP", "$bookmark");
+    insert("JZERO", "H", "$bookmark");
     DEBUG_MSG("Rozpoczęto procedurę else");
 }
 
 void __end_if() {
     replace(commands.at(conditions.top().index), "$bookmark", to_string(cmdIndex));
-    replace(commands.at(conditions.top().index + 1), "$bookmark", to_string(cmdIndex));
     removeCond();
     DEBUG_MSG("Zakończono warunek if");
 }
@@ -437,7 +443,7 @@ void __condGreEq(char* a, char* b, int yylineno) {
     insert("SUB", "E", "D");
     insert("JZERO", "E", cmdIndex + 3);
     insert("INC", "G");
-    insert("JUMP", cmdIndex + 5);
+    insert("JUMP", cmdIndex + 6);
     insert("COPY", "E", "D");
     insert("SUB", "E", "C"); 
     insert("JZERO", "E", cmdIndex + 2);
@@ -650,6 +656,7 @@ void createCond() {
     insertIde("V", value);
     identifiers.at("V").initialized = true;
     storeRegister("G", value.memory);
+    insert("PUT", "G");
 
     Condition cond;
     cond.index = cmdIndex;

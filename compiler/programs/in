@@ -1,12 +1,9 @@
-[ expect 2 4 ]
 DECLARE
     a; b;
 IN
-    a := 20;
-    
-    WHILE a > 5 DO
-        WRITE a;
-        a := a - 1;
+    a:=5;
+    WHILE a>1 DO
+    WRITE a;
+    a := a - 1;
     ENDWHILE
-
 END

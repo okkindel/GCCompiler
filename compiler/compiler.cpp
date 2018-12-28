@@ -38,17 +38,18 @@ void __cmdAssign(char* a, int yylineno) {
 }
 
 void __if_else() {
-    replace(commands.at(conditions.top().index - 1), "$bookmark", to_string(cmdIndex));
-    assignRegister("G", conditions.top().value);
+    replace(commands.at(conditions.top().index), "$bookmark", to_string(cmdIndex));
+    assignRegister("H", conditions.top().value);
     removeCond();
-    insert("JZERO", "G", cmdIndex + 2);
-    insert("JUMP", "$bookmark");
     createCond();
+    insert("JZERO", "H", cmdIndex + 2);
+    insert("JUMP", "$bookmark");
     DEBUG_MSG("Rozpoczęto procedurę else");
 }
 
 void __end_if() {
-    replace(commands.at(conditions.top().index - 1), "$bookmark", to_string(cmdIndex));
+    replace(commands.at(conditions.top().index), "$bookmark", to_string(cmdIndex));
+    replace(commands.at(conditions.top().index + 1), "$bookmark", to_string(cmdIndex));
     removeCond();
     DEBUG_MSG("Zakończono warunek if");
 }
@@ -58,7 +59,7 @@ void __begin_while() {
 }
 
 void __end_while() {
-    replace(commands.at(conditions.top().index - 1), "$bookmark", to_string(conditions.top().index));
+    replace(commands.at(conditions.top().index), "$bookmark", to_string(conditions.top().index));
     assignRegister("G", conditions.top().value);
     removeCond();
     insert("JZERO", "G", cmdIndex + 2);
@@ -269,6 +270,10 @@ void __expressionDiv (char* a, char* b) {
         setRegister("B", val);
         removeIde(ide1.name);
         removeIde(ide2.name);
+    } else if (ide2.type == "NUM" && stoll(ide2.name) == 2) {
+        assignRegister("B", ide1);
+        insert("HALF", "B");
+        removeIde(ide2.name);
     } else {
         assignRegister("B", ide1, "C", ide2);
         // counter
@@ -364,8 +369,8 @@ void __condEq(char* a, char* b, int yylineno) {
     insert("JUMP", cmdIndex + 2);
     insert("INC", "G");
 
-    insert("JZERO", "G", "$bookmark");
     createCond();
+    insert("JZERO", "G", "$bookmark");
 
     DEBUG_MSG("Porównano: " << ide1.name << " == " << ide2.name);
 }
@@ -389,8 +394,8 @@ void __condNotEq(char* a, char* b, int yylineno) {
     insert("JZERO", "E", cmdIndex + 2);
     insert("INC", "G");
 
-    insert("JZERO", "G", "$bookmark");
     createCond();
+    insert("JZERO", "G", "$bookmark");
 
     DEBUG_MSG("Porównano: " << ide1.name << " != " << ide2.name);
 }
@@ -414,8 +419,8 @@ void __condLowEq(char* a, char* b, int yylineno) {
     insert("JUMP", cmdIndex + 2);
     insert("INC", "G");
 
-    insert("JZERO", "G", "$bookmark");
     createCond();
+    insert("JZERO", "G", "$bookmark");
 
     DEBUG_MSG("Porównano: " << ide1.name << " <= " << ide2.name);
 }
@@ -439,8 +444,8 @@ void __condGreEq(char* a, char* b, int yylineno) {
     insert("JUMP", cmdIndex + 2);
     insert("INC", "G");
 
-    insert("JZERO", "G", "$bookmark");
     createCond();
+    insert("JZERO", "G", "$bookmark");
 
     DEBUG_MSG("Porównano: " << ide1.name << " >= " << ide2.name);
 }
@@ -462,8 +467,8 @@ void __condLow(char* a, char* b, int yylineno) {
     insert("JZERO", "E", cmdIndex + 2);
     insert("INC", "G");
 
-    insert("JZERO", "G", "$bookmark");
     createCond();
+    insert("JZERO", "G", "$bookmark");
 
     DEBUG_MSG("Porównano: " << ide1.name << " > " << ide2.name);
 }
@@ -479,14 +484,14 @@ void __condGre(char* a, char* b, int yylineno) {
     insert("COPY", "E", "D");
     insert("SUB", "E", "C");
     insert("JZERO", "E", cmdIndex + 2);
-    insert("JUMP", cmdIndex + 6);
+    insert("JUMP", cmdIndex + 5);
     insert("COPY", "E", "C");
     insert("SUB", "E", "D");
     insert("JZERO", "E", cmdIndex + 2);
     insert("INC", "G");
 
-    insert("JZERO", "G", "$bookmark");
     createCond();
+    insert("JZERO", "G", "$bookmark");
 
     DEBUG_MSG("Porównano: " << ide1.name << " > " << ide2.name);
 }
@@ -640,14 +645,14 @@ void removeLoop() {
 void createCond() {
     DEBUG_MSG("Nowy warunek");
 
-    int index = cmdIndex;
     Identifier value;
     createIde(&value, "V", "VAR");
     insertIde("V", value);
     identifiers.at("V").initialized = true;
     storeRegister("G", value.memory);
+
     Condition cond;
-    cond.index = index;
+    cond.index = cmdIndex;
     cond.value = value;
     conditions.push(cond);
 }

@@ -72,6 +72,18 @@ void __end_while() {
     DEBUG_MSG("Zakończono warunek if");
 }
 
+void __end_do() {
+    replace(commands.at(conditions.top().index), "$bookmark", to_string(cmdIndex));
+    assignRegister("G", conditions.top().value);
+    
+    insert("JZERO", "G", cmdIndex + 2);
+    insert("JUMP", hooks.top());
+
+    removeCond();
+    hooks.pop();
+    DEBUG_MSG("Zakończono warunek do");
+}
+
 void __for(char* i, char* a, char* b, int yylineno) {
     
     DEBUG_MSG("Zadeklarowano zmienną: " << a);     

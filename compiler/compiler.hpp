@@ -79,6 +79,8 @@ void __end_if();
 void __begin_while();
 // end while
 void __end_while();
+// end do
+void __end_do();
 // for loop
 void __for(char* i, char* a, char* b, int yylineno);
 // end donwto for

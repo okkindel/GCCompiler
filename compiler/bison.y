@@ -51,7 +51,8 @@ command:
         _else commands _endif                                           { __end_if(); } 
     | _while                                                            { __begin_while(); } 
         condition _do commands _endwhile                                { __end_while(); }
-    | _do commands _while condition _enddo                              { cout << "do" << endl; }
+    | _do                                                               { __begin_while(); } 
+        commands _while condition _enddo                                { __end_do(); }
     | _for _identifier _from value _downto value _do                    { __for($2, $4, $6, yylineno); } 
         commands _endfor                                                { __end_down_for(); }
     | _for _identifier _from value _to value _do                        { __for($2, $4, $6, yylineno); } 

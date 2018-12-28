@@ -1,10 +1,11 @@
 DECLARE
     a; b;
 IN
-    a:=5;
-    IF a < 5 THEN
-        WRITE 1;
-    ELSE
-        WRITE 0;
-    ENDIF
+    a := 0;
+    DO
+        WRITE a;
+        a := a + 1;
+    WHILE
+        a < 5
+    ENDDO
 END

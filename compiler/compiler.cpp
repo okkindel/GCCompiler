@@ -1,3 +1,12 @@
+/* Copyright (C) 2018 Maciej Hajduk - All Rights Reserved
+ * You may use, distribute and modify this code under the
+ * terms of the Beerware license, which unfortunately won't
+ * be written for another century.
+ *
+ * You should have received a copy of the Beerware license
+ * with this file. If not, please write to m.hajduk(at)pm.me
+ */
+
 #include "compiler.hpp"
 
 //////////////////////////////////
@@ -209,7 +218,11 @@ void __expressionSub (char* a, char* b) {
     Identifier ide1 = identifiers.at(a);
     Identifier ide2 = identifiers.at(b);
 
-    if (ide1.type == "NUM" && ide2.type == "NUM") {
+    if (ide2.type == "NUM" && stoll(ide2.name) == 1) {
+        assignRegister("B", ide1);
+        insert("DEC", "B");
+        removeIde(ide2.name);
+    } else if (ide1.type == "NUM" && ide2.type == "NUM") {
         long long int val = stoll(ide1.name) - stoll(ide2.name);
         if (val < 0)
             val = 0;
@@ -567,7 +580,7 @@ void storeRegister(string reg, int mem) {
 
 void loadRegister(string reg, int mem) {
     setRegister("A", mem);
-	insert("LOAD", reg);
+    insert("LOAD", reg);
 }
 
 void assignRegister(string r, Identifier i) {
@@ -724,7 +737,7 @@ void print(char* out) {
     file.open(out);
     DEBUG_MSG(""/*endl*/"");
 
-	for(cmd = 0; cmd < commands.size(); cmd++) {
+    for(cmd = 0; cmd < commands.size(); cmd++) {
         DEBUG_MSG(cmd << ":\t" << commands.at(cmd));
         file << commands.at(cmd) << endl;
     }

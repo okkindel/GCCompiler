@@ -1,11 +1,7 @@
 DECLARE
-    a; b;
+    a;
 IN
-    a := 0;
-    DO
-        WRITE a;
-        a := a + 1;
-    WHILE
-        a < 5
-    ENDDO
+    READ a;
+    a := a - 1;
+    WRITE a;
 END

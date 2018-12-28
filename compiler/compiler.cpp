@@ -65,11 +65,12 @@ void __begin_while() {
 }
 
 void __end_while() {
-    replace(commands.at(conditions.top().index), "$bookmark", to_string(conditions.top().index));
-    assignRegister("G", conditions.top().value);
-    removeCond();
-    insert("JZERO", "G", cmdIndex + 2);
     insert("JUMP", hooks.top());
+    replace(commands.at(conditions.top().index), "$bookmark", to_string(cmdIndex));
+    assignRegister("G", conditions.top().value);
+    insert("JZERO", "G", cmdIndex + 2);
+    insert("JUMP", to_string(conditions.top().index + 1));
+    removeCond();
     hooks.pop();
     DEBUG_MSG("Zakończono warunek if");
 }
@@ -656,7 +657,6 @@ void createCond() {
     insertIde("V", value);
     identifiers.at("V").initialized = true;
     storeRegister("G", value.memory);
-    insert("PUT", "G");
 
     Condition cond;
     cond.index = cmdIndex;

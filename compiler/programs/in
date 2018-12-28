@@ -2,8 +2,14 @@ DECLARE
     a; b;
 IN
     a:=5;
-    WHILE a>=1 DO
-        [WRITE a;]
-        a := a - 1;
+    WHILE a>0 DO
+        b:=a/2;
+        b:=b*2;
+        IF a>b THEN 
+            WRITE 1;
+        ELSE 
+            WRITE 0;
+        ENDIF
+        a:=a/2;
     ENDWHILE
 END

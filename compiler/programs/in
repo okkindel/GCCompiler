@@ -2,14 +2,9 @@ DECLARE
     a; b;
 IN
     a:=5;
-    WHILE a>0 DO
-        b:=a/2;
-        b:=b*2;
-        IF a>b THEN 
-            WRITE 1;
-        ELSE 
-            WRITE 0;
-        ENDIF
-        a:=a/2;
-    ENDWHILE
+    IF a < 5 THEN
+        WRITE 1;
+    ELSE
+        WRITE 0;
+    ENDIF
 END

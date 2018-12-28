@@ -42,10 +42,7 @@ void __if_else() {
     assignRegister("G", conditions.top().value);
 
     // negation
-    Identifier ide;
-    createIde(&ide, "1", "NUM");
-    insertIde("1", ide);
-    loadRegister("H", ide.memory);
+    setRegister("H", 1);
     insert("SUB", "H", "G");
 
     removeCond();

@@ -49,9 +49,9 @@ command:
     | _if condition _then commands _endif                               { __end_if(); }
     | _if condition _then commands                                      { __if_else(); } 
         _else commands _endif                                           { __end_if(); } 
-    | _while                                                            { __begin_while(); } 
+    | _while                                                            { __begin_loop(); } 
         condition _do commands _endwhile                                { __end_while(); }
-    | _do                                                               { __begin_while(); } 
+    | _do                                                               { __begin_loop(); } 
         commands _while condition _enddo                                { __end_do(); }
     | _for _identifier _from value _downto value _do                    { __for($2, $4, $6, yylineno); } 
         commands _endfor                                                { __end_down_for(); }

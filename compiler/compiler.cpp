@@ -57,7 +57,7 @@ void __end_if() {
     DEBUG_MSG("Zakończono warunek if");
 }
 
-void __begin_while() {
+void __begin_loop() {
     hooks.push(cmdIndex);
 }
 

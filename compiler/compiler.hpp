@@ -76,7 +76,7 @@ void __if_else();
 // end if
 void __end_if();
 // begin while
-void __begin_while();
+void __begin_loop();
 // end while
 void __end_while();
 // end do

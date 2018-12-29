@@ -46,9 +46,10 @@ void __declareTab (char* a, char* b, char* c, int yylineno) {
         error(a, yylineno, "Tablica o ujemnej pojemności:");
     else {
         Identifier ide;
-        int size  = stoll(c) - stoll(b);
+        int size  = stoll(c) - stoll(b) + 2;
         createIde(&ide, a, "TAB", stoll(b), size);
         insertIde(a, ide);
+        memIndex++;
     }
 }
 

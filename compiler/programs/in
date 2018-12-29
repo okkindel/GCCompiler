@@ -1,12 +1,16 @@
 DECLARE
-    a; b; c(0:100);
+    a; b; s(2:100);
 IN
     a := 0;
     b := 100;
 
-    FOR i FROM a TO b DO
-        c(i) := i;
-        WRITE c(i);
+    FOR i FROM 2 TO 100 DO
+        s(i) := 1;
+        WRITE s(i);
     ENDFOR
+
+[    FOR i FROM a TO b DO
+        WRITE c(i);
+    ENDFOR]
 
 END

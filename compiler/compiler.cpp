@@ -18,7 +18,7 @@ int cmdIndex = 0;
 int loopIndex = 0;
 vector<string> commands;
 map<string, Identifier> identifiers;
-stack<Condition> conditions;
+stack<Jump> jumps;
 map<int, Loop> loops;
 stack<Array> arrays;
 stack<int> hooks;
@@ -62,22 +62,22 @@ void __cmdAssign(char* a, int yylineno) {
 }
 
 void __if_else() {
-    replace(commands.at(conditions.top().index), "$bookmark", to_string(cmdIndex));
-    assignRegister("G", conditions.top().value);
+    assignJump(cmdIndex);
+    assignRegister("G", jumps.top().value);
 
     // negation
     setRegister("H", 1);
     insert("SUB", "H", "G");
 
-    removeCond();
-    createCond();
+    removeJump();
+    createJump();
     insert("JZERO", "H", "$bookmark");
     DEBUG_MSG("Rozpoczęto procedurę else");
 }
 
 void __end_if() {
-    replace(commands.at(conditions.top().index), "$bookmark", to_string(cmdIndex));
-    removeCond();
+    assignJump(cmdIndex);
+    removeJump();
     DEBUG_MSG("Zakończono warunek if");
 }
 
@@ -87,23 +87,23 @@ void __begin_loop() {
 
 void __end_while() {
     insert("JUMP", hooks.top());
-    replace(commands.at(conditions.top().index), "$bookmark", to_string(cmdIndex));
-    assignRegister("G", conditions.top().value);
+    assignJump(cmdIndex);
+    assignRegister("G", jumps.top().value);
     insert("JZERO", "G", cmdIndex + 2);
-    insert("JUMP", to_string(conditions.top().index + 1));
-    removeCond();
+    insert("JUMP", to_string(jumps.top().index + 1));
+    removeJump();
     hooks.pop();
     DEBUG_MSG("Zakończono warunek if");
 }
 
 void __end_do() {
-    replace(commands.at(conditions.top().index), "$bookmark", to_string(cmdIndex));
-    assignRegister("G", conditions.top().value);
+    assignJump(cmdIndex);
+    assignRegister("G", jumps.top().value);
     
     insert("JZERO", "G", cmdIndex + 2);
     insert("JUMP", hooks.top());
 
-    removeCond();
+    removeJump();
     hooks.pop();
     DEBUG_MSG("Zakończono warunek do");
 }
@@ -146,13 +146,13 @@ void __end_down_for() {
 
     insert("COPY", "F", "H");
     insert("SUB", "F", "G");
-    createCond();
+    createJump();
     insert("JZERO", "F", "$bookmark");
     insert("DEC H");
     storeRegister("H", loop.iterator);
     insert("JUMP", loop.index);
-    replace(commands.at(conditions.top().index), "$bookmark", to_string(cmdIndex));
-    removeCond();
+    assignJump(cmdIndex);
+    removeJump();
     removeLoop();
 }
 
@@ -165,13 +165,13 @@ void __end_up_for() {
 
     insert("COPY", "F", "G");
     insert("SUB", "F", "H");
-    createCond();
+    createJump();
     insert("JZERO", "F", "$bookmark");
     insert("INC H");
     storeRegister("H", loop.iterator);
     insert("JUMP", loop.index);
-    replace(commands.at(conditions.top().index), "$bookmark", to_string(cmdIndex));
-    removeCond();
+    assignJump(cmdIndex);
+    removeJump();
     removeLoop();
 }
 
@@ -424,7 +424,7 @@ void __condEq(char* a, char* b, int yylineno) {
     insert("JUMP", cmdIndex + 2);
     insert("INC", "G");
 
-    createCond();
+    createJump();
     insert("JZERO", "G", "$bookmark");
 
     DEBUG_MSG("Porównano: " << ide1.name << " == " << ide2.name);
@@ -450,7 +450,7 @@ void __condNotEq(char* a, char* b, int yylineno) {
     insert("JZERO", "E", cmdIndex + 2);
     insert("INC", "G");
 
-    createCond();
+    createJump();
     insert("JZERO", "G", "$bookmark");
 
     DEBUG_MSG("Porównano: " << ide1.name << " != " << ide2.name);
@@ -476,7 +476,7 @@ void __condLowEq(char* a, char* b, int yylineno) {
     insert("JUMP", cmdIndex + 2);
     insert("INC", "G");
 
-    createCond();
+    createJump();
     insert("JZERO", "G", "$bookmark");
 
     DEBUG_MSG("Porównano: " << ide1.name << " <= " << ide2.name);
@@ -502,7 +502,7 @@ void __condGreEq(char* a, char* b, int yylineno) {
     insert("JUMP", cmdIndex + 2);
     insert("INC", "G");
 
-    createCond();
+    createJump();
     insert("JZERO", "G", "$bookmark");
 
     DEBUG_MSG("Porównano: " << ide1.name << " >= " << ide2.name);
@@ -526,7 +526,7 @@ void __condLow(char* a, char* b, int yylineno) {
     insert("JZERO", "E", cmdIndex + 2);
     insert("INC", "G");
 
-    createCond();
+    createJump();
     insert("JZERO", "G", "$bookmark");
 
     DEBUG_MSG("Porównano: " << ide1.name << " > " << ide2.name);
@@ -550,7 +550,7 @@ void __condGre(char* a, char* b, int yylineno) {
     insert("JZERO", "E", cmdIndex + 2);
     insert("INC", "G");
 
-    createCond();
+    createJump();
     insert("JZERO", "G", "$bookmark");
 
     DEBUG_MSG("Porównano: " << ide1.name << " > " << ide2.name);
@@ -659,12 +659,12 @@ void loadRegister(string reg, Identifier i) {
 }
 
 void assignMemory(Identifier i) {
-    // if (i.type == "TAB") {
-    //     assignRegister("G", arrays.top().index);
-    //     setRegister("A", i.memory);
-    //     insert("ADD", "A", "G");
-    //     arrays.pop();
-    // } else
+    if (i.type == "TAB") {
+        assignRegister("H", arrays.top().index);
+        setRegister("A", i.memory);
+        insert("ADD", "A", "H");
+        arrays.pop();
+    } else
     setRegister("A", i.memory);
 }
 
@@ -757,7 +757,7 @@ void removeLoop() {
 //     Condition functions      //
 //////////////////////////////////
 
-void createCond() {
+void createJump() {
     DEBUG_MSG("Nowy warunek");
 
     Identifier value;
@@ -766,15 +766,19 @@ void createCond() {
     identifiers.at("V").initialized = true;
     storeRegister("G", value);
 
-    Condition cond;
-    cond.index = cmdIndex;
-    cond.value = value;
-    conditions.push(cond);
+    Jump jump;
+    jump.index = cmdIndex;
+    jump.value = value;
+    jumps.push(jump);
 }
 
-void removeCond() {
-    removeIde(conditions.top().value.name);
-    conditions.pop();
+void assignJump(int bookmark) {
+    replace(commands.at(jumps.top().index), "$bookmark", to_string(bookmark));
+}
+
+void removeJump() {
+    removeIde(jumps.top().value.name);
+    jumps.pop();
     DEBUG_MSG("Usunięto z pamięci warunek");
 }
 

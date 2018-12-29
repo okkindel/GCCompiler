@@ -60,7 +60,7 @@ typedef struct {
 typedef struct {
 	int index;
 	Identifier value;
-} Condition;
+} Jump;
 
 typedef struct {
 	Identifier value;
@@ -72,7 +72,7 @@ typedef struct {
 //////////////////////////////////
 
 extern map<string, Identifier> identifiers;
-extern stack<Condition> conditions;
+extern stack<Jump> jumps;
 extern map<int, Loop> loops;
 extern stack<Array> arrays;
 extern stack<int> hooks;
@@ -189,9 +189,11 @@ void removeLoop();
 //////////////////////////////////
 
 // create condition
-void createCond();
+void createJump();
+// assign bookmark to jump
+void assignJump(int bookmark);
 // remove condition
-void removeCond();
+void removeJump();
 
 //////////////////////////////////
 //      Compiler functions      //

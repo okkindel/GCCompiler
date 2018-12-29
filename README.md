@@ -13,7 +13,7 @@ Source files are located in `./compiler` directory. To compile the compiler by y
 | g++   | 7.3.0   |
 | make  | 4.1     |
 
-To compile program from sources, just run command `make` or `make compiler` in `./compiler` folder. Your program will appear in `./out` directory.
+To compile program from sources, just run command `make` or `make compiler` in `./compiler` folder. Your compiler will appear in `./out` directory.
 
 ## Run your first program
 

@@ -142,14 +142,17 @@ void __end_down_for() {
     Loop loop = loops.at(loopIndex - 1);
 
     assignRegister("G", loop.condition);
-    loadRegister("H", loop.iterator);
+    assignRegister("H", loop.iterator);
 
     insert("COPY", "F", "H");
     insert("SUB", "F", "G");
-    insert("JZERO", "F", cmdIndex + loop.iterator.memory + 5);
+    createCond();
+    insert("JZERO", "F", "$bookmark");
     insert("DEC H");
     storeRegister("H", loop.iterator);
     insert("JUMP", loop.index);
+    replace(commands.at(conditions.top().index), "$bookmark", to_string(cmdIndex));
+    removeCond();
     removeLoop();
 }
 
@@ -158,14 +161,17 @@ void __end_up_for() {
     Loop loop = loops.at(loopIndex - 1);
 
     assignRegister("G", loop.condition);
-    loadRegister("H", loop.iterator);
+    assignRegister("H", loop.iterator);
 
     insert("COPY", "F", "G");
     insert("SUB", "F", "H");
-    insert("JZERO", "F", cmdIndex + loop.iterator.memory + 5);
+    createCond();
+    insert("JZERO", "F", "$bookmark");
     insert("INC H");
     storeRegister("H", loop.iterator);
     insert("JUMP", loop.index);
+    replace(commands.at(conditions.top().index), "$bookmark", to_string(cmdIndex));
+    removeCond();
     removeLoop();
 }
 
@@ -653,12 +659,12 @@ void loadRegister(string reg, Identifier i) {
 }
 
 void assignMemory(Identifier i) {
-    if (i.type == "TAB") {
-        assignRegister("G", arrays.top().index);
-        setRegister("A", i.memory);
-        insert("ADD", "A", "G");
-        arrays.pop();
-    } else
+    // if (i.type == "TAB") {
+    //     assignRegister("G", arrays.top().index);
+    //     setRegister("A", i.memory);
+    //     insert("ADD", "A", "G");
+    //     arrays.pop();
+    // } else
     setRegister("A", i.memory);
 }
 

@@ -1,15 +1,12 @@
 DECLARE
-    a; b;
+    a; b; c(0:100);
 IN
-    READ a;
-    WHILE a>0 DO
-        b:=a/2;
-        b:=2*b;
-        IF a>b THEN 
-            WRITE 1;
-        ELSE 
-            WRITE 0;
-        ENDIF
-        a:=a/2;
-    ENDWHILE
+    a := 0;
+    b := 100;
+
+    FOR i FROM a TO b DO
+        c(i) := i;
+        WRITE c(i);
+    ENDFOR
+
 END

@@ -1,0 +1,8 @@
+DECLARE
+a; b(0:10);
+IN
+a := 0;
+b(0) := 1;
+a := a + b(a);
+WRITE a;
+END

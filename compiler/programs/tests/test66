@@ -1,0 +1,9 @@
+DECLARE
+a; b;
+IN
+a := 13;
+b := 0;
+a := a % b;
+a := a + 1;
+WRITE a;
+END

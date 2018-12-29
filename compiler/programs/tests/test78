@@ -1,0 +1,16 @@
+DECLARE
+tab(0:999999999); a; b; c; d; n;
+IN
+READ a;
+tab(a) := 9;
+n := 999999998;
+tab(n) := tab(a);
+b := 111111111;
+b := b * tab(a);
+c := 90909090;
+READ d;
+tab(a) := b - c;
+tab(n) := tab(a) / d;
+WRITE tab(a);
+WRITE tab(n);
+END

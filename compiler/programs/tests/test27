@@ -1,0 +1,9 @@
+DECLARE
+a; b(0:10);
+IN
+a := 3;
+b(3) := 19;
+IF b(a) > a THEN
+	WRITE 1;
+ENDIF
+END

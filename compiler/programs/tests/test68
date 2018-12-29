@@ -1,0 +1,10 @@
+DECLARE
+a; b; c(0:10);
+IN
+a := 0;
+b := 1;
+c(0) := 31;
+c(b) := 3;
+c(a) := c(a)  % c(b);
+WRITE c(a);
+END

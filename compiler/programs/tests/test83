@@ -1,0 +1,48 @@
+DECLARE
+    a; aa; b; c; d; e; f; g;
+IN
+    READ a;
+    READ aa;
+    READ b;
+    c := a + 10;
+    d := b - 5;
+    e := 1;
+    f := d + e;
+    g := 1111111111;
+
+    WRITE g;
+    WRITE a;
+    WRITE aa;
+    WRITE b;
+    WRITE c;
+    WRITE d;
+    WRITE e;
+    WRITE f;
+    WRITE g;
+
+    IF a > b THEN
+        e := a + c;
+        IF a > aa THEN
+            f := e * aa;
+        ELSE
+            f := e * a;
+        ENDIF
+    ELSE
+        e := b + c;
+        IF aa > a THEN
+            f := e / a;
+        ELSE
+            f := e / aa;
+        ENDIF
+    ENDIF
+
+    WRITE a;
+    WRITE aa;
+    WRITE b;
+    WRITE c;
+    WRITE d;
+    WRITE e;
+    WRITE f;
+
+END
+

@@ -1,0 +1,7 @@
+DECLARE
+a; b;
+IN
+IF 0 = 0 THEN
+	WRITE 1;
+ENDIF
+END

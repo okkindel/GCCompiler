@@ -46,6 +46,8 @@ void __declareTab (char* a, char* b, char* c, int yylineno) {
         error(a, yylineno, "Tablica o ujemnej pojemności:");
     else {
         Identifier ide;
+        // We have to left one memory cell free. Don't ask why. 
+        // I don't know. But it works that way... 
         int size  = stoll(c) - stoll(b) + 2;
         createIde(&ide, a, "TAB", stoll(b), size);
         insertIde(a, ide);

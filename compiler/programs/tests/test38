@@ -1,0 +1,11 @@
+DECLARE
+a; b(0:10);
+IN
+a := 1;
+b(1) := 0;
+IF a <= b(1) THEN
+	WRITE 0;
+ELSE
+	WRITE 1;
+ENDIF
+END

@@ -1,0 +1,8 @@
+DECLARE
+a; b;
+IN
+a := 1000;
+b := a - 1000;
+b := b + 1;
+WRITE b;
+END

@@ -1,0 +1,18 @@
+DECLARE
+n; i; wynik; a;
+IN
+i := 1;
+wynik := 1;
+READ n;
+WHILE i <= n DO
+	a := i / 2;
+	a := 2 * a;
+	IF a < i THEN
+		wynik := i * wynik;
+	ELSE
+		wynik := wynik * i;
+	ENDIF
+	i := i + 1;
+ENDWHILE
+WRITE wynik;
+END

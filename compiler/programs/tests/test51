@@ -1,0 +1,11 @@
+DECLARE
+a; b(0:10); c;
+IN
+a := 1;
+b(1) := 11;
+FOR i FROM a TO b(a) DO
+	a := 3;
+	c := i - 1;
+	WRITE c;
+ENDFOR
+END

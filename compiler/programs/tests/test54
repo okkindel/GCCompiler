@@ -1,0 +1,10 @@
+DECLARE
+a; b(0:10); c;
+IN
+a := 10010;
+b(5) := 10000;
+FOR i FROM a DOWNTO b(5) DO
+	c := i - 10000;
+	WRITE c;
+ENDFOR
+END

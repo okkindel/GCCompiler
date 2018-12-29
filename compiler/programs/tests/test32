@@ -1,0 +1,9 @@
+DECLARE
+a(0:999); b;
+IN
+a(756) := 4;
+b := 756;
+IF b != a(b) THEN
+	WRITE 1;
+ENDIF
+END

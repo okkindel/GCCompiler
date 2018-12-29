@@ -1,0 +1,10 @@
+DECLARE
+a; b(0:10); c;
+IN
+a := 10;
+b(5) := 0;
+FOR i FROM a DOWNTO b(5) DO
+	b(5) := 9;
+	WRITE i;
+ENDFOR
+END

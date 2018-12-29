@@ -1,0 +1,11 @@
+[n!]
+DECLARE
+fact; n;
+IN
+READ n;
+fact := 1;
+FOR k FROM 1 TO n DO
+	fact := fact * k;
+ENDFOR
+WRITE fact;
+END

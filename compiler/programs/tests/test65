@@ -1,0 +1,6 @@
+DECLARE
+a; b;
+IN
+a := 5 % 2;
+WRITE a;
+END

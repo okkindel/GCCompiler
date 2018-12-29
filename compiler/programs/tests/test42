@@ -1,0 +1,10 @@
+DECLARE
+a; b(0:2);
+IN
+a := 0;
+b(1) := 1;
+WHILE a < b(1) DO
+	WRITE 1;
+	a := a + 1;
+ENDWHILE
+END

@@ -1,0 +1,21 @@
+DECLARE
+b; c; j; t;
+IN
+j := 111111 - 111110;
+READ b;
+READ c;
+IF b > 50 THEN
+	b := b % 50;
+ENDIF
+t := b + 1000;
+t := t - 1;
+WRITE t;
+FOR i FROM b TO t DO
+	t := i / j;
+	c := c + t;
+	t := i % i;
+	c := c + t;
+ENDFOR
+WRITE t;
+WRITE c;
+END

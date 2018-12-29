@@ -1,0 +1,7 @@
+DECLARE
+a; b;
+IN
+a := 99 / 3;
+a := a - 32;
+WRITE a;
+END

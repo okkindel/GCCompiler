@@ -1,0 +1,7 @@
+DECLARE
+a; b;
+IN
+a := 5 - 10;
+a := a + 1;
+WRITE a;
+END

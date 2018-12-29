@@ -1,0 +1,9 @@
+DECLARE
+a; b;
+IN
+IF 1 = 5 THEN
+	WRITE 0;
+ELSE
+	WRITE 1;
+ENDIF
+END

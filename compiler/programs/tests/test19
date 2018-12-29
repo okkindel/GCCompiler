@@ -1,0 +1,8 @@
+DECLARE
+a; b;
+IN
+a := 1;
+b := 2;
+a := b - a;
+WRITE a;
+END

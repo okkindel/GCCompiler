@@ -1,0 +1,14 @@
+[ szybsza wersja programu 0
+wykorzystanie div i mod
+]
+DECLARE
+a; b;
+IN
+READ a;
+WHILE a > 0 DO 
+	b := a % 2; 
+	a := a / 2; 
+	WRITE b; 
+ENDWHILE
+END
+

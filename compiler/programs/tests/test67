@@ -1,0 +1,9 @@
+DECLARE
+a; b(0:10);
+IN
+a := 999;
+b(0) := 4;
+a := a % b(0);
+a := a - 2;
+WRITE a;
+END

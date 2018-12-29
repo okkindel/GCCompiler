@@ -1,0 +1,7 @@
+DECLARE
+a; b(0:10);
+IN
+a := 6 - 4;
+b(0) := a - 1;
+WRITE b(0);
+END

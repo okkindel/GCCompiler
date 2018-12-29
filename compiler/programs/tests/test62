@@ -1,0 +1,9 @@
+DECLARE
+a; b(0:10);
+IN
+a := 5;
+b(0) := 0;
+a := a / b(0);
+a := a + 1;
+WRITE a;
+END

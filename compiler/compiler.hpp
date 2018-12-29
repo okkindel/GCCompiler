@@ -153,6 +153,8 @@ void setRegister(string reg, long long int num);
 void storeRegister(string reg, Identifier i);
 // loads memory to register
 void loadRegister(string reg, Identifier i);
+// loads proper memory
+void assignMemory(Identifier i);
 // assign one identifier to register
 void assignRegister(string r, Identifier i);
 // zero register
@@ -207,8 +209,6 @@ void insert(string cmd, int index);
 void insert(string str, string reg, int index);
 // check for initialized error
 void initError(Identifier ide, char* a, int yylineno);
-// check if tab and shift
-int tabShift(Identifier ide);
 // prints stack
 void print(char* output);
 // throws errors

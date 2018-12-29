@@ -566,21 +566,22 @@ void __ideIdetifier(char* a, int yylineno) {
 }
 
 void __ideIdeIde(char* a, char* b, int yylineno) {
-    // if (identifiers.find(a) == identifiers.end())
-    //     error(a, yylineno, "Zmienna nie została zadeklarowana:");
+    if (identifiers.find(a) == identifiers.end())
+        error(a, yylineno, "Zmienna nie została zadeklarowana:");
+    if (identifiers.find(b) == identifiers.end())
+        error(a, yylineno, "Zmienna nie została zadeklarowana:");
 
-    // Identifier ide = identifiers.at(a);
+    Identifier ide = identifiers.at(a);
+    Identifier var = identifiers.at(b);
 
-    // if (ide.type != "TAB")
-    //     error(a, yylineno, "Niewłaściwe odwołanie do zmiennej:");
-    // if (stoll(b) < ide.begin || stoll(b) > ide.begin + ide.size)
-    //     error(a, yylineno, "Przekroczony zakres tablicy:");
+    if (ide.type != "TAB")
+        error(a, yylineno, "Niewłaściwe odwołanie do zmiennej:");
     
-    // Array arr;
-    // arr.value = ide;
-    // arr.index = stoll(b);
-    // arrays.push(arr);
-    // DEBUG_MSG("Znaleziono klucz tablicy: " << identifiers.at(a).name << " i jest zainicjowany: " << identifiers.at(a).initialized);
+    Array arr;
+    arr.value = ide;
+    arr.index = var;
+    arrays.push(arr);
+    DEBUG_MSG("Znaleziono klucz tablicy: " << identifiers.at(a).name << " i jest zainicjowany: " << identifiers.at(a).initialized);
 }
 
 void __ideIdeNum(char* a, char* b, int yylineno) {
@@ -642,27 +643,23 @@ void setRegister(string reg, long long int num) {
 }
 
 void storeRegister(string reg, Identifier i) {
-    // if (i.type == "TAB") {
-    //     assignRegister("B", arrays.top().index);
-    //     setRegister("A", i.memory);
-    //     insert("ADD", "A", "B");
-    // } else {
-    //     setRegister("A", i.memory);
-    // }
-    setRegister("A", i.memory + tabShift(i));
+    assignMemory(i);
     insert("STORE", reg);
 }
 
 void loadRegister(string reg, Identifier i) {
-    // if (i.type == "TAB") {
-    //     assignRegister("B", arrays.top().index);
-    //     setRegister("A", i.memory);
-    //     insert("ADD", "A", "B");
-    // } else {
-    //     setRegister("A", i.memory);
-    // }
-    setRegister("A", i.memory + tabShift(i));
+    assignMemory(i);
     insert("LOAD", reg);
+}
+
+void assignMemory(Identifier i) {
+    if (i.type == "TAB") {
+        assignRegister("F", arrays.top().index);
+        setRegister("A", i.memory);
+        insert("ADD", "A", "F");
+        arrays.pop();
+    } else
+        setRegister("A", i.memory);
 }
 
 void assignRegister(string r, Identifier i) {
@@ -810,18 +807,6 @@ void insert(string cmd, int index) {
 void initError(Identifier ide, char* a, int yylineno) {
     if (ide.type != "NUM" && ide.initialized == false)
         error(a, yylineno, "Próba użycia niezainicjalizowanej zmiennej:");
-}
-
-int tabShift(Identifier ide) {
-    if (ide.type == "TAB") {
-        if (arrays.top().index.type == "NUM") {
-            int shift = stoll(arrays.top().index.name);
-            arrays.pop();
-            return shift;
-        }
-        return 0;
-    }
-    return 0;
 }
 
 void print(char* out) {

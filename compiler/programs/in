@@ -1,11 +1,11 @@
 DECLARE
-    a(5:10);
+    a(0:10);
     b; c;
 IN
-    READ a(7);
-    b := 10;
-    a(5) := b;
-    b := b + a(5);
-    b := b + a(7);
-    WRITE b;
+
+    FOR i FROM 0 TO 9 DO
+        a(i) := i;
+        WRITE a(i);
+    ENDFOR
+
 END

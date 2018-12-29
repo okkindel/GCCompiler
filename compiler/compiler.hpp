@@ -46,6 +46,8 @@ typedef struct {
 	int counter;
 	int memory;
 	bool initialized;
+	int begin;
+	int size;
 } Identifier;
 
 typedef struct {
@@ -60,6 +62,11 @@ typedef struct {
 	Identifier value;
 } Condition;
 
+typedef struct {
+	Identifier value;
+	Identifier index;
+} Array;
+
 //////////////////////////////////
 //          Variables           //
 //////////////////////////////////
@@ -67,6 +74,7 @@ typedef struct {
 extern map<string, Identifier> identifiers;
 extern stack<Condition> conditions;
 extern map<int, Loop> loops;
+extern stack<Array> arrays;
 extern stack<int> hooks;
 extern int loopIndex;
 extern int memIndex;
@@ -78,6 +86,8 @@ extern int cmdIndex;
 
 // declare identifier
 void __declareIde (char* a, int yylineno);
+// declare array
+void __declareTab (char* a, char* b, char* c, int yylineno);
 // assign to variable
 void __cmdAssign(char* a, int yylineno);
 // else
@@ -128,6 +138,10 @@ void __condGreEq(char* a, char* b, int yylineno);
 void __valueNum(char* a, int yylineno);
 // simple identifier
 void __ideIdetifier(char* a, int yylineno);
+// tab identifier with ide
+void __ideIdeIde(char* a, char* b, int yylineno);
+// tab identifier with num
+void __ideIdeNum(char* a, char* b, int yylineno);
 
 //////////////////////////////////
 //      Register functions      //
@@ -136,13 +150,11 @@ void __ideIdetifier(char* a, int yylineno);
 // sets register to given number
 void setRegister(string reg, long long int num);
 // stores register to memory
-void storeRegister(string reg, int mem);
+void storeRegister(string reg, Identifier i);
 // loads memory to register
-void loadRegister(string reg, int mem);
+void loadRegister(string reg, Identifier i);
 // assign one identifier to register
 void assignRegister(string r, Identifier i);
-// assign two identifiers to registers
-void assignRegister(string r1, Identifier i1, string r2, Identifier i2);
 // zero register
 void resetRegister(string reg);
 
@@ -152,6 +164,8 @@ void resetRegister(string reg);
 
 // create identifier
 void createIde(Identifier *s, string name, string type);
+// create tab
+void createIde(Identifier *ide, string name, string type, int begin, int size);
 // insert identifier
 void insertIde(string key, Identifier i);
 // remove identifier
@@ -193,6 +207,8 @@ void insert(string cmd, int index);
 void insert(string str, string reg, int index);
 // check for initialized error
 void initError(Identifier ide, char* a, int yylineno);
+// check if tab and shift
+int tabShift(Identifier ide);
 // prints stack
 void print(char* output);
 // throws errors

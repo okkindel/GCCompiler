@@ -20,6 +20,7 @@ vector<string> commands;
 map<string, Identifier> identifiers;
 stack<Condition> conditions;
 map<int, Loop> loops;
+stack<Array> arrays;
 stack<int> hooks;
 
 //////////////////////////////////
@@ -29,10 +30,24 @@ stack<int> hooks;
 void __declareIde (char* a, int yylineno) { 
     DEBUG_MSG("Zadeklarowano zmienną: " << a);     
     if (identifiers.find(a) != identifiers.end())
-        error(a, yylineno, "Kolejna deklaracja zmiennej");
+        error(a, yylineno, "Kolejna deklaracja zmiennej:");
     else {
         Identifier ide;
         createIde(&ide, a, "VAR");
+        insertIde(a, ide);
+    }
+}
+
+void __declareTab (char* a, char* b, char* c, int yylineno) {
+    DEBUG_MSG("Zadeklarowano tablicę: " << a);     
+    if (identifiers.find(a) != identifiers.end())
+        error(a, yylineno, "Kolejna deklaracja zmiennej:");
+    else if (stoll(b) > stoll(c))
+        error(a, yylineno, "Tablica o ujemnej pojemności:");
+    else {
+        Identifier ide;
+        int size  = stoll(c) - stoll(b);
+        createIde(&ide, a, "TAB", stoll(b), size);
         insertIde(a, ide);
     }
 }
@@ -42,7 +57,7 @@ void __cmdAssign(char* a, int yylineno) {
     if (ide.type == "ITE")
         error(a, yylineno, "Modyfikacja iteratora pętli:");
     identifiers.at(a).initialized = true;
-    storeRegister("B", ide.memory);
+    storeRegister("B", ide);
     DEBUG_MSG("Przyporządkowano klucz do zmiennej: " << ide.name << " na miejscu: " << ide.memory << " i jest zainicjowany: " << ide.initialized);
 }
 
@@ -113,9 +128,9 @@ void __for(char* i, char* a, char* b, int yylineno) {
     Identifier finish = identifiers.at(b);
 
     assignRegister("F", start);
-    storeRegister("F", iterator.memory);
+    storeRegister("F", iterator);
     assignRegister("F", finish);
-    storeRegister("F", condition.memory);
+    storeRegister("F", condition);
 
     Loop loop;
     createLoop(&loop, iterator, condition, cmdIndex);
@@ -127,13 +142,13 @@ void __end_down_for() {
     Loop loop = loops.at(loopIndex - 1);
 
     assignRegister("G", loop.condition);
-    loadRegister("H", loop.iterator.memory);
+    loadRegister("H", loop.iterator);
 
     insert("COPY", "F", "H");
     insert("SUB", "F", "G");
     insert("JZERO", "F", cmdIndex + loop.iterator.memory + 5);
     insert("DEC H");
-    storeRegister("H", loop.iterator.memory);
+    storeRegister("H", loop.iterator);
     insert("JUMP", loop.index);
     removeLoop();
 }
@@ -143,13 +158,13 @@ void __end_up_for() {
     Loop loop = loops.at(loopIndex - 1);
 
     assignRegister("G", loop.condition);
-    loadRegister("H", loop.iterator.memory);
+    loadRegister("H", loop.iterator);
 
     insert("COPY", "F", "G");
     insert("SUB", "F", "H");
     insert("JZERO", "F", cmdIndex + loop.iterator.memory + 5);
     insert("INC H");
-    storeRegister("H", loop.iterator.memory);
+    storeRegister("H", loop.iterator);
     insert("JUMP", loop.index);
     removeLoop();
 }
@@ -166,7 +181,7 @@ void __cmdRead(char* a, int yylineno) {
     Identifier ide = identifiers.at(a);
     identifiers.at(a).initialized = true;
     insert("GET", "B");
-    storeRegister("B", ide.memory);
+    storeRegister("B", ide);
     DEBUG_MSG("Zapisywanie klucza: " << ide.name << " do miejsca w pamięci: " << ide.memory);
 }
 
@@ -179,10 +194,10 @@ void __expressionVal(char* a, int yylineno) {
     }
     else if (ide.type == "VAR") {
         initError(ide, a, yylineno);
-        loadRegister("B", ide.memory);
-    } else {
-        // TODO: TAB
-        DEBUG_MSG("value TAB");
+        loadRegister("B", ide);
+    } else { // TAB
+        initError(ide, a, yylineno);
+        assignRegister("B", ide);
     }
 }
 
@@ -204,7 +219,8 @@ void __expressionAdd (char* a, char* b) {
         insert("INC", "B");
         removeIde(ide2.name);
     } else {
-        assignRegister("B", ide1, "C", ide2);
+        assignRegister("B", ide1);
+        assignRegister("C", ide2);
         insert("ADD", "B", "C");
         if (ide1.type == "NUM")
             removeIde(ide1.name);
@@ -231,7 +247,8 @@ void __expressionSub (char* a, char* b) {
         removeIde(ide1.name);
         removeIde(ide2.name);
     } else {
-        assignRegister("B", ide1, "C", ide2);
+        assignRegister("B", ide1);
+        assignRegister("C", ide2);
         insert("SUB", "B", "C");
         if (ide1.type == "NUM")
             removeIde(ide1.name);
@@ -257,22 +274,22 @@ void __expressionMul (char* a, char* b) {
         removeIde(ide1.name);
         removeIde(ide2.name);
     } else if (ide1.type == "NUM" && ide2.type == "VAR") {
-        loadRegister("C", ide2.memory);
+        loadRegister("C", ide2);
         resetRegister("B");
         for (long long int i = 0; i < stoll(ide1.name); ++i) {
             insert("ADD", "B", "C");
         }
         removeIde(ide1.name);
     } else if (ide1.type == "VAR" && ide2.type == "NUM") {
-        loadRegister("C", ide1.memory);
+        loadRegister("C", ide1);
         resetRegister("B");
         for (long long int i = 0; i < stoll(ide2.name); ++i) {
             insert("ADD", "B", "C");
         }
         removeIde(ide2.name);
     } else if (ide1.type == "VAR" && ide2.type == "VAR") {
-        loadRegister("B", ide1.memory);
-        loadRegister("C", ide2.memory);
+        loadRegister("B", ide1);
+        loadRegister("C", ide2);
         insert("JZERO", "C", cmdIndex + 7);
         insert("COPY", "D", "B");
         insert("DEC", "C");
@@ -304,7 +321,8 @@ void __expressionDiv (char* a, char* b) {
         insert("HALF", "B");
         removeIde(ide2.name);
     } else {
-        assignRegister("B", ide1, "C", ide2);
+        assignRegister("B", ide1);
+        assignRegister("C", ide2);
         // counter
         resetRegister("D");
 
@@ -354,7 +372,8 @@ void __expressionMod (char* a, char* b) {
         removeIde(ide1.name);
         removeIde(ide2.name);
     } else {
-        assignRegister("B", ide1, "C", ide2);
+        assignRegister("B", ide1);
+        assignRegister("C", ide2);
         // if b == 0
         insert("JZERO", "C", cmdIndex + 6);
         
@@ -386,7 +405,8 @@ void __condEq(char* a, char* b, int yylineno) {
     initError(ide2, b, yylineno);
 
     resetRegister("G");
-    assignRegister("C", ide1, "D", ide2);
+    assignRegister("C", ide1);
+    assignRegister("D", ide2);
 
     insert("COPY", "E", "C");
     insert("SUB", "E", "D");
@@ -412,7 +432,8 @@ void __condNotEq(char* a, char* b, int yylineno) {
 
 
     resetRegister("G");
-    assignRegister("C", ide1, "D", ide2);
+    assignRegister("C", ide1);
+    assignRegister("D", ide2);
     insert("COPY", "E", "C");
     insert("SUB", "E", "D");
     insert("JZERO", "E", cmdIndex + 2);
@@ -436,7 +457,8 @@ void __condLowEq(char* a, char* b, int yylineno) {
     initError(ide2, b, yylineno);
 
     resetRegister("G");
-    assignRegister("C", ide1, "D", ide2);
+    assignRegister("C", ide1);
+    assignRegister("D", ide2);
     insert("COPY", "E", "D");
     insert("SUB", "E", "C");
     insert("JZERO", "E", cmdIndex + 3);
@@ -461,7 +483,8 @@ void __condGreEq(char* a, char* b, int yylineno) {
     initError(ide2, b, yylineno);
 
     resetRegister("G");
-    assignRegister("C", ide1, "D", ide2);
+    assignRegister("C", ide1);
+    assignRegister("D", ide2);
     insert("COPY", "E", "C");
     insert("SUB", "E", "D");
     insert("JZERO", "E", cmdIndex + 3);
@@ -486,7 +509,8 @@ void __condLow(char* a, char* b, int yylineno) {
     initError(ide2, b, yylineno);
 
     resetRegister("G");
-    assignRegister("C", ide1, "D", ide2);
+    assignRegister("C", ide1);
+    assignRegister("D", ide2);
     insert("COPY", "E", "C");
     insert("SUB", "E", "D");
     insert("JZERO", "E", cmdIndex + 2);
@@ -509,7 +533,8 @@ void __condGre(char* a, char* b, int yylineno) {
     initError(ide2, b, yylineno);
 
     resetRegister("G");
-    assignRegister("C", ide1, "D", ide2);
+    assignRegister("C", ide1);
+    assignRegister("D", ide2);
     insert("COPY", "E", "D");
     insert("SUB", "E", "C");
     insert("JZERO", "E", cmdIndex + 2);
@@ -535,7 +560,50 @@ void __valueNum(char* a, int yylineno) {
 void __ideIdetifier(char* a, int yylineno) {
     if (identifiers.find(a) == identifiers.end())
         error(a, yylineno, "Zmienna nie została zadeklarowana:");
+    if (identifiers.at(a).type == "TAB")
+        error(a, yylineno, "Brak odwołania do elementu tablicy:");
     DEBUG_MSG("Znaleziono klucz: " << identifiers.at(a).name << " i jest zainicjowany: " << identifiers.at(a).initialized);
+}
+
+void __ideIdeIde(char* a, char* b, int yylineno) {
+    // if (identifiers.find(a) == identifiers.end())
+    //     error(a, yylineno, "Zmienna nie została zadeklarowana:");
+
+    // Identifier ide = identifiers.at(a);
+
+    // if (ide.type != "TAB")
+    //     error(a, yylineno, "Niewłaściwe odwołanie do zmiennej:");
+    // if (stoll(b) < ide.begin || stoll(b) > ide.begin + ide.size)
+    //     error(a, yylineno, "Przekroczony zakres tablicy:");
+    
+    // Array arr;
+    // arr.value = ide;
+    // arr.index = stoll(b);
+    // arrays.push(arr);
+    // DEBUG_MSG("Znaleziono klucz tablicy: " << identifiers.at(a).name << " i jest zainicjowany: " << identifiers.at(a).initialized);
+}
+
+void __ideIdeNum(char* a, char* b, int yylineno) {
+    if (identifiers.find(a) == identifiers.end())
+        error(a, yylineno, "Zmienna nie została zadeklarowana:");
+
+    Identifier ide = identifiers.at(a);
+    Identifier num;
+    createIde(&num, b, "NUM");
+    insertIde(b, num);
+
+    if (ide.type != "TAB")
+        error(a, yylineno, "Niewłaściwe odwołanie do zmiennej:");
+    if (stoll(b) < ide.begin || stoll(b) > ide.begin + ide.size)
+        error(a, yylineno, "Przekroczony zakres tablicy:");
+    
+    Array arr;
+    arr.value = ide;
+    arr.index = num;
+    arrays.push(arr);
+
+    removeIde(num.name);
+    DEBUG_MSG("Znaleziono klucz tablicy: " << identifiers.at(a).name << " i jest zainicjowany: " << identifiers.at(a).initialized);
 }
 
 //////////////////////////////////
@@ -573,32 +641,35 @@ void setRegister(string reg, long long int num) {
     }    
 }
 
-void storeRegister(string reg, int mem) {
-    setRegister("A", mem);
+void storeRegister(string reg, Identifier i) {
+    // if (i.type == "TAB") {
+    //     assignRegister("B", arrays.top().index);
+    //     setRegister("A", i.memory);
+    //     insert("ADD", "A", "B");
+    // } else {
+    //     setRegister("A", i.memory);
+    // }
+    setRegister("A", i.memory + tabShift(i));
     insert("STORE", reg);
 }
 
-void loadRegister(string reg, int mem) {
-    setRegister("A", mem);
+void loadRegister(string reg, Identifier i) {
+    // if (i.type == "TAB") {
+    //     assignRegister("B", arrays.top().index);
+    //     setRegister("A", i.memory);
+    //     insert("ADD", "A", "B");
+    // } else {
+    //     setRegister("A", i.memory);
+    // }
+    setRegister("A", i.memory + tabShift(i));
     insert("LOAD", reg);
 }
 
 void assignRegister(string r, Identifier i) {
     if (i.type == "NUM")
         setRegister(r, stoll(i.name));
-    else if (i.type == "VAR" || i.type == "ITE")
-        loadRegister(r, i.memory);
-}
-
-void assignRegister(string r1, Identifier i1, string r2, Identifier i2) {
-    if (i1.type == "NUM")
-        setRegister(r1, stoll(i1.name));
-    else if (i1.type == "VAR" || i1.type == "ITE")
-        loadRegister(r1, i1.memory);
-    if (i2.type == "NUM")
-        setRegister(r2, stoll(i2.name));
-    else if (i2.type == "VAR" || i2.type == "ITE")
-        loadRegister(r2, i2.memory);    
+    else if (i.type == "VAR" || i.type == "ITE" || i.type == "TAB")
+        loadRegister(r, i);
 }
 
 void resetRegister(string reg) {
@@ -614,18 +685,28 @@ void createIde(Identifier *ide, string name, string type) {
     ide->memory = memIndex;
     ide->type = type;
     ide->initialized = false;
+    ide->size = 1;
+}
+
+void createIde(Identifier *ide, string name, string type, int begin, int size) {
+    ide->name = name;
+    ide->memory = memIndex;
+    ide->type = type;
+    ide->initialized = false;
+    ide->begin = begin;
+    ide->size = size;
 }
 
 void insertIde(string key, Identifier ide) {
+    DEBUG_MSG("Dodano do pamięci klucz: " << key << ", typu: " << ide.type << ", na miejscu: " << memIndex);
     if (identifiers.count(key) == 0) {
         identifiers.insert(make_pair(key, ide));
         identifiers.at(key).counter = 0;
-        memIndex++;
+        memIndex += ide.size;
     }
     else {
         identifiers.at(key).counter = identifiers.at(key).counter + 1;
     }
-    DEBUG_MSG("Dodano do pamięci klucz: " << key << ", typu: " << ide.type << ", na miejscu: " << memIndex - 1);
 }
 
 void removeIde(string key) {
@@ -678,7 +759,7 @@ void createCond() {
     createIde(&value, "V", "VAR");
     insertIde("V", value);
     identifiers.at("V").initialized = true;
-    storeRegister("G", value.memory);
+    storeRegister("G", value);
 
     Condition cond;
     cond.index = cmdIndex;
@@ -731,6 +812,18 @@ void initError(Identifier ide, char* a, int yylineno) {
         error(a, yylineno, "Próba użycia niezainicjalizowanej zmiennej:");
 }
 
+int tabShift(Identifier ide) {
+    if (ide.type == "TAB") {
+        if (arrays.top().index.type == "NUM") {
+            int shift = stoll(arrays.top().index.name);
+            arrays.pop();
+            return shift;
+        }
+        return 0;
+    }
+    return 0;
+}
+
 void print(char* out) {
 	long long int cmd;
     ofstream file;
@@ -745,7 +838,7 @@ void print(char* out) {
 }
 
 void error(char* a, int yylineno, char const* msg) {
-    cout << "\e[1mBłąd na lini " << yylineno << ": \e[1m\x1B[31m" << msg << " " << a << ".\e[0m\n" << endl;
+    cout << "\e[1m\x1B[31m[ ERROR ]\e[0m \e[1m[ LINE " << yylineno << " ] \e[1m\x1B[31m" << msg << " " << a << ".\e[0m\n" << endl;
     exit(1);
 }
 

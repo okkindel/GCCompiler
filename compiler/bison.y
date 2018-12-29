@@ -42,7 +42,7 @@ program:
 declarations:
 
     declarations _identifier _sem                                       { __declareIde($2, yylineno); }
-    | declarations _identifier _lb _number _col _number _rb _sem        { cout << "tab ( num : num )" << endl; }
+    | declarations _identifier _lb _number _col _number _rb _sem        { __declareTab($2, $4, $6, yylineno); }
     |
     ;
 
@@ -99,8 +99,8 @@ value:
 identifier:
 
     _identifier                                     { __ideIdetifier($1, yylineno); }
-    | _identifier _lb _identifier _rb               { cout << "ide ( ide )" << endl; }
-    | _identifier _lb _number _rb                   { cout << "ide ( num )" << endl; }
+    | _identifier _lb _identifier _rb               { __ideIdeIde($1, $3, yylineno); }
+    | _identifier _lb _number _rb                   { __ideIdeNum($1, $3, yylineno); }
     ;
 
 %%

@@ -569,7 +569,7 @@ void __ideIdeIde(char* a, char* b, int yylineno) {
     if (identifiers.find(a) == identifiers.end())
         error(a, yylineno, "Zmienna nie została zadeklarowana:");
     if (identifiers.find(b) == identifiers.end())
-        error(a, yylineno, "Zmienna nie została zadeklarowana:");
+        error(b, yylineno, "Zmienna nie została zadeklarowana:");
 
     Identifier ide = identifiers.at(a);
     Identifier var = identifiers.at(b);
@@ -654,18 +654,20 @@ void loadRegister(string reg, Identifier i) {
 
 void assignMemory(Identifier i) {
     if (i.type == "TAB") {
-        assignRegister("F", arrays.top().index);
+        assignRegister("G", arrays.top().index);
         setRegister("A", i.memory);
-        insert("ADD", "A", "F");
+        insert("ADD", "A", "G");
         arrays.pop();
     } else
-        setRegister("A", i.memory);
+    setRegister("A", i.memory);
 }
 
 void assignRegister(string r, Identifier i) {
     if (i.type == "NUM")
         setRegister(r, stoll(i.name));
-    else if (i.type == "VAR" || i.type == "ITE" || i.type == "TAB")
+    else if (i.type == "VAR" || i.type == "ITE")
+        loadRegister(r, i);
+    else
         loadRegister(r, i);
 }
 
@@ -677,7 +679,7 @@ void resetRegister(string reg) {
 //    Identifiers functions     //
 //////////////////////////////////
 
-void createIde(Identifier *ide, string name, string type) {
+void createIde(Identifier* ide, string name, string type) {
     ide->name = name;
     ide->memory = memIndex;
     ide->type = type;
@@ -685,7 +687,7 @@ void createIde(Identifier *ide, string name, string type) {
     ide->size = 1;
 }
 
-void createIde(Identifier *ide, string name, string type, int begin, int size) {
+void createIde(Identifier* ide, string name, string type, int begin, int size) {
     ide->name = name;
     ide->memory = memIndex;
     ide->type = type;

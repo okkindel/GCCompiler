@@ -107,7 +107,7 @@ identifier:
 
 int main(int argv, char* argc[]) {
     if( argv != 3 ) {
-        cerr << "\e[1m\x1B[31mUSAGE:\e[0m ./compiler input output" << endl;
+        cerr << "\e[1mUSAGE:\e[0m ./compiler input output" << endl;
         return -1;
     }
     yyin = fopen(argc[1], "r");
@@ -117,7 +117,6 @@ int main(int argv, char* argc[]) {
 }
 
 int yyerror(string err) {
-    cout << "\e[1mBłąd na lini " << yylineno << \
-    ", konkretnie: \e[1m\x1B[31m" << err << ".\e[0m\n" << endl;
+    cout << "\e[1m\x1B[31m[ ERROR ]\e[0m \e[1m[ LINE " << yylineno << " ] \e[1m\x1B[31m" << err << ".\e[0m\n" << endl;
     exit(1);
 }

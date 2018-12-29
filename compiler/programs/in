@@ -1,11 +1,11 @@
 DECLARE
-    a(0:10);
+    a(0:20);
     b; c;
 IN
-
-    FOR i FROM 0 TO 9 DO
-        a(i) := i;
-        WRITE a(i);
-    ENDFOR
-
+    b := 30;
+    WHILE b > 0 DO
+        b := b - 1;
+        a(b) := b;
+        WRITE a(b);
+    ENDWHILE
 END

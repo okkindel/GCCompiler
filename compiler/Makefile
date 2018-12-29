@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -std=c++11 -DDEBUG
+CFLAGS = -std=c++11 #-DDEBUG
 SRC = ./out/compiler
 
 all: compiler

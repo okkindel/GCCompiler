@@ -255,6 +255,11 @@ void __expressionSub (char* a, char* b) {
         setRegister("B", val);
         removeIde(ide1.name);
         removeIde(ide2.name);
+    } else if (ide1.type == "TAB" && ide2.type == "TAB") {
+        // as long as double tab, we have to switch registers
+        assignRegister("C", ide1);
+        assignRegister("B", ide2);
+        insert("SUB", "B", "C");
     } else {
         assignRegister("B", ide1);
         assignRegister("C", ide2);
@@ -296,9 +301,9 @@ void __expressionMul (char* a, char* b) {
             insert("ADD", "B", "C");
         }
         removeIde(ide2.name);
-    } else if (ide1.type == "VAR" && ide2.type == "VAR") {
-        loadRegister("B", ide1);
-        loadRegister("C", ide2);
+    } else {
+        assignRegister("B", ide1);
+        assignRegister("C", ide2);
         insert("JZERO", "C", cmdIndex + 7);
         insert("COPY", "D", "B");
         insert("DEC", "C");
@@ -330,8 +335,14 @@ void __expressionDiv (char* a, char* b) {
         insert("HALF", "B");
         removeIde(ide2.name);
     } else {
-        assignRegister("B", ide1);
-        assignRegister("C", ide2);
+        if (ide1.type == "TAB" && ide2.type == "TAB") {
+            // as long as double tab, we have to switch registers
+            assignRegister("C", ide1);
+            assignRegister("B", ide2);
+        } else {
+            assignRegister("B", ide1);
+            assignRegister("C", ide2);
+        }
         // counter
         resetRegister("D");
 
@@ -667,8 +678,9 @@ void assignMemory(Identifier i) {
         setRegister("A", i.memory);
         insert("ADD", "A", "H");
         arrays.pop();
-    } else
-    setRegister("A", i.memory);
+    } else {
+        setRegister("A", i.memory);
+    }
 }
 
 void assignRegister(string r, Identifier i) {

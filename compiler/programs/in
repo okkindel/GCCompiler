@@ -1,8 +1,11 @@
 DECLARE
-    s(2:10);
+a; b(0:10); c;
 IN
-    FOR i FROM 2 TO 10 DO
-        s(i) := 1;
-        WRITE s(i);
-    ENDFOR
+b(0) := 4;
+b(6) := 3;
+a := b(0);
+c := b(6);
+[a := a - c;]
+a := b(0) / b(6);
+WRITE a;
 END

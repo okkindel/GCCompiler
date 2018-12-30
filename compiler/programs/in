@@ -8,4 +8,15 @@ IN
     c := a(0) / c;
     WRITE c;
     WRITE 1111111111111;
+    c := 10 % 0;
+    WRITE c;
 END
+
+
+[
+    TODO:
+    - cleanup (gitignores)
+    - if no write, then no isntructions
+    - multiplying
+    - factorial
+]

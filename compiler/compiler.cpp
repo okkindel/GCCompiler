@@ -450,7 +450,6 @@ void __condNotEq(char* a, char* b, int yylineno) {
     initError(ide1, a, yylineno);
     initError(ide2, b, yylineno);
 
-
     resetRegister("G");
     assignRegister("C", ide1);
     assignRegister("D", ide2);
@@ -641,16 +640,16 @@ void setRegister(string reg, long long int num) {
         }
     } else {
         string bin = decToBin(num);
-	    long long int limit = bin.size();
-	    for (long long int i = 0; i < limit; ++i){
-		    if(bin[i] == '1'){
-			    insert("INC", reg);
-		    }
-		    if(i < (limit - 1)){
+        long long int limit = bin.size();
+        for (long long int i = 0; i < limit; ++i) {
+            if(bin[i] == '1') {
+                insert("INC", reg);
+            }
+            if(i < (limit - 1)) {
 	            insert("ADD", reg, reg);
     		}
-	    }
-    } 
+        }
+    }
 }
 
 void storeRegister(string reg, Identifier i) {

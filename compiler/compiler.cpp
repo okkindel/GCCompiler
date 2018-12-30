@@ -13,15 +13,15 @@
 //          Variables           //
 //////////////////////////////////
 
-int memIndex = 0;
 int cmdIndex = 0;
+int memIndex = 0;
 int loopIndex = 0;
+stack<int> hooks;
+stack<Jump> jumps;
+stack<Array> arrays;
+map<int, Loop> loops;
 vector<string> commands;
 map<string, Identifier> identifiers;
-stack<Jump> jumps;
-map<int, Loop> loops;
-stack<Array> arrays;
-stack<int> hooks;
 
 //////////////////////////////////
 //      Token functions         //
@@ -48,7 +48,7 @@ void __declareTab (char* a, char* b, char* c, int yylineno) {
         Identifier ide;
         // We have to left one memory cell free. Don't ask why. 
         // I don't know. But it works that way... 
-        int size  = stoll(c) - stoll(b) + 2;
+        int size  = 1 + stoll(c) - stoll(b) + 1;
         createIde(&ide, a, "TAB", stoll(b), size);
         insertIde(a, ide);
         memIndex++;
@@ -633,94 +633,23 @@ void __ideIdeNum(char* a, char* b, int yylineno) {
 
 void setRegister(string reg, long long int num) {
 
-    int regvalue = 1;
-    int helper;
-
     resetRegister(reg);
 
-    // if (num < 10) {
-    // 	for (long long int i = 0; i < num; ++i)
-    //         insert("INC", reg);
-    // } else {
-    //     int k = 2, c = 0;
-    //     while(num > 1) {
-    //         c = 0;
-    //         while(num % k == 0) {
-    //             num /= k;
-    //             c++;
-    //         }
-    //         if (c > 0) {
-    //             cout << k << " " << c << endl;
-    //             resetRegister("C");
-    //             helper = 0;
-
-    //             if (k < 10) {
-    //                 for (long long int i = 0; i < k; ++i)
-    //                     insert("INC", "C");
-    //             } else {
-    //                 for (long long int i = 0; i < 10; ++i)
-    //                     insert("INC", "C");
-    //                 long long int counter = 10;
-    //                 while (2 * counter < k) {
-    //                     insert("ADD", "C", "C");
-    //                     counter *= 2;
-    //                 }
-    //                 if (k - counter < 2 * counter - k) {
-    //                     for (long long int i = 0; i < k - counter; ++i)
-    //                         insert("INC", "C");
-    //                 } else {
-    //                     insert("ADD", "C", "C");
-    //                     for (long long int i = 0; i < 2 * counter - k; ++i)
-    //                         insert("DEC", "C");
-    //                 }
-    //             }
-
-    //             resetRegister("D");
-    //             for (int j = 0; j < c; j++) {
-    //                 insert("ADD", "D", "C");
-    //                 helper += k;
-    //             }
-    //             for (int i = 1; i < c - 1; i++) {
-    //                 insert("ADD", "D", "D");
-    //                 helper += helper;
-    //             }
-
-    //             for (int i = 0; i < regvalue; i++) {
-    //                 insert("ADD", reg, "D");
-    //             }
-
-    //             regvalue *= helper;   
-    //             cout << "r:" << regvalue << " h:" << helper << endl;
-    //         }
-    //         ++k;
-    //     }
-    // }
-
-    // some optimization here, we can also increment in loop
     if (num < 10) {
     	for (long long int i = 0; i < num; ++i) {
             insert("INC", reg);
         }
     } else {
-        for (long long int i = 0; i < 10; ++i) {
-            insert("INC", reg);
-        }
-
-        long long int counter = 10;
-        while (2 * counter < num) {
-            insert("ADD", reg, reg);
-            counter *= 2;
-        }
-        if (num - counter < 2 * counter - num) {
-            for (long long int i = 0; i < num - counter; ++i) {
-                insert("INC", reg);
-            }
-        } else {
-            insert("ADD", reg, reg);
-            for (long long int i = 0; i < 2 * counter - num; ++i) {
-                insert("DEC", reg);
-            }
-        }
+        string bin = decToBin(num);
+	    long long int limit = bin.size();
+	    for (long long int i = 0; i < limit; ++i){
+		    if(bin[i] == '1'){
+			    insert("INC", reg);
+		    }
+		    if(i < (limit - 1)){
+	            insert("ADD", reg, reg);
+    		}
+	    }
     } 
 }
 
@@ -868,8 +797,7 @@ void insert(string cmd) {
     cmdIndex ++;
 }
 
-void insert(string cmd, string reg) 
-{
+void insert(string cmd, string reg) {
     cmd = cmd + " " + reg;
     commands.push_back(cmd);
     cmdIndex ++;
@@ -924,4 +852,13 @@ void replace(string& str, const string& from, const string& to) {
         str.replace(start_pos, from.length(), to);
         start_pos += to.length();
     }
+}
+
+string decToBin(long long int num) {
+    string bin;
+    while (num != 0) { 
+        bin = (num % 2 == 0 ? "0" : "1") + bin; 
+        num /= 2;
+    }
+    return bin;
 }

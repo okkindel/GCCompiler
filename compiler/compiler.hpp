@@ -217,3 +217,5 @@ void print(char* output);
 void error(char* a, int yylineno, char const* msg);
 // replace string
 void replace(string& str, const string& from, const string& to);
+// decimal to binary
+string decToBin(long long int n);

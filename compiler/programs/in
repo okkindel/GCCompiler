@@ -7,4 +7,5 @@ IN
     a(0) := a(0) - a(4);
     c := a(0) / c;
     WRITE c;
+    WRITE 1111111111111;
 END

@@ -633,33 +633,57 @@ void __ideIdeNum(char* a, char* b, int yylineno) {
 
 void setRegister(string reg, long long int num) {
     resetRegister(reg);
+    insert("INC", reg);
 
-    // some optimization here, we can also increment in loop
     if (num < 10) {
-    	for (long long int i = 0; i < num; ++i) {
+    	for (long long int i = 1; i < num; ++i)
             insert("INC", reg);
-        }
     } else {
-        for (long long int i = 0; i < 10; ++i) {
-            insert("INC", reg);
-        }
+        int k = 2, c = 0;
+        while(num > 1) {
+            c = 0;
+            while(num % k == 0) {
+                num /= k;
+                c++;
+            }
+            if (c > 0) {
+                resetRegister("C");
+                if (k < 10) {
+                    for (long long int i = 0; i < k; ++i)
+                        insert("INC", "C");
+                } else {
+                    for (long long int i = 0; i < 10; ++i)
+                        insert("INC", "C");
+                    long long int counter = 10;
+                    while (2 * counter < k) {
+                        insert("ADD", "C", "C");
+                        counter *= 2;
+                    }
+                    if (k - counter < 2 * counter - k) {
+                        for (long long int i = 0; i < k - counter; ++i)
+                            insert("INC", "C");
+                    } else {
+                        insert("ADD", "C", "C");
+                        for (long long int i = 0; i < 2 * counter - k; ++i)
+                            insert("DEC", "C");
+                    }
+                }
+                for (int l = 1; l < c; l++) {
+                    insert("ADD", "C", "C");
+                }
 
-        long long int counter = 10;
-        while (2 * counter < num) {
-            insert("ADD", reg, reg);
-            counter *= 2;
-        }
-        if (num - counter < 2 * counter - num) {
-            for (long long int i = 0; i < num - counter; ++i) {
-                insert("INC", reg);
+                // multiplying, to be optymized
+                insert("JZERO", "C", cmdIndex + 7);
+                insert("COPY", "D", reg);
+                insert("DEC", "C");
+                insert("ADD", reg, "D");
+                insert("DEC", "C");
+                insert("JZERO", "C", cmdIndex + 2);
+                insert("JUMP", cmdIndex - 3);    
             }
-        } else {
-            insert("ADD", reg, reg);
-            for (long long int i = 0; i < 2 * counter - num; ++i) {
-                insert("DEC", reg);
-            }
+            ++k;
         }
-    }    
+    }
 }
 
 void storeRegister(string reg, Identifier i) {

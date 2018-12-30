@@ -111,6 +111,8 @@ int main(int argv, char* argc[]) {
         return -1;
     }
     yyin = fopen(argc[1], "r");
+    if (yyin == NULL)
+        error(argc[1], 0, "File does not exist:");
 	yyparse();
     print(argc[2]);
 	return 0;

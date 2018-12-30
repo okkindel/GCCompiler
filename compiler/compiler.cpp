@@ -30,7 +30,7 @@ map<string, Identifier> identifiers;
 void __declareIde (char* a, int yylineno) { 
     DEBUG_MSG("Zadeklarowano zmienną: " << a);     
     if (identifiers.find(a) != identifiers.end())
-        error(a, yylineno, "Kolejna deklaracja zmiennej:");
+        error(a, yylineno, "Repeated variable declaration:");
     else {
         Identifier ide;
         createIde(&ide, a, "VAR");
@@ -41,9 +41,9 @@ void __declareIde (char* a, int yylineno) {
 void __declareTab (char* a, char* b, char* c, int yylineno) {
     DEBUG_MSG("Zadeklarowano tablicę: " << a);     
     if (identifiers.find(a) != identifiers.end())
-        error(a, yylineno, "Kolejna deklaracja zmiennej:");
+        error(a, yylineno, "Repeated variable declaration:");
     else if (stoll(b) > stoll(c))
-        error(a, yylineno, "Tablica o ujemnej pojemności:");
+        error(a, yylineno, "Negative capacity array:");
     else {
         Identifier ide;
         // We have to left one memory cell free. Don't ask why. 
@@ -58,7 +58,7 @@ void __declareTab (char* a, char* b, char* c, int yylineno) {
 void __cmdAssign(char* a, int yylineno) {
     Identifier ide = identifiers.at(a);
     if (ide.type == "ITE")
-        error(a, yylineno, "Modyfikacja iteratora pętli:");
+        error(a, yylineno, "Loop iterator modification:");
     identifiers.at(a).initialized = true;
     storeRegister("B", ide);
     DEBUG_MSG("Przyporządkowano klucz do zmiennej: " << ide.name << " na miejscu: " << ide.memory << " i jest zainicjowany: " << ide.initialized);
@@ -115,7 +115,7 @@ void __for(char* i, char* a, char* b, int yylineno) {
     
     DEBUG_MSG("Zadeklarowano zmienną: " << a);     
     if (identifiers.find(i) != identifiers.end())
-        error(i, yylineno, "kolejna deklaracja zmiennej");
+        error(i, yylineno, "Repeated variable declaration:");
 
     Identifier iterator;
     createIde(&iterator, i, "ITE");
@@ -579,23 +579,23 @@ void __valueNum(char* a, int yylineno) {
 
 void __ideIdetifier(char* a, int yylineno) {
     if (identifiers.find(a) == identifiers.end())
-        error(a, yylineno, "Zmienna nie została zadeklarowana:");
+        error(a, yylineno, "The variable has not been declared:");
     if (identifiers.at(a).type == "TAB")
-        error(a, yylineno, "Brak odwołania do elementu tablicy:");
+        error(a, yylineno, "Lack of reference to the element of the array:");
     DEBUG_MSG("Znaleziono klucz: " << identifiers.at(a).name << " i jest zainicjowany: " << identifiers.at(a).initialized);
 }
 
 void __ideIdeIde(char* a, char* b, int yylineno) {
     if (identifiers.find(a) == identifiers.end())
-        error(a, yylineno, "Zmienna nie została zadeklarowana:");
+        error(a, yylineno, "The variable has not been declared:");
     if (identifiers.find(b) == identifiers.end())
-        error(b, yylineno, "Zmienna nie została zadeklarowana:");
+        error(b, yylineno, "The variable has not been declared:");
 
     Identifier ide = identifiers.at(a);
     Identifier var = identifiers.at(b);
 
     if (ide.type != "TAB")
-        error(a, yylineno, "Niewłaściwe odwołanie do zmiennej:");
+        error(a, yylineno, "Incorrect reference to the variable:");
     
     Array arr;
     arr.value = ide;
@@ -606,7 +606,7 @@ void __ideIdeIde(char* a, char* b, int yylineno) {
 
 void __ideIdeNum(char* a, char* b, int yylineno) {
     if (identifiers.find(a) == identifiers.end())
-        error(a, yylineno, "Zmienna nie została zadeklarowana:");
+        error(a, yylineno, "The variable has not been declared:");
 
     Identifier ide = identifiers.at(a);
     Identifier num;
@@ -614,9 +614,9 @@ void __ideIdeNum(char* a, char* b, int yylineno) {
     insertIde(b, num);
 
     if (ide.type != "TAB")
-        error(a, yylineno, "Niewłaściwe odwołanie do zmiennej:");
+        error(a, yylineno, "Incorrect reference to the variable:");
     if (stoll(b) < ide.begin || stoll(b) > ide.begin + ide.size)
-        error(a, yylineno, "Przekroczony zakres tablicy:");
+        error(a, yylineno, "The range of the array has been exceeded:");
     
     Array arr;
     arr.value = ide;
@@ -823,7 +823,7 @@ void insert(string cmd, int index) {
 
 void initError(Identifier ide, char* a, int yylineno) {
     if (ide.type != "NUM" && ide.initialized == false)
-        error(a, yylineno, "Próba użycia niezainicjalizowanej zmiennej:");
+        error(a, yylineno, "An attempt to use an uninitialized variable:");
 }
 
 void print(char* out) {

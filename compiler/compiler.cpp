@@ -632,58 +632,96 @@ void __ideIdeNum(char* a, char* b, int yylineno) {
 //////////////////////////////////
 
 void setRegister(string reg, long long int num) {
+
+    int regvalue = 1;
+    int helper;
+
     resetRegister(reg);
-    insert("INC", reg);
 
+    // if (num < 10) {
+    // 	for (long long int i = 0; i < num; ++i)
+    //         insert("INC", reg);
+    // } else {
+    //     int k = 2, c = 0;
+    //     while(num > 1) {
+    //         c = 0;
+    //         while(num % k == 0) {
+    //             num /= k;
+    //             c++;
+    //         }
+    //         if (c > 0) {
+    //             cout << k << " " << c << endl;
+    //             resetRegister("C");
+    //             helper = 0;
+
+    //             if (k < 10) {
+    //                 for (long long int i = 0; i < k; ++i)
+    //                     insert("INC", "C");
+    //             } else {
+    //                 for (long long int i = 0; i < 10; ++i)
+    //                     insert("INC", "C");
+    //                 long long int counter = 10;
+    //                 while (2 * counter < k) {
+    //                     insert("ADD", "C", "C");
+    //                     counter *= 2;
+    //                 }
+    //                 if (k - counter < 2 * counter - k) {
+    //                     for (long long int i = 0; i < k - counter; ++i)
+    //                         insert("INC", "C");
+    //                 } else {
+    //                     insert("ADD", "C", "C");
+    //                     for (long long int i = 0; i < 2 * counter - k; ++i)
+    //                         insert("DEC", "C");
+    //                 }
+    //             }
+
+    //             resetRegister("D");
+    //             for (int j = 0; j < c; j++) {
+    //                 insert("ADD", "D", "C");
+    //                 helper += k;
+    //             }
+    //             for (int i = 1; i < c - 1; i++) {
+    //                 insert("ADD", "D", "D");
+    //                 helper += helper;
+    //             }
+
+    //             for (int i = 0; i < regvalue; i++) {
+    //                 insert("ADD", reg, "D");
+    //             }
+
+    //             regvalue *= helper;   
+    //             cout << "r:" << regvalue << " h:" << helper << endl;
+    //         }
+    //         ++k;
+    //     }
+    // }
+
+    // some optimization here, we can also increment in loop
     if (num < 10) {
-    	for (long long int i = 1; i < num; ++i)
+    	for (long long int i = 0; i < num; ++i) {
             insert("INC", reg);
-    } else {
-        int k = 2, c = 0;
-        while(num > 1) {
-            c = 0;
-            while(num % k == 0) {
-                num /= k;
-                c++;
-            }
-            if (c > 0) {
-                resetRegister("C");
-                if (k < 10) {
-                    for (long long int i = 0; i < k; ++i)
-                        insert("INC", "C");
-                } else {
-                    for (long long int i = 0; i < 10; ++i)
-                        insert("INC", "C");
-                    long long int counter = 10;
-                    while (2 * counter < k) {
-                        insert("ADD", "C", "C");
-                        counter *= 2;
-                    }
-                    if (k - counter < 2 * counter - k) {
-                        for (long long int i = 0; i < k - counter; ++i)
-                            insert("INC", "C");
-                    } else {
-                        insert("ADD", "C", "C");
-                        for (long long int i = 0; i < 2 * counter - k; ++i)
-                            insert("DEC", "C");
-                    }
-                }
-                for (int l = 1; l < c; l++) {
-                    insert("ADD", "C", "C");
-                }
-
-                // multiplying, to be optymized
-                insert("JZERO", "C", cmdIndex + 7);
-                insert("COPY", "D", reg);
-                insert("DEC", "C");
-                insert("ADD", reg, "D");
-                insert("DEC", "C");
-                insert("JZERO", "C", cmdIndex + 2);
-                insert("JUMP", cmdIndex - 3);    
-            }
-            ++k;
         }
-    }
+    } else {
+        for (long long int i = 0; i < 10; ++i) {
+            insert("INC", reg);
+        }
+
+        long long int counter = 10;
+        while (2 * counter < num) {
+            insert("ADD", reg, reg);
+            counter *= 2;
+        }
+        if (num - counter < 2 * counter - num) {
+            for (long long int i = 0; i < num - counter; ++i) {
+                insert("INC", reg);
+            }
+        } else {
+            insert("ADD", reg, reg);
+            for (long long int i = 0; i < 2 * counter - num; ++i) {
+                insert("DEC", reg);
+            }
+        }
+    } 
 }
 
 void storeRegister(string reg, Identifier i) {
@@ -699,7 +737,7 @@ void loadRegister(string reg, Identifier i) {
 void assignMemory(Identifier i) {
     if (i.type == "TAB") {
         assignRegister("H", arrays.top().index);
-        setRegister("A", i.memory);
+        setRegister("A", arrays.top().value.memory);
         insert("ADD", "A", "H");
         arrays.pop();
     } else {

@@ -20,7 +20,7 @@
 //////////////////////////////////
 // A - memory register			//
 // B - attribution register		//
-// C D E F - temporary register //
+// C D E F - temporary register	//
 // G - condition register		//
 // H - iterator register		//
 //////////////////////////////////

@@ -1,10 +1,10 @@
 # GCCompiler
 
-Gębalang is a simple imerative language based on i have no idea what. Let me introduce a *a new georgus compiler* of this awesome language - **GCCompiler**.
+Gębalang is a simple imperative programming language based on i have no idea what. Let me introduce a *a new georgus compiler* of this awesome language - **GCCompiler**.
 
 ## Compile sources
 
-Source files are located in `./compiler` directory. To compile the compiler by yourself you will need:
+Source files are located in `./compiler/src` directory. To compile the compiler by yourself you will need:
 
 | tool  | version |
 |-------|---------|
@@ -17,7 +17,7 @@ To compile program from sources, just run command `make` or `make compiler` in `
 
 ## Run your first program
 
-You will find language documentation in `./data/docs.pdf` file. Sample programs are located in `./compiler/programs/` folder.
+You will find language documentation in `./compiler/docs/documentation.pdf` file. Sample programs are located in `./compiler/programs/` folder.
 
 To compile a program run command `./compiler input_file output_file`.
 Output file will appear. You can run your program using interpreter located in `./interpreter` directory. To compile interpreter run `make maszyna-rejestrowa`. Run it with your output file as an argument. Thats it!

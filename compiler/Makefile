@@ -1,18 +1,20 @@
 CC = g++
 CFLAGS = -std=c++11 #-DDEBUG
-SRC = ./out/compiler
+SRC = ./src
+OUT = ../out/compiler
+FILES = lex.yy.c parser.tab.c compiler.cpp expressions.cpp conditions.cpp
 
 all: compiler
 
-bison: bison.y
-	bison -t -d bison.y
+parser: $(SRC)/parser.y
+	cd $(SRC) && bison -t -d parser.y
 
-lexer: lexer.l
-	flex lexer.l
+lexer: $(SRC)/lexer.l
+	cd $(SRC) && flex lexer.l
 
-compiler: lexer bison
+compiler: lexer parser
 	mkdir -p out
-	$(CC) $(CFLAGS) -o $(SRC) lex.yy.c bison.tab.c compiler.cpp expressions.cpp conditions.cpp
+	cd $(SRC) && $(CC) $(CFLAGS) -o $(OUT) $(FILES)
 	make clean
 
 interpreter:
@@ -21,16 +23,16 @@ interpreter:
 
 debug: compiler
 	test -f ../interpreter/maszyna-rejestrowa || make interpreter
-	./out/compiler ./programs/in out/out
-	../interpreter/maszyna-rejestrowa ./out/out
+	./out/compiler programs/in out/out
+	../interpreter/maszyna-rejestrowa out/out
 
 test: compiler
 	test -f ../interpreter/maszyna-rejestrowa || make interpreter
 	./out/compiler ./programs/tests/test$(num) out/out
-	../interpreter/maszyna-rejestrowa ./out/out
+	../interpreter/maszyna-rejestrowa out/out
 
 clean:
-	rm -f lex.yy.c bison.tab.c bison.tab.h
+	cd $(SRC) && rm -f lex.yy.c parser.tab.c parser.tab.h
 
 cleanall: clean
-	rm -f ./out/compiler
+	cd $(SRC) && rm -f ./out/compiler

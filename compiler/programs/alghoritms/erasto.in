@@ -1,8 +1,8 @@
 [ sito Eratostenesa ]
 DECLARE
-    j; sito(2:10000); n; 
+    j; sito(2:100); n; 
 IN
-    n := 100000;
+    n := 100;
     FOR i FROM n DOWNTO 2 DO
         sito(i) := 1;
     ENDFOR

@@ -12,7 +12,7 @@ lexer: lexer.l
 
 compiler: lexer bison
 	mkdir -p out
-	$(CC) $(CFLAGS) -o $(SRC) lex.yy.c bison.tab.c compiler.cpp
+	$(CC) $(CFLAGS) -o $(SRC) lex.yy.c bison.tab.c compiler.cpp expressions.cpp conditions.cpp
 	make clean
 
 interpreter:

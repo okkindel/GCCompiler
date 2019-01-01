@@ -287,30 +287,17 @@ void __expressionMul (char* a, char* b) {
         setRegister("B", val);
         removeIde(ide1.name);
         removeIde(ide2.name);
-    } else if (ide1.type == "NUM" && ide2.type == "VAR") {
-        loadRegister("C", ide2);
-        resetRegister("B");
-        for (long long int i = 0; i < stoll(ide1.name); ++i) {
-            insert("ADD", "B", "C");
-        }
-        removeIde(ide1.name);
-    } else if (ide1.type == "VAR" && ide2.type == "NUM") {
-        loadRegister("C", ide1);
-        resetRegister("B");
-        for (long long int i = 0; i < stoll(ide2.name); ++i) {
-            insert("ADD", "B", "C");
-        }
-        removeIde(ide2.name);
     } else {
-        assignRegister("B", ide1);
-        assignRegister("C", ide2);
-        insert("JZERO", "C", cmdIndex + 7);
-        insert("COPY", "D", "B");
-        insert("DEC", "C");
+        assignRegister("C", ide1);
+        assignRegister("D", ide2);
+        resetRegister("B");
+        insert("JODD", "C", cmdIndex + 2);
+        insert("JUMP", cmdIndex + 2);
         insert("ADD", "B", "D");
-        insert("DEC", "C");
+        insert("ADD", "D", "D");
+        insert("HALF", "C");
         insert("JZERO", "C", cmdIndex + 2);
-        insert("JUMP", cmdIndex - 3);        
+        insert("JUMP", cmdIndex - 6);      
     }
     DEBUG_MSG("Mnożenie: " << ide1.name << ": " << ide1.type << " * " << ide2.name << ": " << ide2.type);
 }
@@ -337,36 +324,35 @@ void __expressionDiv (char* a, char* b) {
     } else {
         if (ide1.type == "TAB" && ide2.type == "TAB") {
             // as long as double tab, we have to switch registers
-            assignRegister("C", ide1);
+            assignRegister("D", ide1);
             assignRegister("B", ide2);
         } else {
-            assignRegister("B", ide1);
+            assignRegister("D", ide1);
             assignRegister("C", ide2);
         }
-        // counter
-        resetRegister("D");
-
-        // if b == 0
-        insert("JZERO", "C", cmdIndex + 9);
         
-        insert("COPY", "E", "B");
-        insert("SUB", "B", "C");
-
-        // if a <= b
-        insert("JZERO", "B", cmdIndex + 4);
-        insert("INC", "D");
-        insert("JZERO", "B", cmdIndex + 4);
-        insert("JUMP", cmdIndex - 5);
-
-        // if a >= b
-        insert("SUB", "C", "E");
-        insert("JZERO", "C", cmdIndex + 3);
-
-        insert("COPY", "B", "D");
+        insert("JZERO", "C", cmdIndex + 22);
+        insert("COPY", "E", "C");
+        insert("COPY", "B", "E");
+        insert("SUB", "B", "D");
+        insert("JZERO", "B", cmdIndex + 2);
         insert("JUMP", cmdIndex + 3);
-
-        insert("INC", "D");
-        insert("JUMP", cmdIndex - 3);
+        insert("ADD", "E", "E");
+        insert("JUMP", cmdIndex - 5);
+        resetRegister("B");
+        insert("COPY", "F", "E");
+        insert("SUB", "F", "D");
+        insert("JZERO", "F", cmdIndex + 4);
+        insert("ADD", "B", "B");
+        insert("HALF", "E");
+        insert("JUMP", cmdIndex + 5);
+        insert("ADD", "B", "B");
+        insert("INC", "B");
+        insert("SUB", "D", "E");
+        insert("HALF", "E");
+        insert("COPY", "F", "C");
+        insert("SUB", "F", "E");
+        insert("JZERO", "F", cmdIndex - 12);
 
         if (ide1.type == "NUM")
             removeIde(ide1.name);
@@ -640,14 +626,14 @@ void setRegister(string reg, long long int num) {
         }
     } else {
         string bin = decToBin(num);
-        long long int limit = bin.size();
-        for (long long int i = 0; i < limit; ++i) {
+        long long int size = bin.size();
+        for (long long int i = 0; i < size; ++i) {
             if(bin[i] == '1') {
                 insert("INC", reg);
             }
-            if(i < (limit - 1)) {
+            if(i < (size - 1)) {
 	            insert("ADD", reg, reg);
-    		}
+            }
         }
     }
 }

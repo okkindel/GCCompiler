@@ -1,6 +1,6 @@
-# GCompiler
+# GCCompiler
 
-Gębalang is a simple imerative language based on i have no idea what. Let me introduce a *a new georgus compiler* of this awesome language - **GCompiler**.
+Gębalang is a simple imerative language based on i have no idea what. Let me introduce a *a new georgus compiler* of this awesome language - **GCCompiler**.
 
 ## Compile sources
 

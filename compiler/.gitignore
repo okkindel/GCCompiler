@@ -1,4 +1,0 @@
-compiler
-lex.yy.c
-bison.tab.c
-bison.tab.h

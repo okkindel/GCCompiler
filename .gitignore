@@ -1,0 +1,9 @@
+compiler/out/compiler
+compiler/lex.yy.c
+compiler/bison.tab.c
+compiler/bison.tab.h
+interpreter/maszyna-rejestrowa
+interpreter/maszyna-rejestrowa-cln
+interpreter/parser.cc
+interpreter/parser.hh
+interpreter/lexer.cc

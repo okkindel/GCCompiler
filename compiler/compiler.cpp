@@ -840,7 +840,7 @@ void optymize() {
         }
     }
     if (!is_written) {
-        for (auto it = begin(commands); it != end(commands);) {
+        for (auto it = begin(commands); it != end(commands) - 1;) {
             char const *COMMANDS = commands.at(distance(commands.begin(), it)).c_str();
             char const *COMMAND = "GET";
             if (!strstr(COMMANDS, COMMAND))
@@ -848,7 +848,6 @@ void optymize() {
             else 
                 ++it;
         }
-        insert("HALT");
     }
 }
 

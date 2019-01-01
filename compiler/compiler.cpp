@@ -324,13 +324,13 @@ void __expressionDiv (char* a, char* b) {
     } else {
         if (ide1.type == "TAB" && ide2.type == "TAB") {
             // as long as double tab, we have to switch registers
-            assignRegister("D", ide1);
-            assignRegister("B", ide2);
+            assignRegister("C", ide1);
+            assignRegister("D", ide2);
         } else {
             assignRegister("D", ide1);
             assignRegister("C", ide2);
         }
-        
+
         insert("JZERO", "C", cmdIndex + 22);
         insert("COPY", "E", "C");
         insert("COPY", "B", "E");
@@ -378,23 +378,41 @@ void __expressionMod (char* a, char* b) {
         removeIde(ide1.name);
         removeIde(ide2.name);
     } else {
-        assignRegister("B", ide1);
-        assignRegister("C", ide2);
-        // if b == 0
-        insert("JZERO", "C", cmdIndex + 6);
-        
-        insert("COPY", "D", "B");
-        insert("SUB", "B", "C");
+        if (ide1.type == "TAB" && ide2.type == "TAB") {
+            // as long as double tab, we have to switch registers
+            assignRegister("D", ide1);
+            assignRegister("B", ide2);
+        } else {
+            assignRegister("D", ide1);
+            assignRegister("C", ide2);
+        }
 
+        insert("JZERO", "C", cmdIndex + 24);
+        insert("JZERO", "C", cmdIndex + 22);
+        insert("COPY", "E", "C");
+        insert("COPY", "B", "E");
+        insert("SUB", "B", "D");
         insert("JZERO", "B", cmdIndex + 2);
-        insert("JUMP", cmdIndex - 3);
-
-        // if a == b
-        insert("SUB", "C", "D");
-        insert("JZERO", "C", cmdIndex + 3);
-        insert("COPY", "B", "D");
+        insert("JUMP", cmdIndex + 3);
+        insert("ADD", "E", "E");
+        insert("JUMP", cmdIndex - 5);
+        resetRegister("B");
+        insert("COPY", "F", "E");
+        insert("SUB", "F", "D");
+        insert("JZERO", "F", cmdIndex + 4);
+        insert("ADD", "B", "B");
+        insert("HALF", "E");
+        insert("JUMP", cmdIndex + 5);
+        insert("ADD", "B", "B");
+        insert("INC", "B");
+        insert("SUB", "D", "E");
+        insert("HALF", "E");
+        insert("COPY", "F", "C");
+        insert("SUB", "F", "E");
+        insert("JZERO", "F", cmdIndex - 12);
         insert("JUMP", cmdIndex + 2);
-        insert("COPY", "B", "C");
+        resetRegister("D");
+        insert("COPY", "B", "D");
 
         if (ide1.type == "NUM")
             removeIde(ide1.name);

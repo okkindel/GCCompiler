@@ -1,24 +1,28 @@
 DECLARE
     a(0:10); b(0:10); c; d; e;
 IN
-    [
+    
         a(0) := 6;
         a(4) := 2;
         c := 2;
         a(0) := a(0) * a(4);
         c := a(0) * c;
-        WRITE c;
+        [WRITE c;]
         WRITE 1111111111111;
         c := 10 % 0;
-        WRITE c;
-    ]
+        [WRITE c;]
+    
 
+    
     READ d;
     READ e;
 
     d := d / e;
 
-    WRITE d;
+    [WRITE d;]
+    
+
+    [WRITE 2147483646;]
 
 END
 

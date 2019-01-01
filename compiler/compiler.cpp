@@ -829,13 +829,35 @@ void initError(Identifier ide, char* a, int yylineno) {
         error(a, yylineno, "An attempt to use an uninitialized variable:");
 }
 
+void optymize() {
+    bool is_written = false;
+    for (int cmd = 0; cmd < commands.size(); cmd++) {
+        char const *COMMANDS = commands.at(cmd).c_str();
+        char const *COMMAND = "PUT";
+        if(strstr(COMMANDS, COMMAND) != NULL) {
+            is_written = true;
+            break;
+        }
+    }
+    if (!is_written) {
+        for (auto it = begin(commands); it != end(commands);) {
+            char const *COMMANDS = commands.at(distance(commands.begin(), it)).c_str();
+            char const *COMMAND = "GET";
+            if (!strstr(COMMANDS, COMMAND))
+                it = commands.erase(it);
+            else 
+                ++it;
+        }
+        insert("HALT");
+    }
+}
+
 void print(char* out) {
-	long long int cmd;
     ofstream file;
     file.open(out);
     DEBUG_MSG(""/*endl*/"");
 
-    for(cmd = 0; cmd < commands.size(); cmd++) {
+    for (int cmd = 0; cmd < commands.size(); cmd++) {
         DEBUG_MSG(cmd << ":\t" << commands.at(cmd));
         file << commands.at(cmd) << endl;
     }

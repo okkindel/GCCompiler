@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <iostream>
 #include <algorithm>
 #include <fstream>
@@ -211,6 +212,8 @@ void insert(string cmd, int index);
 void insert(string str, string reg, int index);
 // check for initialized error
 void initError(Identifier ide, char* a, int yylineno);
+// optymize code, remove unused commands
+void optymize();
 // prints stack
 void print(char* output);
 // throws errors

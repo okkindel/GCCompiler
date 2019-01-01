@@ -114,6 +114,7 @@ int main(int argv, char* argc[]) {
     if (yyin == NULL)
         error(argc[1], 0, "File does not exist:");
 	yyparse();
+    optymize();
     print(argc[2]);
 	return 0;
 }

@@ -151,13 +151,13 @@ void __ideIdeNum(char* a, char* b, int yylineno);
 // sets register to given number
 void setRegister(string reg, long long int num);
 // stores register to memory
-void storeRegister(string reg, Variable i);
+void storeRegister(string reg, Variable var);
 // loads memory to register
-void loadRegister(string reg, Variable i);
+void loadRegister(string reg, Variable var);
 // loads proper memory
-void assignMemory(Variable i);
+void assignMemory(Variable var);
 // assign one variable to register
-void assignRegister(string r, Variable i);
+void assignRegister(string reg, Variable var);
 // zero register
 void resetRegister(string reg);
 

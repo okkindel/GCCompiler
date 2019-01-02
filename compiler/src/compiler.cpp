@@ -277,34 +277,34 @@ void setRegister(string reg, long long int num) {
     }
 }
 
-void storeRegister(string reg, Variable i) {
-    assignMemory(i);
+void storeRegister(string reg, Variable var) {
+    assignMemory(var);
     insert("STORE", reg);
 }
 
-void loadRegister(string reg, Variable i) {
-    assignMemory(i);
+void loadRegister(string reg, Variable var) {
+    assignMemory(var);
     insert("LOAD", reg);
 }
 
-void assignMemory(Variable i) {
-    if (i.type == "TAB") {
+void assignMemory(Variable var) {
+    if (var.type == "TAB") {
         assignRegister("H", arrays.top().index);
         setRegister("A", arrays.top().value.memory);
         insert("ADD", "A", "H");
         arrays.pop();
     } else {
-        setRegister("A", i.memory);
+        setRegister("A", var.memory);
     }
 }
 
-void assignRegister(string r, Variable i) {
-    if (i.type == "NUM")
-        setRegister(r, stoll(i.name));
-    else if (i.type == "VAR" || i.type == "ITE")
-        loadRegister(r, i);
+void assignRegister(string reg, Variable var) {
+    if (var.type == "NUM")
+        setRegister(reg, stoll(var.name));
+    else if (var.type == "VAR" || var.type == "ITE")
+        loadRegister(reg, var);
     else
-        loadRegister(r, i);
+        loadRegister(reg, var);
 }
 
 void resetRegister(string reg) {

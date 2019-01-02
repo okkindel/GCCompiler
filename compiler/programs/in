@@ -1,6 +1,6 @@
 DECLARE
     a(0:10); 
-    b(0:10); 
+    b(0:10);
     c; d; e;
 IN
     a(0) := 6;
@@ -35,11 +35,9 @@ IN
     d := a(1) / b(2);
     WRITE d;
 
-    [
     d := 10;
     WHILE d > 0 DO
         WRITE d;
         d := d - 1;
     ENDWHILE
-    ]
 END

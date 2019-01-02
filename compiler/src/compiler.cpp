@@ -15,11 +15,10 @@
 
 int cmdIndex = 0;
 int memIndex = 0;
-int loopIndex = 0;
 stack<int> hooks;
+stack<Loop> loops;
 stack<Jump> jumps;
 stack<Array> arrays;
-map<int, Loop> loops;
 vector<string> commands;
 map<string, Variable> variables;
 
@@ -84,7 +83,7 @@ void __end_if() {
     DEBUG_MSG("Zakończono warunek if");
 }
 
-void __begin_loop() {
+void __begin_while() {
     hooks.push(cmdIndex);
 }
 
@@ -135,14 +134,12 @@ void __for(char* i, char* a, char* b, int yylineno) {
     assignRegister("F", finish);
     storeRegister("F", condition);
 
-    Loop loop;
-    createLoop(&loop, iterator, condition, cmdIndex);
-    insertLoop(loop);
+    createLoop(iterator, condition, cmdIndex);
 }
 
 void __end_down_for() {
 
-    Loop loop = loops.at(loopIndex - 1);
+    Loop loop = loops.top();
 
     assignRegister("G", loop.condition);
     assignRegister("H", loop.iterator);
@@ -161,7 +158,7 @@ void __end_down_for() {
 
 void __end_up_for() {
 
-    Loop loop = loops.at(loopIndex - 1);
+    Loop loop = loops.top();
 
     assignRegister("G", loop.condition);
     assignRegister("H", loop.iterator);
@@ -215,14 +212,14 @@ void __ideIdeIde(char* a, char* b, int yylineno) {
     if (variables.find(b) == variables.end())
         error(b, yylineno, "The variable has not been declared:");
 
-    Variable val = variables.at(a);
+    Variable name = variables.at(a);
     Variable index = variables.at(b);
 
-    if (val.type != "TAB")
+    if (name.type != "TAB")
         error(a, yylineno, "Incorrect reference to the variable:");
     
     Array arr;
-    arr.value = val;
+    arr.name = name;
     arr.index = index;
     arrays.push(arr);
     DEBUG_MSG("Znaleziono klucz tablicy: " << variables.at(a).name << " i jest zainicjowany: " << variables.at(a).initialized);
@@ -243,7 +240,7 @@ void __ideIdeNum(char* a, char* b, int yylineno) {
         error(a, yylineno, "The range of the array has been exceeded:");
     
     Array arr;
-    arr.value = var;
+    arr.name = var;
     arr.index = num;
     arrays.push(arr);
 
@@ -290,7 +287,7 @@ void loadRegister(string reg, Variable var) {
 void assignMemory(Variable var) {
     if (var.type == "TAB") {
         assignRegister("H", arrays.top().index);
-        setRegister("A", arrays.top().value.memory);
+        setRegister("A", arrays.top().name.memory);
         insert("ADD", "A", "H");
         arrays.pop();
     } else {
@@ -352,25 +349,19 @@ void removeIde(string key) {
 //        Loop functions        //
 //////////////////////////////////
 
-void createLoop(Loop* loop, Variable iterator, Variable condition, int index) {
+void createLoop(Variable iterator, Variable condition, int index) {
     DEBUG_MSG("Warunek pętli: " << condition.name << ", typu: " << condition.type);
-    loop->depth = loopIndex;
-    loop->iterator = iterator;
-    loop->condition = condition;
-    loop->index = index;
-}
-
-void insertLoop(Loop loop) {
-    loops.insert(make_pair(loopIndex, loop));
-    loopIndex++;
-    DEBUG_MSG("Dodano do pamięci pętlę o id: " << loopIndex - 1);
+    Loop loop;
+    loop.iterator = iterator;
+    loop.condition = condition;
+    loop.index = index;
+    loops.push(loop);
 }
 
 void removeLoop() {
-    removeIde(loops.at(loopIndex - 1).iterator.name);
-    removeIde(loops.at(loopIndex - 1).condition.name);
-    loops.erase(loopIndex - 1);
-    loopIndex--;
+    removeIde(loops.top().iterator.name);
+    removeIde(loops.top().condition.name);
+    loops.pop();
     DEBUG_MSG("Usunięto z pamięci pętlę o id: " << loopIndex);
 }
 

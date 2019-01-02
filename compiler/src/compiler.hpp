@@ -52,7 +52,6 @@ typedef struct {
 
 typedef struct {
 	int index;
-	int depth;
 	Variable iterator;
 	Variable condition;
 } Loop;
@@ -63,7 +62,7 @@ typedef struct {
 } Jump;
 
 typedef struct {
-	Variable value;
+	Variable name;
 	Variable index;
 } Array;
 
@@ -73,10 +72,9 @@ typedef struct {
 
 extern map<string, Variable> variables;
 extern stack<Jump> jumps;
-extern map<int, Loop> loops;
 extern stack<Array> arrays;
+extern stack<Loop> loops;
 extern stack<int> hooks;
-extern int loopIndex;
 extern int memIndex;
 extern int cmdIndex;
 
@@ -95,7 +93,7 @@ void __if_else();
 // end if
 void __end_if();
 // begin while
-void __begin_loop();
+void __begin_while();
 // end while
 void __end_while();
 // end do
@@ -178,9 +176,7 @@ void removeIde(string key);
 //////////////////////////////////
 
 // create loop
-void createLoop(Loop* loop, Variable iterator, Variable condition, int index);
-// insert loop
-void insertLoop(Loop loop);
+void createLoop(Variable iterator, Variable condition, int index);
 // remove loop
 void removeLoop();
 

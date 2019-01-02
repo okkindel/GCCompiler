@@ -15,7 +15,6 @@
 
 int cmdIndex = 0;
 int memIndex = 0;
-stack<int> hooks;
 stack<Loop> loops;
 stack<Jump> jumps;
 stack<Array> arrays;
@@ -84,29 +83,27 @@ void __end_if() {
 }
 
 void __begin_while() {
-    hooks.push(cmdIndex);
+    createHook(cmdIndex);
 }
 
 void __end_while() {
-    insert("JUMP", hooks.top());
+    insert("JUMP", loops.top().index);
     assignJump(cmdIndex);
     assignRegister("G", jumps.top().value);
     insert("JZERO", "G", cmdIndex + 2);
     insert("JUMP", to_string(jumps.top().index + 1));
     removeJump();
-    hooks.pop();
+    removeLoop();
     DEBUG_MSG("Zakończono warunek if");
 }
 
 void __end_do() {
     assignJump(cmdIndex);
     assignRegister("G", jumps.top().value);
-    
     insert("JZERO", "G", cmdIndex + 2);
-    insert("JUMP", hooks.top());
-
+    insert("JUMP", loops.top().index);
     removeJump();
-    hooks.pop();
+    removeLoop();
     DEBUG_MSG("Zakończono warunek do");
 }
 
@@ -348,6 +345,13 @@ void removeIde(string key) {
 //////////////////////////////////
 //        Loop functions        //
 //////////////////////////////////
+
+void createHook(int index) {
+    DEBUG_MSG("Zakotwiczenie: " << index);
+    Loop loop;
+    loop.index = index;
+    loops.push(loop);
+}
 
 void createLoop(Variable iterator, Variable condition, int index) {
     DEBUG_MSG("Warunek pętli: " << condition.name << ", typu: " << condition.type);

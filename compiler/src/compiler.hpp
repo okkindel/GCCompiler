@@ -74,7 +74,6 @@ extern map<string, Variable> variables;
 extern stack<Jump> jumps;
 extern stack<Array> arrays;
 extern stack<Loop> loops;
-extern stack<int> hooks;
 extern int memIndex;
 extern int cmdIndex;
 
@@ -175,6 +174,8 @@ void removeIde(string key);
 //        Loop functions        //
 //////////////////////////////////
 
+// create hook
+void createHook(int index);
 // create loop
 void createLoop(Variable iterator, Variable condition, int index);
 // remove loop

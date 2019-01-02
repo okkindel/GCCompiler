@@ -36,7 +36,7 @@ IN
     WRITE d;
 
     d := 10;
-    WHILE d > 0 DO
+    WHILE d > 3 DO
         WRITE d;
         d := d - 1;
     ENDWHILE

@@ -44,7 +44,6 @@ using namespace std;
 typedef struct {
 	string name;
 	string type;
-	int counter;
 	int memory;
 	bool initialized;
 	int begin;

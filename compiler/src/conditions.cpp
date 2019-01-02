@@ -10,14 +10,14 @@
 #include "compiler.hpp"
 
 void __condEq(char* a, char* b, int yylineno) {
-    Identifier ide1 = identifiers.at(a);
-    Identifier ide2 = identifiers.at(b);
-    initError(ide1, a, yylineno);
-    initError(ide2, b, yylineno);
+    Variable var1 = variables.at(a);
+    Variable var2 = variables.at(b);
+    initError(var1, a, yylineno);
+    initError(var2, b, yylineno);
 
     resetRegister("G");
-    assignRegister("C", ide1);
-    assignRegister("D", ide2);
+    assignRegister("C", var1);
+    assignRegister("D", var2);
 
     insert("COPY", "E", "C");
     insert("SUB", "E", "D");
@@ -32,18 +32,18 @@ void __condEq(char* a, char* b, int yylineno) {
     createJump();
     insert("JZERO", "G", "$bookmark");
 
-    DEBUG_MSG("Porównano: " << ide1.name << " == " << ide2.name);
+    DEBUG_MSG("Porównano: " << var1.name << " == " << var2.name);
 }
 
 void __condNotEq(char* a, char* b, int yylineno) {
-    Identifier ide1 = identifiers.at(a);
-    Identifier ide2 = identifiers.at(b);
-    initError(ide1, a, yylineno);
-    initError(ide2, b, yylineno);
+    Variable var1 = variables.at(a);
+    Variable var2 = variables.at(b);
+    initError(var1, a, yylineno);
+    initError(var2, b, yylineno);
 
     resetRegister("G");
-    assignRegister("C", ide1);
-    assignRegister("D", ide2);
+    assignRegister("C", var1);
+    assignRegister("D", var2);
     insert("COPY", "E", "C");
     insert("SUB", "E", "D");
     insert("JZERO", "E", cmdIndex + 2);
@@ -57,18 +57,18 @@ void __condNotEq(char* a, char* b, int yylineno) {
     createJump();
     insert("JZERO", "G", "$bookmark");
 
-    DEBUG_MSG("Porównano: " << ide1.name << " != " << ide2.name);
+    DEBUG_MSG("Porównano: " << var1.name << " != " << var2.name);
 }
 
 void __condLowEq(char* a, char* b, int yylineno) {
-    Identifier ide1 = identifiers.at(a);
-    Identifier ide2 = identifiers.at(b);
-    initError(ide1, a, yylineno);
-    initError(ide2, b, yylineno);
+    Variable var1 = variables.at(a);
+    Variable var2 = variables.at(b);
+    initError(var1, a, yylineno);
+    initError(var2, b, yylineno);
 
     resetRegister("G");
-    assignRegister("C", ide1);
-    assignRegister("D", ide2);
+    assignRegister("C", var1);
+    assignRegister("D", var2);
     insert("COPY", "E", "D");
     insert("SUB", "E", "C");
     insert("JZERO", "E", cmdIndex + 3);
@@ -83,18 +83,18 @@ void __condLowEq(char* a, char* b, int yylineno) {
     createJump();
     insert("JZERO", "G", "$bookmark");
 
-    DEBUG_MSG("Porównano: " << ide1.name << " <= " << ide2.name);
+    DEBUG_MSG("Porównano: " << var1.name << " <= " << var2.name);
 }
 
 void __condGreEq(char* a, char* b, int yylineno) {
-    Identifier ide1 = identifiers.at(a);
-    Identifier ide2 = identifiers.at(b);
-    initError(ide1, a, yylineno);
-    initError(ide2, b, yylineno);
+    Variable var1 = variables.at(a);
+    Variable var2 = variables.at(b);
+    initError(var1, a, yylineno);
+    initError(var2, b, yylineno);
 
     resetRegister("G");
-    assignRegister("C", ide1);
-    assignRegister("D", ide2);
+    assignRegister("C", var1);
+    assignRegister("D", var2);
     insert("COPY", "E", "C");
     insert("SUB", "E", "D");
     insert("JZERO", "E", cmdIndex + 3);
@@ -109,18 +109,18 @@ void __condGreEq(char* a, char* b, int yylineno) {
     createJump();
     insert("JZERO", "G", "$bookmark");
 
-    DEBUG_MSG("Porównano: " << ide1.name << " >= " << ide2.name);
+    DEBUG_MSG("Porównano: " << var1.name << " >= " << var2.name);
 }
 
 void __condLow(char* a, char* b, int yylineno) {
-    Identifier ide1 = identifiers.at(a);
-    Identifier ide2 = identifiers.at(b);
-    initError(ide1, a, yylineno);
-    initError(ide2, b, yylineno);
+    Variable var1 = variables.at(a);
+    Variable var2 = variables.at(b);
+    initError(var1, a, yylineno);
+    initError(var2, b, yylineno);
 
     resetRegister("G");
-    assignRegister("C", ide1);
-    assignRegister("D", ide2);
+    assignRegister("C", var1);
+    assignRegister("D", var2);
     insert("COPY", "E", "C");
     insert("SUB", "E", "D");
     insert("JZERO", "E", cmdIndex + 2);
@@ -133,18 +133,18 @@ void __condLow(char* a, char* b, int yylineno) {
     createJump();
     insert("JZERO", "G", "$bookmark");
 
-    DEBUG_MSG("Porównano: " << ide1.name << " > " << ide2.name);
+    DEBUG_MSG("Porównano: " << var1.name << " > " << var2.name);
 }
 
 void __condGre(char* a, char* b, int yylineno) {
-    Identifier ide1 = identifiers.at(a);
-    Identifier ide2 = identifiers.at(b);
-    initError(ide1, a, yylineno);
-    initError(ide2, b, yylineno);
+    Variable var1 = variables.at(a);
+    Variable var2 = variables.at(b);
+    initError(var1, a, yylineno);
+    initError(var2, b, yylineno);
 
     resetRegister("G");
-    assignRegister("C", ide1);
-    assignRegister("D", ide2);
+    assignRegister("C", var1);
+    assignRegister("D", var2);
     insert("COPY", "E", "D");
     insert("SUB", "E", "C");
     insert("JZERO", "E", cmdIndex + 2);
@@ -157,5 +157,5 @@ void __condGre(char* a, char* b, int yylineno) {
     createJump();
     insert("JZERO", "G", "$bookmark");
 
-    DEBUG_MSG("Porównano: " << ide1.name << " > " << ide2.name);
+    DEBUG_MSG("Porównano: " << var1.name << " > " << var2.name);
 }

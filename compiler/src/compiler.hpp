@@ -49,30 +49,30 @@ typedef struct {
 	bool initialized;
 	int begin;
 	int size;
-} Identifier;
+} Variable;
 
 typedef struct {
 	int index;
 	int depth;
-	Identifier iterator;
-	Identifier condition;
+	Variable iterator;
+	Variable condition;
 } Loop;
 
 typedef struct {
 	int index;
-	Identifier value;
+	Variable value;
 } Jump;
 
 typedef struct {
-	Identifier value;
-	Identifier index;
+	Variable value;
+	Variable index;
 } Array;
 
 //////////////////////////////////
 //          Variables           //
 //////////////////////////////////
 
-extern map<string, Identifier> identifiers;
+extern map<string, Variable> variables;
 extern stack<Jump> jumps;
 extern map<int, Loop> loops;
 extern stack<Array> arrays;
@@ -85,7 +85,7 @@ extern int cmdIndex;
 //      Token functions         //
 //////////////////////////////////
 
-// declare identifier
+// declare variable
 void __declareIde (char* a, int yylineno);
 // declare array
 void __declareTab (char* a, char* b, char* c, int yylineno);
@@ -137,11 +137,11 @@ void __condLowEq(char* a, char* b, int yylineno);
 void __condGreEq(char* a, char* b, int yylineno);
 // constant number
 void __valueNum(char* a, int yylineno);
-// simple identifier
+// simple variable
 void __ideIdetifier(char* a, int yylineno);
-// tab identifier with ide
+// tab variable with var
 void __ideIdeIde(char* a, char* b, int yylineno);
-// tab identifier with num
+// tab variable with num
 void __ideIdeNum(char* a, char* b, int yylineno);
 
 //////////////////////////////////
@@ -151,13 +151,13 @@ void __ideIdeNum(char* a, char* b, int yylineno);
 // sets register to given number
 void setRegister(string reg, long long int num);
 // stores register to memory
-void storeRegister(string reg, Identifier i);
+void storeRegister(string reg, Variable i);
 // loads memory to register
-void loadRegister(string reg, Identifier i);
+void loadRegister(string reg, Variable i);
 // loads proper memory
-void assignMemory(Identifier i);
-// assign one identifier to register
-void assignRegister(string r, Identifier i);
+void assignMemory(Variable i);
+// assign one variable to register
+void assignRegister(string r, Variable i);
 // zero register
 void resetRegister(string reg);
 
@@ -165,13 +165,13 @@ void resetRegister(string reg);
 //    Identifiers functions     //
 //////////////////////////////////
 
-// create identifier
-void createIde(Identifier *s, string name, string type);
+// create variable
+void createIde(Variable *s, string name, string type);
 // create tab
-void createIde(Identifier *ide, string name, string type, int begin, int size);
-// insert identifier
-void insertIde(string key, Identifier i);
-// remove identifier
+void createIde(Variable *var, string name, string type, int begin, int size);
+// insert variable
+void insertIde(string key, Variable i);
+// remove variable
 void removeIde(string key);
 
 //////////////////////////////////
@@ -179,7 +179,7 @@ void removeIde(string key);
 //////////////////////////////////
 
 // create loop
-void createLoop(Loop* loop, Identifier iterator, Identifier condition, int index);
+void createLoop(Loop* loop, Variable iterator, Variable condition, int index);
 // insert loop
 void insertLoop(Loop loop);
 // remove loop
@@ -211,7 +211,7 @@ void insert(string cmd, int index);
 // insert double command with registry and number
 void insert(string str, string reg, int index);
 // check for initialized error
-void initError(Identifier ide, char* a, int yylineno);
+void initError(Variable var, char* a, int yylineno);
 // optymize code, remove unused commands
 void optymize();
 // prints stack

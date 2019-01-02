@@ -21,7 +21,7 @@ stack<Jump> jumps;
 stack<Array> arrays;
 map<int, Loop> loops;
 vector<string> commands;
-map<string, Identifier> identifiers;
+map<string, Variable> variables;
 
 //////////////////////////////////
 //      Token functions         //
@@ -29,39 +29,39 @@ map<string, Identifier> identifiers;
 
 void __declareIde (char* a, int yylineno) { 
     DEBUG_MSG("Zadeklarowano zmienną: " << a);     
-    if (identifiers.find(a) != identifiers.end())
+    if (variables.find(a) != variables.end())
         error(a, yylineno, "Repeated variable declaration:");
     else {
-        Identifier ide;
-        createIde(&ide, a, "VAR");
-        insertIde(a, ide);
+        Variable var;
+        createIde(&var, a, "VAR");
+        insertIde(a, var);
     }
 }
 
 void __declareTab (char* a, char* b, char* c, int yylineno) {
     DEBUG_MSG("Zadeklarowano tablicę: " << a);     
-    if (identifiers.find(a) != identifiers.end())
+    if (variables.find(a) != variables.end())
         error(a, yylineno, "Repeated variable declaration:");
     else if (stoll(b) > stoll(c))
         error(a, yylineno, "Negative capacity array:");
     else {
-        Identifier ide;
+        Variable var;
         // We have to left one memory cell free. Don't ask why. 
         // I don't know. But it works that way... 
         int size  = 1 + stoll(c) - stoll(b) + 1;
-        createIde(&ide, a, "TAB", stoll(b), size);
-        insertIde(a, ide);
+        createIde(&var, a, "TAB", stoll(b), size);
+        insertIde(a, var);
         memIndex++;
     }
 }
 
 void __cmdAssign(char* a, int yylineno) {
-    Identifier ide = identifiers.at(a);
-    if (ide.type == "ITE")
+    Variable var = variables.at(a);
+    if (var.type == "ITE")
         error(a, yylineno, "Loop iterator modification:");
-    identifiers.at(a).initialized = true;
-    storeRegister("B", ide);
-    DEBUG_MSG("Przyporządkowano klucz do zmiennej: " << ide.name << " na miejscu: " << ide.memory << " i jest zainicjowany: " << ide.initialized);
+    variables.at(a).initialized = true;
+    storeRegister("B", var);
+    DEBUG_MSG("Przyporządkowano klucz do zmiennej: " << var.name << " na miejscu: " << var.memory << " i jest zainicjowany: " << var.initialized);
 }
 
 void __if_else() {
@@ -114,21 +114,21 @@ void __end_do() {
 void __for(char* i, char* a, char* b, int yylineno) {
     
     DEBUG_MSG("Zadeklarowano zmienną: " << a);     
-    if (identifiers.find(i) != identifiers.end())
+    if (variables.find(i) != variables.end())
         error(i, yylineno, "Repeated variable declaration:");
 
-    Identifier iterator;
+    Variable iterator;
     createIde(&iterator, i, "ITE");
     insertIde(i, iterator);
-    identifiers.at(i).initialized = true;
+    variables.at(i).initialized = true;
 
-    Identifier condition;
+    Variable condition;
     createIde(&condition, "C", "VAR");
     insertIde("C", condition);
-    identifiers.at("C").initialized = true;
+    variables.at("C").initialized = true;
 
-    Identifier start = identifiers.at(a);
-    Identifier finish = identifiers.at(b);
+    Variable start = variables.at(a);
+    Variable finish = variables.at(b);
 
     assignRegister("F", start);
     storeRegister("F", iterator);
@@ -179,76 +179,76 @@ void __end_up_for() {
 }
 
 void __cmdWrite(char* a, int yylineno) {
-    Identifier ide = identifiers.at(a);
-    initError(ide, a, yylineno);    
-    assignRegister("B", ide);
+    Variable var = variables.at(a);
+    initError(var, a, yylineno);    
+    assignRegister("B", var);
     insert("PUT", "B");
-    DEBUG_MSG("Wczytywanie klucza: " << ide.name << " z miejsca w pamięci: " << ide.memory);
+    DEBUG_MSG("Wczytywanie klucza: " << var.name << " z miejsca w pamięci: " << var.memory);
 }
 
 void __cmdRead(char* a, int yylineno) {
-    Identifier ide = identifiers.at(a);
-    identifiers.at(a).initialized = true;
+    Variable var = variables.at(a);
+    variables.at(a).initialized = true;
     insert("GET", "B");
-    storeRegister("B", ide);
-    DEBUG_MSG("Zapisywanie klucza: " << ide.name << " do miejsca w pamięci: " << ide.memory);
+    storeRegister("B", var);
+    DEBUG_MSG("Zapisywanie klucza: " << var.name << " do miejsca w pamięci: " << var.memory);
 }
 
 void __valueNum(char* a, int yylineno) {
     DEBUG_MSG("Znaleziono stałą o wartości: " << a);
-    Identifier ide;
-    createIde(&ide, a, "NUM");
-    insertIde(a, ide);
+    Variable var;
+    createIde(&var, a, "NUM");
+    insertIde(a, var);
 }
 
 void __ideIdetifier(char* a, int yylineno) {
-    if (identifiers.find(a) == identifiers.end())
+    if (variables.find(a) == variables.end())
         error(a, yylineno, "The variable has not been declared:");
-    if (identifiers.at(a).type == "TAB")
+    if (variables.at(a).type == "TAB")
         error(a, yylineno, "Lack of reference to the element of the array:");
-    DEBUG_MSG("Znaleziono klucz: " << identifiers.at(a).name << " i jest zainicjowany: " << identifiers.at(a).initialized);
+    DEBUG_MSG("Znaleziono klucz: " << variables.at(a).name << " i jest zainicjowany: " << variables.at(a).initialized);
 }
 
 void __ideIdeIde(char* a, char* b, int yylineno) {
-    if (identifiers.find(a) == identifiers.end())
+    if (variables.find(a) == variables.end())
         error(a, yylineno, "The variable has not been declared:");
-    if (identifiers.find(b) == identifiers.end())
+    if (variables.find(b) == variables.end())
         error(b, yylineno, "The variable has not been declared:");
 
-    Identifier ide = identifiers.at(a);
-    Identifier var = identifiers.at(b);
+    Variable val = variables.at(a);
+    Variable index = variables.at(b);
 
-    if (ide.type != "TAB")
+    if (val.type != "TAB")
         error(a, yylineno, "Incorrect reference to the variable:");
     
     Array arr;
-    arr.value = ide;
-    arr.index = var;
+    arr.value = val;
+    arr.index = index;
     arrays.push(arr);
-    DEBUG_MSG("Znaleziono klucz tablicy: " << identifiers.at(a).name << " i jest zainicjowany: " << identifiers.at(a).initialized);
+    DEBUG_MSG("Znaleziono klucz tablicy: " << variables.at(a).name << " i jest zainicjowany: " << variables.at(a).initialized);
 }
 
 void __ideIdeNum(char* a, char* b, int yylineno) {
-    if (identifiers.find(a) == identifiers.end())
+    if (variables.find(a) == variables.end())
         error(a, yylineno, "The variable has not been declared:");
 
-    Identifier ide = identifiers.at(a);
-    Identifier num;
+    Variable var = variables.at(a);
+    Variable num;
     createIde(&num, b, "NUM");
     insertIde(b, num);
 
-    if (ide.type != "TAB")
+    if (var.type != "TAB")
         error(a, yylineno, "Incorrect reference to the variable:");
-    if (stoll(b) < ide.begin || stoll(b) > ide.begin + ide.size)
+    if (stoll(b) < var.begin || stoll(b) > var.begin + var.size)
         error(a, yylineno, "The range of the array has been exceeded:");
     
     Array arr;
-    arr.value = ide;
+    arr.value = var;
     arr.index = num;
     arrays.push(arr);
 
     removeIde(num.name);
-    DEBUG_MSG("Znaleziono klucz tablicy: " << identifiers.at(a).name << " i jest zainicjowany: " << identifiers.at(a).initialized);
+    DEBUG_MSG("Znaleziono klucz tablicy: " << variables.at(a).name << " i jest zainicjowany: " << variables.at(a).initialized);
 }
 
 //////////////////////////////////
@@ -277,17 +277,17 @@ void setRegister(string reg, long long int num) {
     }
 }
 
-void storeRegister(string reg, Identifier i) {
+void storeRegister(string reg, Variable i) {
     assignMemory(i);
     insert("STORE", reg);
 }
 
-void loadRegister(string reg, Identifier i) {
+void loadRegister(string reg, Variable i) {
     assignMemory(i);
     insert("LOAD", reg);
 }
 
-void assignMemory(Identifier i) {
+void assignMemory(Variable i) {
     if (i.type == "TAB") {
         assignRegister("H", arrays.top().index);
         setRegister("A", arrays.top().value.memory);
@@ -298,7 +298,7 @@ void assignMemory(Identifier i) {
     }
 }
 
-void assignRegister(string r, Identifier i) {
+void assignRegister(string r, Variable i) {
     if (i.type == "NUM")
         setRegister(r, stoll(i.name));
     else if (i.type == "VAR" || i.type == "ITE")
@@ -312,45 +312,45 @@ void resetRegister(string reg) {
 }
 
 //////////////////////////////////
-//    Identifiers functions     //
+//    Variables functions     //
 //////////////////////////////////
 
-void createIde(Identifier* ide, string name, string type) {
-    ide->name = name;
-    ide->memory = memIndex;
-    ide->type = type;
-    ide->initialized = false;
-    ide->size = 1;
+void createIde(Variable* var, string name, string type) {
+    var->name = name;
+    var->memory = memIndex;
+    var->type = type;
+    var->initialized = false;
+    var->size = 1;
 }
 
-void createIde(Identifier* ide, string name, string type, int begin, int size) {
-    ide->name = name;
-    ide->memory = memIndex;
-    ide->type = type;
-    ide->initialized = false;
-    ide->begin = begin;
-    ide->size = size;
+void createIde(Variable* var, string name, string type, int begin, int size) {
+    var->name = name;
+    var->memory = memIndex;
+    var->type = type;
+    var->initialized = false;
+    var->begin = begin;
+    var->size = size;
 }
 
-void insertIde(string key, Identifier ide) {
-    DEBUG_MSG("Dodano do pamięci klucz: " << key << ", typu: " << ide.type << ", na miejscu: " << memIndex);
-    if (identifiers.count(key) == 0) {
-        identifiers.insert(make_pair(key, ide));
-        identifiers.at(key).counter = 0;
-        memIndex += ide.size;
+void insertIde(string key, Variable var) {
+    DEBUG_MSG("Dodano do pamięci klucz: " << key << ", typu: " << var.type << ", na miejscu: " << memIndex);
+    if (variables.count(key) == 0) {
+        variables.insert(make_pair(key, var));
+        variables.at(key).counter = 0;
+        memIndex += var.size;
     }
     else {
-        identifiers.at(key).counter = identifiers.at(key).counter + 1;
+        variables.at(key).counter = variables.at(key).counter + 1;
     }
 }
 
 void removeIde(string key) {
-    if (identifiers.count(key) > 0) {
-        if (identifiers.at(key).counter > 0) {
-            identifiers.at(key).counter = identifiers.at(key).counter - 1;
+    if (variables.count(key) > 0) {
+        if (variables.at(key).counter > 0) {
+            variables.at(key).counter = variables.at(key).counter - 1;
         }
         else {
-            identifiers.erase(key);
+            variables.erase(key);
             memIndex--;
         }
     }
@@ -361,7 +361,7 @@ void removeIde(string key) {
 //        Loop functions        //
 //////////////////////////////////
 
-void createLoop(Loop* loop, Identifier iterator, Identifier condition, int index) {
+void createLoop(Loop* loop, Variable iterator, Variable condition, int index) {
     DEBUG_MSG("Warunek pętli: " << condition.name << ", typu: " << condition.type);
     loop->depth = loopIndex;
     loop->iterator = iterator;
@@ -390,10 +390,10 @@ void removeLoop() {
 void createJump() {
     DEBUG_MSG("Nowy warunek");
 
-    Identifier value;
+    Variable value;
     createIde(&value, "V", "VAR");
     insertIde("V", value);
-    identifiers.at("V").initialized = true;
+    variables.at("V").initialized = true;
     storeRegister("G", value);
 
     Jump jump;
@@ -445,8 +445,8 @@ void insert(string cmd, int index) {
     cmdIndex ++;
 }
 
-void initError(Identifier ide, char* a, int yylineno) {
-    if (ide.type != "NUM" && ide.initialized == false)
+void initError(Variable var, char* a, int yylineno) {
+    if (var.type != "NUM" && var.initialized == false)
         error(a, yylineno, "An attempt to use an uninitialized variable:");
 }
 

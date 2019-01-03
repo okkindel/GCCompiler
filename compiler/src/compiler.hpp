@@ -176,7 +176,7 @@ void removeIde(string key);
 //////////////////////////////////
 
 // create hook
-void createHook(int index);
+void createLoop(int index);
 // create loop
 void createLoop(Variable iterator, Variable condition, int index);
 // remove loop

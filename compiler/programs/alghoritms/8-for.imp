@@ -10,7 +10,6 @@ IN
 	READ c;
 	FOR i FROM 9 DOWNTO 0 DO
 		FOR j FROM 0 TO i DO
-				WRITE j;
 			FOR k FROM 0 TO j DO
 				a := a + k;
 				c := k * j;
@@ -19,7 +18,7 @@ IN
 			ENDFOR
 		ENDFOR
 	ENDFOR
-[	WRITE a;
+	WRITE a;
 	WRITE b;
-	WRITE c;]
+	WRITE c;
 END

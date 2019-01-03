@@ -83,7 +83,7 @@ void __end_if() {
 }
 
 void __begin_while() {
-    createHook(cmdIndex);
+    createLoop(cmdIndex);
 }
 
 void __end_while() {
@@ -119,9 +119,9 @@ void __for(char* i, char* a, char* b, int yylineno) {
     variables.at(i).initialized = true;
 
     Variable condition;
-    createIde(&condition, "C", "VAR");
-    insertIde("C", condition);
-    variables.at("C").initialized = true;
+    createIde(&condition, ("C" + cmdIndex), "VAR");
+    insertIde(("C" + cmdIndex), condition);
+    variables.at("C" + cmdIndex).initialized = true;
 
     Variable start = variables.at(a);
     Variable finish = variables.at(b);
@@ -328,26 +328,14 @@ void createIde(Variable* var, string name, string type, int begin, int size) {
 
 void insertIde(string key, Variable var) {
     DEBUG_MSG("Dodano do pamięci klucz: " << key << ", typu: " << var.type << ", na miejscu: " << memIndex);
-    if (variables.count(key) == 0) {
-        variables.insert(make_pair(key, var));
-        variables.at(key).counter = 0;
-        memIndex += var.size;
-    }
-    else {
-        variables.at(key).counter = variables.at(key).counter + 1;
-    }
+    variables.insert(make_pair(key, var));
+    memIndex += var.size;
+    
 }
 
 void removeIde(string key) {
-    if (variables.count(key) > 0) {
-        if (variables.at(key).counter > 0) {
-            variables.at(key).counter = variables.at(key).counter - 1;
-        }
-        else {
-            variables.erase(key);
-            memIndex--;
-        }
-    }
+    variables.erase(key);
+    memIndex--;
     DEBUG_MSG("Usunięto z pamięci klucz: " << key);
 }
 
@@ -355,7 +343,7 @@ void removeIde(string key) {
 //        Loop functions        //
 //////////////////////////////////
 
-void createHook(int index) {
+void createLoop(int index) {
     DEBUG_MSG("Zakotwiczenie: " << index);
     Loop loop;
     loop.index = index;
@@ -386,9 +374,9 @@ void createJump() {
     DEBUG_MSG("Nowy warunek");
 
     Variable value;
-    createIde(&value, "V", "VAR");
-    insertIde("V", value);
-    variables.at("V").initialized = true;
+    createIde(&value, ("J" + cmdIndex), "VAR");
+    insertIde(("J" + cmdIndex), value);
+    variables.at("J" + cmdIndex).initialized = true;
     storeRegister("G", value);
 
     Jump jump;

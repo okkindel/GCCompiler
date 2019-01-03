@@ -1,43 +1,10 @@
 DECLARE
     a(0:10); 
     b(0:10);
-    c; d; e;
+
 IN
     a(0) := 6;
     a(4) := 2;
-    c := 3;
-    a(0) := a(0) / a(4);
-    c := a(0) * c;
-    WRITE c;
-    WRITE 1111111111111;
-    c := 10 % 0;
-    WRITE c;
-
-    READ d;
-    READ e;
-
-    d := d / e;
-    WRITE d;
-
-    IF d >= 1 THEN WRITE 1; ELSE WRITE 0; ENDIF
-
-    [MAX LONG LONG INT VALUE]
-    WRITE 9223372036854775807;
-
-    READ d;
-    READ e;
-
-    d := d * e;
-    WRITE d;
-
-    a(1) := 2;
-    b(2) := 1;
-    d := a(1) / b(2);
-    WRITE d;
-
-    d := 10;
-    WHILE d > 3 DO
-        WRITE d;
-        d := d - 1;
-    ENDWHILE
+    a(0) := a(0) - a(4);
+    WRITE a(0);
 END

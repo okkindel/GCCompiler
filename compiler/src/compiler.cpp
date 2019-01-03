@@ -126,11 +126,17 @@ void __for(char* i, char* a, char* b, int yylineno) {
     Variable start = variables.at(a);
     Variable finish = variables.at(b);
 
-    assignRegister("F", start);
-    storeRegister("F", iterator);
-    assignRegister("F", finish);
-    storeRegister("F", condition);
-
+    if (variables.at(a).type == "TAB" && variables.at(b).type == "TAB") {
+        assignRegister("F", start);
+        storeRegister("F", condition);
+        assignRegister("F", finish);
+        storeRegister("F", iterator);
+    } else {
+        assignRegister("F", start);
+        storeRegister("F", iterator);
+        assignRegister("F", finish);
+        storeRegister("F", condition);
+    }
     createLoop(iterator, condition, cmdIndex);
 }
 
@@ -295,8 +301,6 @@ void assignMemory(Variable var) {
 void assignRegister(string reg, Variable var) {
     if (var.type == "NUM")
         setRegister(reg, stoll(var.name));
-    else if (var.type == "VAR" || var.type == "ITE")
-        loadRegister(reg, var);
     else
         loadRegister(reg, var);
 }

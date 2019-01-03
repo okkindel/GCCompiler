@@ -23,7 +23,7 @@ interpreter:
 
 debug: compiler
 	test -f ../interpreter/maszyna-rejestrowa || make interpreter
-	./out/compiler programs/alghoritms/9-sort.imp out/out
+	./out/compiler programs/alghoritms/8-for.imp out/out
 	../interpreter/maszyna-rejestrowa out/out
 
 test: compiler

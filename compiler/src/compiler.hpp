@@ -45,6 +45,7 @@ typedef struct {
 	string name;
 	string type;
 	int memory;
+	int counter;
 	bool initialized;
 	int begin;
 	int size;

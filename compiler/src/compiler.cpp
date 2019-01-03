@@ -330,14 +330,23 @@ void insertIde(string key, Variable var) {
     DEBUG_MSG("Dodano do pamięci klucz: " << key << ", typu: " << var.type << ", na miejscu: " << memIndex);
     if (variables.count(key) == 0) {
         variables.insert(make_pair(key, var));
+        variables.at(key).counter = 0;
         memIndex += var.size;
+    }
+    else {
+        variables.at(key).counter = variables.at(key).counter + 1;
     }
 }
 
 void removeIde(string key) {
     if (variables.count(key) > 0) {
-        variables.erase(key);
-        memIndex--;
+        if (variables.at(key).counter > 0) {
+            variables.at(key).counter = variables.at(key).counter - 1;
+        }
+        else {
+            variables.erase(key);
+            memIndex--;
+        }
     }
     DEBUG_MSG("Usunięto z pamięci klucz: " << key);
 }

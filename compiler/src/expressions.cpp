@@ -146,6 +146,7 @@ void __expressionDiv (char* a, char* b) {
             assignRegister("C", var2);
         }
 
+        resetRegister("B");
         insert("JZERO", "C", cmdIndex + 22);
         insert("COPY", "E", "C");
         insert("COPY", "B", "E");

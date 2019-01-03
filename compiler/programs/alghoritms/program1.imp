@@ -1,6 +1,6 @@
 [ sito Eratostenesa ]
 DECLARE
-    j; sito(2:100); n; 
+    n; j; sito(2:100);
 IN
     n := 100;
     FOR i FROM n DOWNTO 2 DO

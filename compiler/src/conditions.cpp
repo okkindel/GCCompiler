@@ -44,6 +44,7 @@ void __condNotEq(char* a, char* b, int yylineno) {
     resetRegister("G");
     assignRegister("C", var1);
     assignRegister("D", var2);
+
     insert("COPY", "E", "C");
     insert("SUB", "E", "D");
     insert("JZERO", "E", cmdIndex + 2);
@@ -67,8 +68,15 @@ void __condLowEq(char* a, char* b, int yylineno) {
     initError(var2, b, yylineno);
 
     resetRegister("G");
-    assignRegister("C", var1);
-    assignRegister("D", var2);
+    if (var1.type == "TAB" && var2.type == "TAB") {
+        // as long as double tab, we have to switch registers
+        assignRegister("D", var1);
+        assignRegister("C", var2);
+    } else {
+        assignRegister("C", var1);
+        assignRegister("D", var2);
+    }
+
     insert("COPY", "E", "D");
     insert("SUB", "E", "C");
     insert("JZERO", "E", cmdIndex + 3);
@@ -93,8 +101,15 @@ void __condGreEq(char* a, char* b, int yylineno) {
     initError(var2, b, yylineno);
 
     resetRegister("G");
-    assignRegister("C", var1);
-    assignRegister("D", var2);
+    if (var1.type == "TAB" && var2.type == "TAB") {
+        // as long as double tab, we have to switch registers
+        assignRegister("D", var1);
+        assignRegister("C", var2);
+    } else {
+        assignRegister("C", var1);
+        assignRegister("D", var2);
+    }
+
     insert("COPY", "E", "C");
     insert("SUB", "E", "D");
     insert("JZERO", "E", cmdIndex + 3);
@@ -119,8 +134,15 @@ void __condLow(char* a, char* b, int yylineno) {
     initError(var2, b, yylineno);
 
     resetRegister("G");
-    assignRegister("C", var1);
-    assignRegister("D", var2);
+    if (var1.type == "TAB" && var2.type == "TAB") {
+        // as long as double tab, we have to switch registers
+        assignRegister("D", var1);
+        assignRegister("C", var2);
+    } else {
+        assignRegister("C", var1);
+        assignRegister("D", var2);
+    }
+
     insert("COPY", "E", "C");
     insert("SUB", "E", "D");
     insert("JZERO", "E", cmdIndex + 2);
@@ -143,8 +165,15 @@ void __condGre(char* a, char* b, int yylineno) {
     initError(var2, b, yylineno);
 
     resetRegister("G");
-    assignRegister("C", var1);
-    assignRegister("D", var2);
+    if (var1.type == "TAB" && var2.type == "TAB") {
+        // as long as double tab, we have to switch registers
+        assignRegister("D", var1);
+        assignRegister("C", var2);
+    } else {
+        assignRegister("C", var1);
+        assignRegister("D", var2);
+    }
+
     insert("COPY", "E", "D");
     insert("SUB", "E", "C");
     insert("JZERO", "E", cmdIndex + 2);

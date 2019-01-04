@@ -16,10 +16,7 @@ void __expressionVal(char* a, int yylineno) {
         setRegister("B", stoll(var.name));
         removeIde(var.name);
     }
-    else if (var.type == "VAR") {
-        initError(var, a, yylineno);
-        loadRegister("B", var);
-    } else { // TAB
+    else {
         initError(var, a, yylineno);
         assignRegister("B", var);
     }
@@ -43,8 +40,7 @@ void __expressionAdd (char* a, char* b) {
         insert("INC", "B");
         removeIde(var2.name);
     } else {
-        assignRegister("B", var1);
-        assignRegister("C", var2);
+        assignRegister("B", var1, "C", var2);
         insert("ADD", "B", "C");
         if (var1.type == "NUM")
             removeIde(var1.name);
@@ -66,18 +62,11 @@ void __expressionSub (char* a, char* b) {
         long long int val = stoll(var1.name) - stoll(var2.name);
         if (val < 0)
             val = 0;
-
         setRegister("B", val);
         removeIde(var1.name);
         removeIde(var2.name);
-    } else if (var1.type == "TAB" && var2.type == "TAB") {
-        // as long as double tab, we have to switch registers
-        assignRegister("C", var1);
-        assignRegister("B", var2);
-        insert("SUB", "B", "C");
     } else {
-        assignRegister("B", var1);
-        assignRegister("C", var2);
+        assignRegister("B", var1, "C", var2);
         insert("SUB", "B", "C");
         if (var1.type == "NUM")
             removeIde(var1.name);
@@ -103,8 +92,7 @@ void __expressionMul (char* a, char* b) {
         removeIde(var1.name);
         removeIde(var2.name);
     } else {
-        assignRegister("C", var1);
-        assignRegister("D", var2);
+        assignRegister("C", var1, "D", var2);
         resetRegister("B");
         insert("JODD", "C", cmdIndex + 2);
         insert("JUMP", cmdIndex + 2);
@@ -137,15 +125,7 @@ void __expressionDiv (char* a, char* b) {
         insert("HALF", "B");
         removeIde(var2.name);
     } else {
-        if (var1.type == "TAB" && var2.type == "TAB") {
-            // as long as double tab, we have to switch registers
-            assignRegister("C", var1);
-            assignRegister("D", var2);
-        } else {
-            assignRegister("D", var1);
-            assignRegister("C", var2);
-        }
-
+        assignRegister("D", var1, "C", var2);
         resetRegister("B");
         insert("JZERO", "C", cmdIndex + 22);
         insert("COPY", "E", "C");
@@ -194,15 +174,7 @@ void __expressionMod (char* a, char* b) {
         removeIde(var1.name);
         removeIde(var2.name);
     } else {
-        if (var1.type == "TAB" && var2.type == "TAB") {
-            // as long as double tab, we have to switch registers
-            assignRegister("C", var1);
-            assignRegister("D", var2);
-        } else {
-            assignRegister("D", var1);
-            assignRegister("C", var2);
-        }
-
+        assignRegister("D", var1, "C", var2);
         insert("JZERO", "C", cmdIndex + 24);
         insert("JZERO", "C", cmdIndex + 22);
         insert("COPY", "E", "C");
@@ -235,5 +207,5 @@ void __expressionMod (char* a, char* b) {
         if (var2.type == "NUM")
             removeIde(var2.name);
     }
-    DEBUG_MSG("Dzielenie: " << var1.name << ": " << var1.type << " / " << var2.name << ": " << var2.type);
+    DEBUG_MSG("Modulo: " << var1.name << ": " << var1.type << " % " << var2.name << ": " << var2.type);
 }

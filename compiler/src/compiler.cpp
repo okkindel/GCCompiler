@@ -44,8 +44,8 @@ void __declareTab (char* a, char* b, char* c, int yylineno) {
         error(a, yylineno, "Negative capacity array:");
     else {
         Variable var;
-        // We have to left one memory cell free. Don't ask why. 
-        // I don't know. But it works that way... 
+        // We have to left one memory cell free.
+        // I don't know why. But it works that way... 
         int size  = 1 + stoll(c) - stoll(b) + 1;
         createIde(&var, a, "TAB", stoll(b), size);
         insertIde(a, var);
@@ -126,26 +126,16 @@ void __for(char* i, char* a, char* b, int yylineno) {
     Variable start = variables.at(a);
     Variable finish = variables.at(b);
 
-    if (variables.at(a).type == "TAB" && variables.at(b).type == "TAB") {
-        assignRegister("F", start);
-        storeRegister("F", condition);
-        assignRegister("F", finish);
-        storeRegister("F", iterator);
-    } else {
-        assignRegister("F", start);
-        storeRegister("F", iterator);
-        assignRegister("F", finish);
-        storeRegister("F", condition);
-    }
+    assignRegister("H", start, "F", finish);
+    storeRegister("H", iterator);
+    storeRegister("F", condition);
     createLoop(iterator, condition, cmdIndex);
 }
 
 void __end_down_for() {
 
     Loop loop = loops.top();
-
-    assignRegister("G", loop.condition);
-    assignRegister("H", loop.iterator);
+    assignRegister("G", loop.condition, "H", loop.iterator);
 
     insert("COPY", "F", "H");
     insert("SUB", "F", "G");
@@ -162,9 +152,7 @@ void __end_down_for() {
 void __end_up_for() {
 
     Loop loop = loops.top();
-
-    assignRegister("G", loop.condition);
-    assignRegister("H", loop.iterator);
+    assignRegister("G", loop.condition, "H", loop.iterator);
 
     insert("COPY", "F", "G");
     insert("SUB", "F", "H");
@@ -303,6 +291,17 @@ void assignRegister(string reg, Variable var) {
         setRegister(reg, stoll(var.name));
     else
         loadRegister(reg, var);
+}
+
+void assignRegister(string reg1, Variable var1, string reg2, Variable var2) {
+    if (var1.type == "TAB" && var2.type == "TAB") {
+        // as long as double tab, we have to switch registers
+        assignRegister(reg2, var1);
+        assignRegister(reg1, var2);
+    } else {
+        assignRegister(reg1, var1);
+        assignRegister(reg2, var2);
+    }
 }
 
 void resetRegister(string reg) {

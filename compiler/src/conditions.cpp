@@ -16,8 +16,7 @@ void __condEq(char* a, char* b, int yylineno) {
     initError(var2, b, yylineno);
 
     resetRegister("G");
-    assignRegister("C", var1);
-    assignRegister("D", var2);
+    assignRegister("C", var1, "D", var2);
 
     insert("COPY", "E", "C");
     insert("SUB", "E", "D");
@@ -42,8 +41,7 @@ void __condNotEq(char* a, char* b, int yylineno) {
     initError(var2, b, yylineno);
 
     resetRegister("G");
-    assignRegister("C", var1);
-    assignRegister("D", var2);
+    assignRegister("C", var1, "D", var2);
 
     insert("COPY", "E", "C");
     insert("SUB", "E", "D");
@@ -68,14 +66,7 @@ void __condLowEq(char* a, char* b, int yylineno) {
     initError(var2, b, yylineno);
 
     resetRegister("G");
-    if (var1.type == "TAB" && var2.type == "TAB") {
-        // as long as double tab, we have to switch registers
-        assignRegister("D", var1);
-        assignRegister("C", var2);
-    } else {
-        assignRegister("C", var1);
-        assignRegister("D", var2);
-    }
+    assignRegister("C", var1, "D", var2);
 
     insert("COPY", "E", "D");
     insert("SUB", "E", "C");
@@ -101,14 +92,7 @@ void __condGreEq(char* a, char* b, int yylineno) {
     initError(var2, b, yylineno);
 
     resetRegister("G");
-    if (var1.type == "TAB" && var2.type == "TAB") {
-        // as long as double tab, we have to switch registers
-        assignRegister("D", var1);
-        assignRegister("C", var2);
-    } else {
-        assignRegister("C", var1);
-        assignRegister("D", var2);
-    }
+    assignRegister("C", var1, "D", var2);
 
     insert("COPY", "E", "C");
     insert("SUB", "E", "D");
@@ -134,14 +118,7 @@ void __condLow(char* a, char* b, int yylineno) {
     initError(var2, b, yylineno);
 
     resetRegister("G");
-    if (var1.type == "TAB" && var2.type == "TAB") {
-        // as long as double tab, we have to switch registers
-        assignRegister("D", var1);
-        assignRegister("C", var2);
-    } else {
-        assignRegister("C", var1);
-        assignRegister("D", var2);
-    }
+    assignRegister("C", var1, "D", var2);
 
     insert("COPY", "E", "C");
     insert("SUB", "E", "D");
@@ -165,14 +142,7 @@ void __condGre(char* a, char* b, int yylineno) {
     initError(var2, b, yylineno);
 
     resetRegister("G");
-    if (var1.type == "TAB" && var2.type == "TAB") {
-        // as long as double tab, we have to switch registers
-        assignRegister("D", var1);
-        assignRegister("C", var2);
-    } else {
-        assignRegister("C", var1);
-        assignRegister("D", var2);
-    }
+    assignRegister("C", var1, "D", var2);
 
     insert("COPY", "E", "D");
     insert("SUB", "E", "C");

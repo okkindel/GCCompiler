@@ -155,6 +155,8 @@ void loadRegister(string reg, Variable var);
 void assignMemory(Variable var);
 // assign one variable to register
 void assignRegister(string reg, Variable var);
+// assign double register
+void assignRegister(string reg1, Variable var1, string reg2, Variable var2);
 // zero register
 void resetRegister(string reg);
 

@@ -4,6 +4,9 @@ SRC = ./src
 OUT = ../out/compiler
 FILES = lex.yy.c parser.tab.c compiler.cpp expressions.cpp conditions.cpp
 
+RUN_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+$(eval $(RUN_ARGS):;@:)
+
 all: compiler
 
 parser: $(SRC)/parser.y
@@ -23,16 +26,16 @@ interpreter:
 
 debug: compiler
 	test -f ../interpreter/maszyna-rejestrowa || make interpreter
-	./out/compiler programs/alghoritms/9-sort.imp out/out
+	./out/compiler programs/$(RUN_ARGS) out/out
 	../interpreter/maszyna-rejestrowa out/out
 
 test: compiler
 	test -f ../interpreter/maszyna-rejestrowa || make interpreter
-	./out/compiler ./programs/tests/test$(num) out/out
+	./out/compiler ./programs/tests/test$(RUN_ARGS) out/out
 	../interpreter/maszyna-rejestrowa out/out
 
 clean:
 	cd $(SRC) && rm -f lex.yy.c parser.tab.c parser.tab.h
 
 cleanall: clean
-	cd $(SRC) && rm -f ./out/compiler
+	cd $(SRC) && rm -f ../out/compiler

@@ -2,9 +2,9 @@
 
 Gębalang is a simple imperative programming language based on i have no idea what. Let me introduce a *a new georgus compiler* of this awesome language - **GCCompiler**.
 
-## Compile sources
+## Building
 
-Source files are located in `./compiler/src` directory. To compile the compiler by yourself you will need:
+Source files are located in `./compiler/src` directory. To build the compiler by yourself you will need:
 
 | tool  | version |
 |-------|---------|
@@ -13,23 +13,25 @@ Source files are located in `./compiler/src` directory. To compile the compiler 
 | g++   | 7.3.0   |
 | make  | 4.1     |
 
-To compile program from sources, just run command `make` or `make compiler` in `./compiler` folder. Your compiler will appear in `./out` directory.
+To compile compiler from sources, just run command `make` or `make compiler` in `./compiler` folder. Your compiler will appear in `./compiler/out` directory.
 
-## Run your first program
+## Usage
 
 You will find language documentation in `./compiler/docs/documentation.pdf` file. Sample programs are located in `./compiler/programs/` folder.
 
 To compile a program run command `./compiler input_file output_file`.
-Output file will appear. You can run your program using interpreter located in `./interpreter` directory. To compile interpreter run `make maszyna-rejestrowa`. Run it with your output file as an argument. Thats it!
+Output file should appear. You can run your program using interpreter located in `./interpreter` directory. To compile interpreter, call `make maszyna-rejestrowa` in its catalogue. To run program, execute interpreter with your output file as an argument.
+
+You can aslo use scripts embedded in makefile to run your programs. To compile and run the program at a time, use `make debug input_file` Input file must be located in `./programs` directory, output file will apper in `./out/out`. For testing the compiler, use `make test number`. Tests are located in `./programs/tests`.
 
 ## Licence
 
-```
-The Beerware License
+> ***Programmer:*** a tool which converts caffeine into code
 
-Copyright (c) 2018 Maciej Hajduk
+    **"THE COFFEEWARE LICENSE" (Revision 2):**
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software. As long as you retain this notice you can do whatever you want with this stuff.
+    Copyright (c) 2018 Maciej Hajduk
 
-MOREOVER, IF YOU MEET THE AUTHOR OF THE PROGRAM, YOU ARE OBLIGATED TO BRING HIM A BEER (as if I am on every KN Solvro meeting).
-```
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software. As long as you retain this notice you can do whatever you want with this stuff. If we meet some day, and you think this stuff is worth it, you are obligated to buy me a beer / coffee in return.
+
+    (as if I am on every KN Solvro meeting).

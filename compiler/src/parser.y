@@ -18,6 +18,7 @@ int yyerror(const string str);
 %}
 
 %define parse.error verbose
+%expect 2
 
 %union {
     char* str;

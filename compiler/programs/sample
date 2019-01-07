@@ -1,0 +1,7 @@
+DECLARE
+    a; b;
+IN
+   READ a;
+   b := a % 2;
+   WRITE b;
+END

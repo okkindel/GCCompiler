@@ -173,6 +173,13 @@ void __expressionMod (char* a, char* b) {
         setRegister("B", val);
         removeIde(var1.name);
         removeIde(var2.name);
+    } else if (var2.type == "NUM" && stoll(var2.name) == 2) {
+        assignRegister("C", var1);
+        resetRegister("B");
+        insert("JODD", "C", cmdIndex + 2);
+        insert("JUMP", cmdIndex + 2);
+        insert("INC", "B");
+        removeIde(var2.name);
     } else {
         assignRegister("D", var1, "C", var2);
         insert("JZERO", "C", cmdIndex + 24);

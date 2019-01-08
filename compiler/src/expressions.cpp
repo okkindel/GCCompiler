@@ -97,11 +97,17 @@ void __expressionMul (char* a, char* b) {
         setRegister("B", val);
         removeIde(var1.name);
         removeIde(var2.name);
-    } else if (var1.type == "NUM" && var1.name == "1") {
+    // if power of two
+    } else if (var1.type == "NUM" && (stoll(var1.name) != 0) && ((stoll(var1.name) & (stoll(var1.name) - 1)) == 0)) {
         assignRegister("B", var2);
+        for (int i = 0; i < log2(stoll(var1.name)); ++i)
+            insert("ADD", "B", "B");
         removeIde(var1.name);
-    } else if (var2.type == "NUM" && var2.name == "1") {
+    // if power of two
+    } else if (var2.type == "NUM" && (stoll(var2.name) != 0) && ((stoll(var2.name) & (stoll(var2.name) - 1)) == 0)) {
         assignRegister("B", var1);
+        for (int i = 0; i < log2(stoll(var2.name)); ++i)
+            insert("ADD", "B", "B");
         removeIde(var2.name);
     } else {
         assignRegister("C", var1, "D", var2);
@@ -134,7 +140,6 @@ void __expressionDiv (char* a, char* b) {
         removeIde(var2.name);
     // if power of two
     } else if (var2.type == "NUM" && (stoll(var2.name) != 0) && ((stoll(var2.name) & (stoll(var2.name) - 1)) == 0)) {
-        cout << "true" << endl;
         assignRegister("B", var1);
         for (int i = 0; i < log2(stoll(var2.name)); ++i)
             insert("HALF", "B");

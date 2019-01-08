@@ -13,6 +13,7 @@
 #include <iostream>
 #include <algorithm>
 #include <fstream>
+#include <math.h>
 #include <vector>
 #include <stack>
 #include <map>

@@ -39,6 +39,12 @@ void __expressionAdd (char* a, char* b) {
         assignRegister("B", var1);
         insert("INC", "B");
         removeIde(var2.name);
+    } else if (var1.type == "NUM" && var1.name == "0") {
+        assignRegister("B", var2);
+        removeIde(var1.name);
+    } else if (var2.type == "NUM" && var2.name == "0") {
+        assignRegister("B", var1);
+        removeIde(var2.name);
     } else {
         assignRegister("B", var1, "C", var2);
         insert("ADD", "B", "C");
@@ -91,6 +97,12 @@ void __expressionMul (char* a, char* b) {
         setRegister("B", val);
         removeIde(var1.name);
         removeIde(var2.name);
+    } else if (var1.type == "NUM" && var1.name == "1") {
+        assignRegister("B", var2);
+        removeIde(var1.name);
+    } else if (var2.type == "NUM" && var2.name == "1") {
+        assignRegister("B", var1);
+        removeIde(var2.name);
     } else {
         assignRegister("C", var1, "D", var2);
         resetRegister("B");
@@ -120,9 +132,12 @@ void __expressionDiv (char* a, char* b) {
         setRegister("B", val);
         removeIde(var1.name);
         removeIde(var2.name);
-    } else if (var2.type == "NUM" && stoll(var2.name) == 2) {
+    // if power of two
+    } else if (var2.type == "NUM" && (stoll(var2.name) != 0) && ((stoll(var2.name) & (stoll(var2.name) - 1)) == 0)) {
+        cout << "true" << endl;
         assignRegister("B", var1);
-        insert("HALF", "B");
+        for (int i = 0; i < log2(stoll(var2.name)); ++i)
+            insert("HALF", "B");
         removeIde(var2.name);
     } else {
         assignRegister("D", var1, "C", var2);

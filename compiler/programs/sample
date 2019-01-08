@@ -1,7 +1,7 @@
 DECLARE
-    a; b;
+    a; b; c;
 IN
-    FOR i FROM 5 DOWNTO i DO
-        WRITE i;
-    ENDFOR
+    READ a;
+    c := a / 1;
+    WRITE c;
 END

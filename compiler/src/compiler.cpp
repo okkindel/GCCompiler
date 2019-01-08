@@ -39,13 +39,11 @@ void __declareIde (char* a, int yylineno) {
 
 void __declareTab (char* a, char* b, char* c, int yylineno) {
     DEBUG_MSG("Zadeklarowano tablicę: " << a);     
-    if (variables.find(a) != variables.end())
-        error(a, yylineno, "Repeated variable declaration:");
-    else if (stoll(b) > stoll(c))
+    if (stoll(b) > stoll(c))
         error(a, yylineno, "Negative capacity array:");
     else {
         // we will add tabs on the end of declarations
-        tabs.push_back(string(a) + " " + string(b) + " " + string(c));
+        tabs.push_back(string(a) + " " + string(b) + " " + string(c) + " " + to_string(yylineno));
     }
 }
 
@@ -53,6 +51,11 @@ void insertTabs() {
     for (int cmd = 0; cmd < tabs.size(); cmd++) {
         vector<string> tab;
         split(tabs[cmd], tab, ' ');
+        if (variables.find(tab[0]) != variables.end()) {
+            char *a = new char[tab[0].length() + 1];
+            strcpy(a, tab[0].c_str());
+            error(a, stoi(tab[3]), "Repeated variable declaration:");
+        }
         Variable var;
         // We have to left one memory cell free.
         int size  = 1 + stoll(tab[2]) - stoll(tab[1]) + 1;

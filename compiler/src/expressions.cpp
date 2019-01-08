@@ -26,12 +26,7 @@ void __expressionAdd (char* a, char* b) {
     Variable var1 = variables.at(a);
     Variable var2 = variables.at(b);
 
-    if (var1.type == "NUM" && var2.type == "NUM" && stoll(var1.name) < LLONG_MAX / 2 && stoll(var2.name) < LLONG_MAX / 2) {
-        long long int val = stoll(var1.name) + stoll(var2.name);
-        setRegister("B", val);
-        removeIde(var1.name);
-        removeIde(var2.name);
-    } else if (var1.type == "NUM" && var1.name == "1") {
+    if (var1.type == "NUM" && var1.name == "1") {
         assignRegister("B", var2);
         insert("INC", "B");
         removeIde(var1.name);
@@ -44,6 +39,11 @@ void __expressionAdd (char* a, char* b) {
         removeIde(var1.name);
     } else if (var2.type == "NUM" && var2.name == "0") {
         assignRegister("B", var1);
+        removeIde(var2.name);
+    } else if (var1.type == "NUM" && var2.type == "NUM" && stoll(var1.name) < LLONG_MAX / 2 && stoll(var2.name) < LLONG_MAX / 2) {
+        long long int val = stoll(var1.name) + stoll(var2.name);
+        setRegister("B", val);
+        removeIde(var1.name);
         removeIde(var2.name);
     } else {
         assignRegister("B", var1, "C", var2);
@@ -98,13 +98,13 @@ void __expressionMul (char* a, char* b) {
         removeIde(var1.name);
         removeIde(var2.name);
     // if power of two
-    } else if (var1.type == "NUM" && (stoll(var1.name) != 0) && ((stoll(var1.name) & (stoll(var1.name) - 1)) == 0)) {
+    } else if (var1.type == "NUM" && ((stoll(var1.name) & (stoll(var1.name) - 1)) == 0)) {
         assignRegister("B", var2);
         for (int i = 0; i < log2(stoll(var1.name)); ++i)
             insert("ADD", "B", "B");
         removeIde(var1.name);
     // if power of two
-    } else if (var2.type == "NUM" && (stoll(var2.name) != 0) && ((stoll(var2.name) & (stoll(var2.name) - 1)) == 0)) {
+    } else if (var2.type == "NUM" && ((stoll(var2.name) & (stoll(var2.name) - 1)) == 0)) {
         assignRegister("B", var1);
         for (int i = 0; i < log2(stoll(var2.name)); ++i)
             insert("ADD", "B", "B");
@@ -139,7 +139,7 @@ void __expressionDiv (char* a, char* b) {
         removeIde(var1.name);
         removeIde(var2.name);
     // if power of two
-    } else if (var2.type == "NUM" && (stoll(var2.name) != 0) && ((stoll(var2.name) & (stoll(var2.name) - 1)) == 0)) {
+    } else if (var2.type == "NUM" && ((stoll(var2.name) & (stoll(var2.name) - 1)) == 0)) {
         assignRegister("B", var1);
         for (int i = 0; i < log2(stoll(var2.name)); ++i)
             insert("HALF", "B");

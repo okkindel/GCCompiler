@@ -223,6 +223,6 @@ void error(char* a, int yylineno, char const* msg);
 // replace string
 void replace(string& str, const string& from, const string& to);
 // split by space
-size_t split(const std::string &txt, std::vector<std::string> &strs, char ch);
+size_t split(const string &txt, vector<string> &strs, char ch);
 // decimal to binary
 string decToBin(long long int n);

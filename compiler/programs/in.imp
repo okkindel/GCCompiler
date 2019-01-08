@@ -1,3 +1,15 @@
+[
+    TIC TAC TOE
+    W pierwszej kolejności podajemy rząd (0, 2), następnie kolumnę (0, 2).
+    Jeżeli spyta cię ponownie o liczbę, to znaczy, że na tym miejscu ktoś już zaznaczył ruch.
+    Gra kończy się
+    1111111111
+    1111111111
+    1111111111
+    1111111111
+    gdy wygra gracz 1, dwójkami, gdy gracz 2 i ósemkami w przypadku remisu.
+]
+
 DECLARE
     rowa(0:3);
     rowb(0:3);
@@ -98,37 +110,48 @@ IN
         WRITE sum;
 
         IF rowa(0) = 1 THEN IF rowa(1) = 1 THEN IF rowa(2) = 1 THEN
-            WRITE 111111111; WRITE 111111111; WRITE 111111111;
+            WRITE 111111111; WRITE 111111111; WRITE 111111111; WRITE 111111111;
             ite := 0;
         ENDIF ENDIF ENDIF
         IF rowb(0) = 1 THEN IF rowb(1) = 1 THEN IF rowb(2) = 1 THEN
-            WRITE 111111111; WRITE 111111111; WRITE 111111111;
+            WRITE 111111111; WRITE 111111111; WRITE 111111111; WRITE 111111111;
             ite := 0;
         ENDIF ENDIF ENDIF
         IF rowc(0) = 1 THEN IF rowc(1) = 1 THEN IF rowc(2) = 1 THEN
-            WRITE 111111111; WRITE 111111111; WRITE 111111111;
+            WRITE 111111111; WRITE 111111111; WRITE 111111111; WRITE 111111111;
             ite := 0;
         ENDIF ENDIF ENDIF
         IF rowa(0) = 1 THEN IF rowb(0) = 1 THEN IF rowc(0) = 1 THEN
-            WRITE 111111111; WRITE 111111111; WRITE 111111111;
+            WRITE 111111111; WRITE 111111111; WRITE 111111111; WRITE 111111111;
             ite := 0;
         ENDIF ENDIF ENDIF
         IF rowa(1) = 1 THEN IF rowb(1) = 1 THEN IF rowc(1) = 1 THEN
-            WRITE 111111111; WRITE 111111111; WRITE 111111111;
+            WRITE 111111111; WRITE 111111111; WRITE 111111111; WRITE 111111111;
             ite := 0;
         ENDIF ENDIF ENDIF
         IF rowa(2) = 1 THEN IF rowb(2) = 1 THEN IF rowc(2) = 1 THEN
-            WRITE 111111111; WRITE 111111111; WRITE 111111111;
+            WRITE 111111111; WRITE 111111111; WRITE 111111111; WRITE 111111111;
             ite := 0;
         ENDIF ENDIF ENDIF
         IF rowa(0) = 1 THEN IF rowb(1) = 1 THEN IF rowc(2) = 1 THEN
-            WRITE 111111111; WRITE 111111111; WRITE 111111111;
+            WRITE 111111111; WRITE 111111111; WRITE 111111111; WRITE 111111111;
             ite := 0;
         ENDIF ENDIF ENDIF
         IF rowa(2) = 1 THEN IF rowb(1) = 1 THEN IF rowc(0) = 1 THEN
-            WRITE 111111111; WRITE 111111111; WRITE 111111111;
+            WRITE 111111111; WRITE 111111111; WRITE 111111111; WRITE 111111111;
             ite := 0;
         ENDIF ENDIF ENDIF
+
+        IF ite = 1 THEN
+
+            IF rowa(0) != 8 THEN IF rowa(1) != 8 THEN IF rowa(2) != 8 THEN
+            IF rowb(0) != 8 THEN IF rowb(1) != 8 THEN IF rowb(2) != 8 THEN
+            IF rowc(0) != 8 THEN IF rowc(1) != 8 THEN IF rowc(2) != 8 THEN
+                WRITE 888888888; WRITE 888888888; WRITE 888888888; WRITE 888888888;
+                ite := 0;        
+            ENDIF ENDIF ENDIF ENDIF ENDIF ENDIF ENDIF ENDIF ENDIF
+
+        ENDIF
 
         IF ite = 1 THEN
 
@@ -187,48 +210,48 @@ IN
         ENDIF
 
         IF rowa(0) = 2 THEN IF rowa(1) = 2 THEN IF rowa(2) = 2 THEN
-            WRITE 222222222; WRITE 222222222; WRITE 222222222;
+            WRITE 222222222; WRITE 222222222; WRITE 222222222; WRITE 222222222;
             ite := 0;
         ENDIF ENDIF ENDIF
         IF rowb(0) = 2 THEN IF rowb(1) = 2 THEN IF rowb(2) = 2 THEN
-            WRITE 222222222; WRITE 222222222; WRITE 222222222;
+            WRITE 222222222; WRITE 222222222; WRITE 222222222; WRITE 222222222;
             ite := 0;
         ENDIF ENDIF ENDIF
         IF rowc(0) = 2 THEN IF rowc(1) = 2 THEN IF rowc(2) = 2 THEN
-            WRITE 222222222; WRITE 222222222; WRITE 222222222;
+            WRITE 222222222; WRITE 222222222; WRITE 222222222; WRITE 222222222;
             ite := 0;
         ENDIF ENDIF ENDIF
         IF rowa(0) = 2 THEN IF rowb(0) = 2 THEN IF rowc(0) = 2 THEN
-            WRITE 111111111; WRITE 111111111; WRITE 111111111;
+            WRITE 222222222; WRITE 222222222; WRITE 222222222; WRITE 222222222;
             ite := 0;
         ENDIF ENDIF ENDIF
         IF rowa(1) = 2 THEN IF rowb(1) = 2 THEN IF rowc(1) = 2 THEN
-            WRITE 111111111; WRITE 111111111; WRITE 111111111;
+            WRITE 222222222; WRITE 222222222; WRITE 222222222; WRITE 222222222;
             ite := 0;
         ENDIF ENDIF ENDIF
         IF rowa(2) = 2 THEN IF rowb(2) = 2 THEN IF rowc(2) = 2 THEN
-            WRITE 111111111; WRITE 111111111; WRITE 111111111;
+            WRITE 222222222; WRITE 222222222; WRITE 222222222; WRITE 222222222;
             ite := 0;
         ENDIF ENDIF ENDIF
         IF rowa(0) = 2 THEN IF rowb(1) = 2 THEN IF rowc(2) = 2 THEN
-            WRITE 111111111; WRITE 111111111; WRITE 111111111;
+            WRITE 222222222; WRITE 222222222; WRITE 222222222; WRITE 222222222;
             ite := 0;
         ENDIF ENDIF ENDIF
         IF rowa(2) = 2 THEN IF rowb(1) = 2 THEN IF rowc(0) = 2 THEN
-            WRITE 111111111; WRITE 111111111; WRITE 111111111;
+            WRITE 222222222; WRITE 222222222; WRITE 222222222; WRITE 222222222;
             ite := 0;
         ENDIF ENDIF ENDIF
 
-    IF ite = 1 THEN
-
-        IF rowa(0) != 8 THEN IF rowa(1) != 8 THEN IF rowa(2) != 8 THEN
-        IF rowb(0) != 8 THEN IF rowb(1) != 8 THEN IF rowb(2) != 8 THEN
-        IF rowc(0) != 8 THEN IF rowc(1) != 8 THEN IF rowc(2) != 8 THEN
-            WRITE 888888888; WRITE 888888888; WRITE 888888888;
-            ite := 0;        
-        ENDIF ENDIF ENDIF ENDIF ENDIF ENDIF ENDIF ENDIF ENDIF
-
-    ENDIF
+        IF ite = 1 THEN
+    
+            IF rowa(0) != 8 THEN IF rowa(1) != 8 THEN IF rowa(2) != 8 THEN
+            IF rowb(0) != 8 THEN IF rowb(1) != 8 THEN IF rowb(2) != 8 THEN
+            IF rowc(0) != 8 THEN IF rowc(1) != 8 THEN IF rowc(2) != 8 THEN
+                WRITE 888888888; WRITE 888888888; WRITE 888888888; WRITE 888888888;
+                ite := 0;        
+            ENDIF ENDIF ENDIF ENDIF ENDIF ENDIF ENDIF ENDIF ENDIF
+    
+        ENDIF
 
     ENDWHILE
 END

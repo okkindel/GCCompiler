@@ -107,7 +107,18 @@ identifier:
 
 %%
 
+void printLogo() {
+    cout << endl;
+    cout << "\033[;36m _____ \033[0m    _      \033[;32m __   \033[0m     ver. 3.0" << endl;
+    cout << "\033[;36m|   __|\033[0m___| |_ ___\033[;32m|  |  \033[0m ___ ___ ___ " << endl;
+    cout << "\033[;36m|  |  |\033[0m -_| . | .'\033[;32m|  |__\033[0m| .'|   | . |" << endl;
+    cout << "\033[;36m|_____|\033[0m___|___|__,\033[;32m|_____\033[0m|__,|_|_|_  |" << endl;
+    cout << "                                |___|" << endl;
+    cout << endl;
+}
+
 int main(int argv, char* argc[]) {
+    printLogo();
     if( argv != 3 ) {
         cerr << "\e[1mUSAGE:\e[0m ./compiler input output" << endl;
         return -1;

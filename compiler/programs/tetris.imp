@@ -64,7 +64,7 @@ IN
         WHILE dropping = 1 DO
             prevpos := pos;
             IF drop = 0 THEN
-                rowa(pos) := 5;
+                rowa(pos) := 7;
             ELSE
                 READ turn;
                 IF turn = 1 THEN
@@ -130,9 +130,9 @@ IN
                 ENDIF
             ENDIF
 
-            IF rowg(1) = 5 THEN IF rowg(2) = 5 THEN IF rowg(3) = 5 THEN IF rowg(4) = 5 THEN 
-            IF rowg(5) = 5 THEN IF rowg(6) = 5 THEN IF rowg(7) = 5 THEN IF rowg(8) = 5 THEN 
-            IF rowg(9) = 5 THEN 
+            IF rowg(1) = 7 THEN IF rowg(2) = 7 THEN IF rowg(3) = 7 THEN IF rowg(4) = 7 THEN 
+            IF rowg(5) = 7 THEN IF rowg(6) = 7 THEN IF rowg(7) = 7 THEN IF rowg(8) = 7 THEN 
+            IF rowg(9) = 7 THEN 
                 FOR i FROM 1 TO 9 DO
                     rowg(i) := rowf(i);
                 ENDFOR

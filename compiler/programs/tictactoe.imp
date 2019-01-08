@@ -1,5 +1,6 @@
 [
     TIC TAC TOE
+    Gra odbywa się na zmianę.
     W pierwszej kolejności podajemy rząd (1, 3), następnie kolumnę (1, 3).
     Jeżeli spyta cię ponownie o liczbę, to znaczy, że na tym miejscu ktoś już zaznaczył ruch.
     Gra kończy się. gdy na ekranie pojawi się
@@ -9,7 +10,7 @@
     111111111   222222222   888888888
     111111111   222222222   888888888
     111111111   222222222   888888888
-    gdy wygra gracz 1 - jedynki, dwójkami, gdy gracz 2 i ósemkami w przypadku remisu.
+    gdy wygra gracz 1 - jedynki, 2 - gdy gracz 2 i 8 w przypadku remisu.
     Autor: Maciej Hajduk
 ]
 

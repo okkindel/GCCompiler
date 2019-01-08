@@ -1,7 +1,8 @@
 DECLARE
     a; b; c;
 IN
-    READ a;
-    c := 8 * a;
+[    READ a;
+    READ b;]
+    c := 53453 * 6232;
     WRITE c;
 END

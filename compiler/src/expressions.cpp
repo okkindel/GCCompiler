@@ -26,7 +26,7 @@ void __expressionAdd (char* a, char* b) {
     Variable var1 = variables.at(a);
     Variable var2 = variables.at(b);
 
-    if (var1.type == "NUM" && var2.type == "NUM") {
+    if (var1.type == "NUM" && var2.type == "NUM" && stoll(var1.name) < LLONG_MAX / 2 && stoll(var2.name) < LLONG_MAX / 2) {
         long long int val = stoll(var1.name) + stoll(var2.name);
         setRegister("B", val);
         removeIde(var1.name);
@@ -92,7 +92,7 @@ void __expressionMul (char* a, char* b) {
             removeIde(var1.name);
         if (var2.type == "NUM")
             removeIde(var2.name);
-    } else if (var1.type == "NUM" && var2.type == "NUM") {
+    } else if (var1.type == "NUM" && var2.type == "NUM" && stoll(var1.name) < sqrt(LLONG_MAX) && stoll(var2.name) < sqrt(LLONG_MAX)) {
         long long int val = stoll(var1.name) * stoll(var2.name);
         setRegister("B", val);
         removeIde(var1.name);

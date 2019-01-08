@@ -85,6 +85,8 @@ extern int cmdIndex;
 void __declareIde (char* a, int yylineno);
 // declare array
 void __declareTab (char* a, char* b, char* c, int yylineno);
+// insert tabs on the end
+void insertTabs();
 // assign to variable
 void __cmdAssign(char* a, int yylineno);
 // else
@@ -218,5 +220,7 @@ void print(char* output);
 void error(char* a, int yylineno, char const* msg);
 // replace string
 void replace(string& str, const string& from, const string& to);
+// split by space
+size_t split(const std::string &txt, std::vector<std::string> &strs, char ch);
 // decimal to binary
 string decToBin(long long int n);

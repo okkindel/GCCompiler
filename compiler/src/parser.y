@@ -37,7 +37,8 @@ int yyerror(const string str);
 %%
 program:
 
-    _declare declarations _in commands _end                             { insert("HALT"); }
+    _declare declarations                               { insertTabs(); }
+        _in commands _end                               { insert("HALT"); }
     ;
 
 declarations:

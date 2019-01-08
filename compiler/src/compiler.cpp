@@ -17,6 +17,7 @@ int cmdIndex = 0;
 int memIndex = 0;
 stack<Loop> loops;
 stack<Jump> jumps;
+vector<string> tabs;
 stack<Array> arrays;
 vector<string> commands;
 map<string, Variable> variables;
@@ -43,12 +44,20 @@ void __declareTab (char* a, char* b, char* c, int yylineno) {
     else if (stoll(b) > stoll(c))
         error(a, yylineno, "Negative capacity array:");
     else {
+        // we will add tabs on the end of declarations
+        tabs.push_back(string(a) + " " + string(b) + " " + string(c));
+    }
+}
+
+void insertTabs() {
+    for (int cmd = 0; cmd < tabs.size(); cmd++) {
+        vector<string> tab;
+        split(tabs[cmd], tab, ' ');
         Variable var;
         // We have to left one memory cell free.
-        // I don't know why. But it works that way... 
-        int size  = 1 + stoll(c) - stoll(b) + 1;
-        createIde(&var, a, "TAB", stoll(b), size);
-        insertIde(a, var);
+        int size  = 1 + stoll(tab[2]) - stoll(tab[1]) + 1;
+        createIde(&var, tab[0], "TAB", stoll(tab[1]), size);
+        insertIde(tab[0], var);
         memIndex++;
     }
 }
@@ -483,6 +492,20 @@ void replace(string& str, const string& from, const string& to) {
         str.replace(start_pos, from.length(), to);
         start_pos += to.length();
     }
+}
+
+size_t split(const std::string &txt, std::vector<std::string> &strs, char ch) {
+    size_t pos = txt.find( ch );
+    size_t initialPos = 0;
+    strs.clear();
+    while( pos != std::string::npos ) {
+        strs.push_back( txt.substr( initialPos, pos - initialPos ) );
+        initialPos = pos + 1;
+
+        pos = txt.find( ch, initialPos );
+    }
+    strs.push_back( txt.substr( initialPos, std::min( pos, txt.size() ) - initialPos + 1 ) );
+    return strs.size();
 }
 
 string decToBin(long long int num) {

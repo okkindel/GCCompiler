@@ -29,8 +29,6 @@ void __condEq(char* a, char* b, int yylineno) {
 
     createJump();
     insert("JZERO", "G", "$bookmark");
-
-    DEBUG_MSG("Porównano: " << var1.name << " == " << var2.name);
 }
 
 void __condNotEq(char* a, char* b, int yylineno) {
@@ -53,8 +51,6 @@ void __condNotEq(char* a, char* b, int yylineno) {
 
     createJump();
     insert("JZERO", "G", "$bookmark");
-
-    DEBUG_MSG("Porównano: " << var1.name << " != " << var2.name);
 }
 
 void __condLowEq(char* a, char* b, int yylineno) {
@@ -78,8 +74,6 @@ void __condLowEq(char* a, char* b, int yylineno) {
 
     createJump();
     insert("JZERO", "G", "$bookmark");
-
-    DEBUG_MSG("Porównano: " << var1.name << " <= " << var2.name);
 }
 
 void __condGreEq(char* a, char* b, int yylineno) {
@@ -103,8 +97,6 @@ void __condGreEq(char* a, char* b, int yylineno) {
 
     createJump();
     insert("JZERO", "G", "$bookmark");
-
-    DEBUG_MSG("Porównano: " << var1.name << " >= " << var2.name);
 }
 
 void __condLow(char* a, char* b, int yylineno) {
@@ -126,8 +118,6 @@ void __condLow(char* a, char* b, int yylineno) {
 
     createJump();
     insert("JZERO", "G", "$bookmark");
-
-    DEBUG_MSG("Porównano: " << var1.name << " > " << var2.name);
 }
 
 void __condGre(char* a, char* b, int yylineno) {
@@ -149,6 +139,4 @@ void __condGre(char* a, char* b, int yylineno) {
 
     createJump();
     insert("JZERO", "G", "$bookmark");
-
-    DEBUG_MSG("Porównano: " << var1.name << " > " << var2.name);
 }

@@ -27,7 +27,6 @@ map<string, Variable> variables;
 //////////////////////////////////
 
 void __declareIde (char* a, int yylineno) { 
-    DEBUG_MSG("Zadeklarowano zmienną: " << a);     
     if (variables.find(a) != variables.end())
         error(a, yylineno, "Repeated variable declaration:");
     else {
@@ -38,7 +37,6 @@ void __declareIde (char* a, int yylineno) {
 }
 
 void __declareTab (char* a, char* b, char* c, int yylineno) {
-    DEBUG_MSG("Zadeklarowano tablicę: " << a);     
     if (stoll(b) > stoll(c))
         error(a, yylineno, "Negative capacity array:");
     else {
@@ -71,7 +69,6 @@ void __cmdAssign(char* a, int yylineno) {
         error(a, yylineno, "Loop iterator modification:");
     variables.at(a).initialized = true;
     storeRegister("B", var);
-    DEBUG_MSG("Przyporządkowano klucz do zmiennej: " << var.name << " na miejscu: " << var.memory << " i jest zainicjowany: " << var.initialized);
 }
 
 void __if_else() {
@@ -85,13 +82,11 @@ void __if_else() {
     removeJump();
     createJump();
     insert("JZERO", "H", "$bookmark");
-    DEBUG_MSG("Rozpoczęto procedurę else");
 }
 
 void __end_if() {
     assignJump(cmdIndex);
     removeJump();
-    DEBUG_MSG("Zakończono warunek if");
 }
 
 void __begin_while() {
@@ -106,7 +101,6 @@ void __end_while() {
     insert("JUMP", to_string(jumps.top().index + 1));
     removeJump();
     removeLoop();
-    DEBUG_MSG("Zakończono warunek if");
 }
 
 void __end_do() {
@@ -116,12 +110,10 @@ void __end_do() {
     insert("JUMP", loops.top().index);
     removeJump();
     removeLoop();
-    DEBUG_MSG("Zakończono warunek do");
 }
 
 void __for(char* i, char* a, char* b, int yylineno) {
     
-    DEBUG_MSG("Zadeklarowano zmienną: " << a);     
     if (variables.find(i) != variables.end())
         error(i, yylineno, "Repeated variable declaration:");
 
@@ -183,7 +175,6 @@ void __cmdWrite(char* a, int yylineno) {
     initError(var, a, yylineno);    
     assignRegister("B", var);
     insert("PUT", "B");
-    DEBUG_MSG("Wczytywanie klucza: " << var.name << " z miejsca w pamięci: " << var.memory);
 }
 
 void __cmdRead(char* a, int yylineno) {
@@ -191,11 +182,9 @@ void __cmdRead(char* a, int yylineno) {
     variables.at(a).initialized = true;
     insert("GET", "B");
     storeRegister("B", var);
-    DEBUG_MSG("Zapisywanie klucza: " << var.name << " do miejsca w pamięci: " << var.memory);
 }
 
 void __valueNum(char* a, int yylineno) {
-    DEBUG_MSG("Znaleziono stałą o wartości: " << a);
     Variable var;
     createIde(&var, a, "NUM");
     insertIde(a, var);
@@ -206,7 +195,6 @@ void __ideIdetifier(char* a, int yylineno) {
         error(a, yylineno, "The variable has not been declared:");
     if (variables.at(a).type == "TAB")
         error(a, yylineno, "Lack of reference to the element of the array:");
-    DEBUG_MSG("Znaleziono klucz: " << variables.at(a).name << " i jest zainicjowany: " << variables.at(a).initialized);
 }
 
 void __ideIdeIde(char* a, char* b, int yylineno) {
@@ -225,7 +213,6 @@ void __ideIdeIde(char* a, char* b, int yylineno) {
     arr.name = name;
     arr.index = index;
     arrays.push(arr);
-    DEBUG_MSG("Znaleziono klucz tablicy: " << variables.at(a).name << " i jest zainicjowany: " << variables.at(a).initialized);
 }
 
 void __ideIdeNum(char* a, char* b, int yylineno) {
@@ -248,7 +235,6 @@ void __ideIdeNum(char* a, char* b, int yylineno) {
     arrays.push(arr);
 
     removeIde(num.name);
-    DEBUG_MSG("Znaleziono klucz tablicy: " << variables.at(a).name << " i jest zainicjowany: " << variables.at(a).initialized);
 }
 
 //////////////////////////////////
@@ -342,16 +328,13 @@ void createIde(Variable* var, string name, string type, int begin, int size) {
 }
 
 void insertIde(string key, Variable var) {
-    DEBUG_MSG("Dodano do pamięci klucz: " << key << ", typu: " << var.type << ", na miejscu: " << memIndex);
     variables.insert(make_pair(key, var));
     memIndex += var.size;
-    
 }
 
 void removeIde(string key) {
     variables.erase(key);
     memIndex--;
-    DEBUG_MSG("Usunięto z pamięci klucz: " << key);
 }
 
 //////////////////////////////////
@@ -359,14 +342,12 @@ void removeIde(string key) {
 //////////////////////////////////
 
 void createLoop(int index) {
-    DEBUG_MSG("Zakotwiczenie: " << index);
     Loop loop;
     loop.index = index;
     loops.push(loop);
 }
 
 void createLoop(Variable iterator, Variable condition, int index) {
-    DEBUG_MSG("Warunek pętli: " << condition.name << ", typu: " << condition.type);
     Loop loop;
     loop.iterator = iterator;
     loop.condition = condition;
@@ -378,7 +359,6 @@ void removeLoop() {
     removeIde(loops.top().iterator.name);
     removeIde(loops.top().condition.name);
     loops.pop();
-    DEBUG_MSG("Usunięto z pamięci pętlę o id: " << loopIndex);
 }
 
 //////////////////////////////////
@@ -386,8 +366,6 @@ void removeLoop() {
 //////////////////////////////////
 
 void createJump() {
-    DEBUG_MSG("Nowy warunek");
-
     Variable value;
     createIde(&value, ("J" + cmdIndex), "VAR");
     insertIde(("J" + cmdIndex), value);
@@ -407,7 +385,6 @@ void assignJump(int bookmark) {
 void removeJump() {
     removeIde(jumps.top().value.name);
     jumps.pop();
-    DEBUG_MSG("Usunięto z pamięci warunek");
 }
 
 //////////////////////////////////

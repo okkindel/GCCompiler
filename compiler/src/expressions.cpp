@@ -11,7 +11,6 @@
 
 void __expressionVal(char* a, int yylineno) {
     Variable var = variables.at(a);
-    DEBUG_MSG("Wyrażenie: wartość zmiennej: " << var.name << ": " << var.type);
     if (var.type == "NUM") {
         setRegister("B", stoll(var.name));
         removeIde(var.name);
@@ -53,7 +52,6 @@ void __expressionAdd (char* a, char* b) {
         if (var2.type == "NUM")
             removeIde(var2.name);
     }
-    DEBUG_MSG("Dodawanie: " << var1.name << ": " << var1.type << " + " << var2.name << ": " << var2.type);
 }
 
 void __expressionSub (char* a, char* b) {
@@ -79,7 +77,6 @@ void __expressionSub (char* a, char* b) {
         if (var2.type == "NUM")
             removeIde(var2.name);
     }
-    DEBUG_MSG("Odejmowanie: " << var1.name << ": " << var1.type << " - " << var2.name << ": " << var2.type);
 }
 
 void __expressionMul (char* a, char* b) {
@@ -120,7 +117,6 @@ void __expressionMul (char* a, char* b) {
         insert("JZERO", "C", cmdIndex + 2);
         insert("JUMP", cmdIndex - 6);      
     }
-    DEBUG_MSG("Mnożenie: " << var1.name << ": " << var1.type << " * " << var2.name << ": " << var2.type);
 }
 
 void __expressionDiv (char* a, char* b) {
@@ -175,7 +171,6 @@ void __expressionDiv (char* a, char* b) {
         if (var2.type == "NUM")
             removeIde(var2.name);
     }
-    DEBUG_MSG("Dzielenie: " << var1.name << ": " << var1.type << " / " << var2.name << ": " << var2.type);
 }
 
 void __expressionMod (char* a, char* b) {
@@ -234,5 +229,4 @@ void __expressionMod (char* a, char* b) {
         if (var2.type == "NUM")
             removeIde(var2.name);
     }
-    DEBUG_MSG("Modulo: " << var1.name << ": " << var1.type << " % " << var2.name << ": " << var2.type);
 }

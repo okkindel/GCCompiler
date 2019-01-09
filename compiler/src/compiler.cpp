@@ -445,6 +445,51 @@ void optymize() {
                 ++it;
         }
     }
+    bool is_readed = false;
+    for (int cmd = 0; cmd < commands.size(); cmd++) {
+        char const *COMMANDS = commands.at(cmd).c_str();
+        char const *COMMAND = "GET";
+        if(strstr(COMMANDS, COMMAND) != NULL) {
+            is_readed = true;
+            break;
+        }
+    }
+    if (!is_readed) {
+        ofstream file;
+        file.open("./out/out");
+        for (int cmd = 0; cmd < commands.size(); cmd++)
+            file << commands.at(cmd) << endl;
+        file.close();
+
+        if ( access( "../../interpreter/maszyna-rejestrowa", F_OK ) != -1 ) {
+            cout << "\n\n\e[1m\x1B[33m[ WARN ]\e[0m \e[1m\x1B[31m" << "Interpreter was not found.\e[0m\n" << endl;
+        } else {
+            unique_ptr<FILE, decltype(&pclose)> pipe(popen("../interpreter/maszyna-rejestrowa ./out/out", "r"), pclose);
+            array<char, 128> buffer;
+            string result = "";
+            vector<string> writes;
+            while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
+                result += buffer.data();
+            stringstream ss;     
+            ss << result; 
+            string temp; 
+            int found; 
+            while (!ss.eof()) { 
+                ss >> temp; 
+                if (stringstream(temp) >> found) 
+                    writes.push_back(to_string(found)); 
+                temp = ""; 
+            }
+            commands.clear();
+            cmdIndex = 0;
+            for (auto it = begin(writes) + 1; it != end(writes) - 1;) {
+                setRegister("B", stoll(*it));
+                insert("PUT", "B");
+                ++it;
+            }
+            insert("HALT");     
+        }       
+    }
 }
 
 void print(char* out) {

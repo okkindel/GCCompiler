@@ -17,6 +17,7 @@ lexer: $(SRC)/lexer.l
 
 compiler: lexer parser
 	mkdir -p out
+	test -f ../interpreter/maszyna-rejestrowa || make interpreter
 	cd $(SRC) && $(CC) $(CFLAGS) -o $(OUT) $(FILES)
 	make clean
 
@@ -25,12 +26,10 @@ interpreter:
 	cd ../interpreter && make clean
 
 debug: compiler
-	test -f ../interpreter/maszyna-rejestrowa || make interpreter
 	./out/compiler programs/$(RUN_ARGS) out/out
 	../interpreter/maszyna-rejestrowa out/out
 
 test: compiler
-	test -f ../interpreter/maszyna-rejestrowa || make interpreter
 	./out/compiler ./programs/tests/test$(RUN_ARGS) out/out
 	../interpreter/maszyna-rejestrowa out/out
 

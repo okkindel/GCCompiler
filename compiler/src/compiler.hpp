@@ -7,13 +7,13 @@
  * with this file. If not, please write to m.hajduk(at)pm.me
  */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <iostream>
 #include <unistd.h>
 #include <fstream>
+#include <sstream>
 #include <climits>
+#include <memory>
 #include <math.h>
 #include <vector>
 #include <stack>

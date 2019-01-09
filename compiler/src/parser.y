@@ -14,7 +14,6 @@ extern int yylex();
 extern int yylineno;
 extern FILE *yyin;
 int yyerror(const string str);
-
 %}
 
 %define parse.error verbose
@@ -115,6 +114,12 @@ void printLogo() {
     cout << "\033[;36m|_____|\033[0m___|___|__,\033[;31m|_____\033[0m|__,|_|_|_  |" << endl;
     cout << "        ~                       |___|" << endl;
     cout << endl;
+
+    string msg =". .. ... ";
+    for (const char c: msg) {
+        cout << c << flush;
+        usleep(80000);
+    }
 }
 
 int main(int argv, char* argc[]) {
@@ -129,10 +134,13 @@ int main(int argv, char* argc[]) {
 	yyparse();
     optymize();
     print(argc[2]);
+    cout << "Compiled without errors •ᴗ•\n" << endl;
 	return 0;
 }
 
 int yyerror(string err) {
+    cout << "(╯°□°）╯︵ ┻━┻\n\n";
+    usleep(500000);
     cout << "\e[1m\x1B[31m[ ERROR ]\e[0m \e[1m[ LINE " << yylineno << " ] \e[1m\x1B[31m" << err << ".\e[0m\n" << endl;
     exit(1);
 }

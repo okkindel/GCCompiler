@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <iostream>
-#include <algorithm>
+#include <unistd.h>
 #include <fstream>
 #include <climits>
 #include <math.h>

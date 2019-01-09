@@ -460,6 +460,8 @@ void print(char* out) {
 }
 
 void error(char* a, int yylineno, char const* msg) {
+    cout << "(╯°□°）╯︵ ┻━┻\n\n";
+    usleep(500000);
     cout << "\e[1m\x1B[31m[ ERROR ]\e[0m \e[1m[ LINE " << yylineno << " ] \e[1m\x1B[31m" << msg << " " << a << ".\e[0m\n" << endl;
     exit(1);
 }

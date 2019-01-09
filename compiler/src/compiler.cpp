@@ -468,26 +468,37 @@ void optymize() {
             array<char, 128> buffer;
             string result = "";
             vector<string> writes;
-            while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
+            bool killed = false;
+            int timeStart = clock();
+            while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
                 result += buffer.data();
-            stringstream ss;     
-            ss << result; 
-            string temp; 
-            int found; 
-            while (!ss.eof()) { 
-                ss >> temp; 
-                if (stringstream(temp) >> found) 
-                    writes.push_back(to_string(found)); 
-                temp = ""; 
+                // kill if to long
+                if ((clock() - timeStart) / CLOCKS_PER_SEC >= 1) {
+                    killed = true; 
+                    break;
+                }
             }
-            commands.clear();
-            cmdIndex = 0;
-            for (auto it = begin(writes) + 1; it != end(writes) - 1;) {
-                setRegister("B", stoll(*it));
-                insert("PUT", "B");
-                ++it;
+            if (!killed) {
+                stringstream ss;     
+                ss << result; 
+                string temp; 
+                long long int found;
+                while (!ss.eof()) { 
+                    ss >> temp; 
+                    if (stringstream(temp) >> found) 
+                        writes.push_back(to_string(found)); 
+                    temp = ""; 
+
+                }
+                commands.clear();
+                cmdIndex = 0;
+                for (auto it = begin(writes) + 1; it != end(writes) - 1;) {
+                    setRegister("B", stoll(*it));
+                    insert("PUT", "B");
+                    ++it;
+                }
+                insert("HALT");     
             }
-            insert("HALT");     
         }       
     }
 }

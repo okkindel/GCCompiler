@@ -1,8 +1,12 @@
 DECLARE
     a; b;
 IN
-    a := 2;
+[    a := 2;
     b := 3 + 5;
     a := a + b;
-    WRITE 12345678901;
+    WRITE 12345678901;]
+
+    WHILE 1 = 1 DO
+        WRITE 1;
+    ENDWHILE
 END

@@ -1,6 +1,6 @@
-# Gębala Compiler Collection
+# G. C. Compiler
 
-Gębalang is a simple imperative programming language based on i have no idea what. Let me introduce a *a new georgus compiler* of this awesome language - **G. C. Compiler**.
+Glang is a simple imperative programming language based on i have no idea what. Let me introduce a *a new georgus compiler* of this awesome language - **G. C. Compiler**.
 
 ## Building
 

@@ -21,10 +21,9 @@ void __condEq(char* a, char* b, int yylineno) {
     insert("COPY", "E", "C");
     insert("SUB", "E", "D");
     insert("JZERO", "E", cmdIndex + 2);
-    insert("JUMP", cmdIndex + 6);
-    insert("COPY", "E", "D");
-    insert("SUB", "E", "C"); 
-    insert("JZERO", "E", cmdIndex + 2);
+    insert("JUMP", cmdIndex + 5);
+    insert("SUB", "D", "C"); 
+    insert("JZERO", "D", cmdIndex + 2);
     insert("JUMP", cmdIndex + 2);
     insert("INC", "G");
 
@@ -48,9 +47,8 @@ void __condNotEq(char* a, char* b, int yylineno) {
     insert("JZERO", "E", cmdIndex + 2);
     insert("INC", "G");
 
-    insert("COPY", "E", "D");
-    insert("SUB", "E", "C"); 
-    insert("JZERO", "E", cmdIndex + 2);
+    insert("SUB", "D", "C"); 
+    insert("JZERO", "D", cmdIndex + 2);
     insert("INC", "G");
 
     createJump();
@@ -72,10 +70,9 @@ void __condLowEq(char* a, char* b, int yylineno) {
     insert("SUB", "E", "C");
     insert("JZERO", "E", cmdIndex + 3);
     insert("INC", "G");
-    insert("JUMP", cmdIndex + 6);
-    insert("COPY", "E", "C");
-    insert("SUB", "E", "D"); 
-    insert("JZERO", "E", cmdIndex + 2);
+    insert("JUMP", cmdIndex + 5);
+    insert("SUB", "C", "D"); 
+    insert("JZERO", "C", cmdIndex + 2);
     insert("JUMP", cmdIndex + 2);
     insert("INC", "G");
 
@@ -98,10 +95,9 @@ void __condGreEq(char* a, char* b, int yylineno) {
     insert("SUB", "E", "D");
     insert("JZERO", "E", cmdIndex + 3);
     insert("INC", "G");
-    insert("JUMP", cmdIndex + 6);
-    insert("COPY", "E", "D");
-    insert("SUB", "E", "C"); 
-    insert("JZERO", "E", cmdIndex + 2);
+    insert("JUMP", cmdIndex + 5);
+    insert("SUB", "D", "C"); 
+    insert("JZERO", "D", cmdIndex + 2);
     insert("JUMP", cmdIndex + 2);
     insert("INC", "G");
 
@@ -123,10 +119,9 @@ void __condLow(char* a, char* b, int yylineno) {
     insert("COPY", "E", "C");
     insert("SUB", "E", "D");
     insert("JZERO", "E", cmdIndex + 2);
-    insert("JUMP", cmdIndex + 5);
-    insert("COPY", "E", "D");
-    insert("SUB", "E", "C");
-    insert("JZERO", "E", cmdIndex + 2);
+    insert("JUMP", cmdIndex + 4);
+    insert("SUB", "D", "C");
+    insert("JZERO", "D", cmdIndex + 2);
     insert("INC", "G");
 
     createJump();
@@ -147,10 +142,9 @@ void __condGre(char* a, char* b, int yylineno) {
     insert("COPY", "E", "D");
     insert("SUB", "E", "C");
     insert("JZERO", "E", cmdIndex + 2);
-    insert("JUMP", cmdIndex + 5);
-    insert("COPY", "E", "C");
-    insert("SUB", "E", "D");
-    insert("JZERO", "E", cmdIndex + 2);
+    insert("JUMP", cmdIndex + 4);
+    insert("SUB", "C", "D");
+    insert("JZERO", "C", cmdIndex + 2);
     insert("INC", "G");
 
     createJump();

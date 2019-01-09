@@ -1,0 +1,12 @@
+DECLARE
+    a; b;
+IN
+    READ a;
+    READ b;
+
+    IF a = b THEN
+        WRITE 1;
+    ELSE
+        WRITE 0;
+    ENDIF
+END

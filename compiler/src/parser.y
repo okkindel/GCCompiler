@@ -75,11 +75,11 @@ command:
 expression:
 
     value                                           { __expressionVal($1, yylineno); }
-    | value _add value                              { __expressionAdd($1, $3); }
-    | value _sub value                              { __expressionSub($1, $3); }
-    | value _mul value                              { __expressionMul($1, $3); }
-    | value _div value                              { __expressionDiv($1, $3); }
-    | value _mod value                              { __expressionMod($1, $3); }
+    | value _add value                              { __expressionAdd($1, $3, yylineno); }
+    | value _sub value                              { __expressionSub($1, $3, yylineno); }
+    | value _mul value                              { __expressionMul($1, $3, yylineno); }
+    | value _div value                              { __expressionDiv($1, $3, yylineno); }
+    | value _mod value                              { __expressionMod($1, $3, yylineno); }
     ;
 
 condition:

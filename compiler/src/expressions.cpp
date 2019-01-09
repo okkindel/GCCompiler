@@ -21,9 +21,11 @@ void __expressionVal(char* a, int yylineno) {
     }
 }
 
-void __expressionAdd (char* a, char* b) {
+void __expressionAdd (char* a, char* b, int yylineno) {
     Variable var1 = variables.at(a);
     Variable var2 = variables.at(b);
+    initError(var1, a, yylineno);
+    initError(var2, b, yylineno);
 
     if (var1.type == "NUM" && var1.name == "1") {
         assignRegister("B", var2);
@@ -54,9 +56,11 @@ void __expressionAdd (char* a, char* b) {
     }
 }
 
-void __expressionSub (char* a, char* b) {
+void __expressionSub (char* a, char* b, int yylineno) {
     Variable var1 = variables.at(a);
     Variable var2 = variables.at(b);
+    initError(var1, a, yylineno);
+    initError(var2, b, yylineno);
 
     if (var2.type == "NUM" && stoll(var2.name) == 1) {
         assignRegister("B", var1);
@@ -79,9 +83,11 @@ void __expressionSub (char* a, char* b) {
     }
 }
 
-void __expressionMul (char* a, char* b) {
+void __expressionMul (char* a, char* b, int yylineno) {
     Variable var1 = variables.at(a);
     Variable var2 = variables.at(b);
+    initError(var1, a, yylineno);
+    initError(var2, b, yylineno);
 
     if ((var1.type == "NUM" && var1.name == "0") || (var2.type == "NUM" && var2.name == "0")) {
         setRegister("B", 0);
@@ -119,9 +125,11 @@ void __expressionMul (char* a, char* b) {
     }
 }
 
-void __expressionDiv (char* a, char* b) {
+void __expressionDiv (char* a, char* b, int yylineno) {
     Variable var1 = variables.at(a);
     Variable var2 = variables.at(b);
+    initError(var1, a, yylineno);
+    initError(var2, b, yylineno);
 
     if ((var1.type == "NUM" && var1.name == "0") || (var2.type == "NUM" && var2.name == "0")) {
         setRegister("B", 0);
@@ -173,9 +181,11 @@ void __expressionDiv (char* a, char* b) {
     }
 }
 
-void __expressionMod (char* a, char* b) {
+void __expressionMod (char* a, char* b, int yylineno) {
     Variable var1 = variables.at(a);
     Variable var2 = variables.at(b);
+    initError(var1, a, yylineno);
+    initError(var2, b, yylineno);
 
     if ((var1.type == "NUM" && var1.name == "0") || (var2.type == "NUM" && var2.name == "0")) {
         setRegister("B", 0);

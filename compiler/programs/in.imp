@@ -1,12 +1,7 @@
 DECLARE
     a; b;
 IN
-    READ a;
-    READ b;
-
-    IF a = b THEN
-        WRITE 1;
-    ELSE
-        WRITE 0;
-    ENDIF
+    a := 2;
+    b := 3 + 5;
+    a := a + b;
 END

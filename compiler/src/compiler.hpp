@@ -114,15 +114,15 @@ void __cmdRead(char* a, int yylineno);
 // expression value
 void __expressionVal(char* a, int yylineno);
 // adds two numbers
-void __expressionAdd(char* a, char* b);
+void __expressionAdd(char* a, char* b, int yylineno);
 // subs two numbers
-void __expressionSub(char* a, char* b);
+void __expressionSub(char* a, char* b, int yylineno);
 // multiples two numbers
-void __expressionMul(char* a, char* b);
+void __expressionMul(char* a, char* b, int yylineno);
 // divides two numbers
-void __expressionDiv(char* a, char* b);
+void __expressionDiv(char* a, char* b, int yylineno);
 // modulo from two numbers
-void __expressionMod(char* a, char* b);
+void __expressionMod(char* a, char* b, int yylineno);
 // condition equal
 void __condEq(char* a, char* b, int yylineno);
 // condition not equal

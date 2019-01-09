@@ -114,20 +114,21 @@ void printLogo() {
     cout << "\033[;36m|_____|\033[0m___|___|__,\033[;31m|_____\033[0m|__,|_|_|_  |" << endl;
     cout << "        ~                       |___|" << endl;
     cout << endl;
+}
+
+int main(int argv, char* argc[]) {
+    printLogo();
+    if( argv != 3 ) {
+        cerr << "\e[1m[ USAGE ]\e[0m compiler input output" << endl;
+        return 1;
+    }
 
     string msg =". .. ... ";
     for (const char c: msg) {
         cout << c << flush;
         usleep(80000);
     }
-}
 
-int main(int argv, char* argc[]) {
-    printLogo();
-    if( argv != 3 ) {
-        cerr << "\e[1mUSAGE:\e[0m ./compiler input output" << endl;
-        return -1;
-    }
     yyin = fopen(argc[1], "r");
     if (yyin == NULL)
         error(argc[1], 0, "File does not exist:");

@@ -1,12 +1,32 @@
+[ while.imp 
+  12 23 34
+  507 4379 0
+]
 DECLARE
-    a; b;
+	a; b; c; pom; pomj; pomk;
 IN
-[    a := 2;
-    b := 3 + 5;
-    a := a + b;
-    WRITE 12345678901;]
+	READ a;
+	READ b;
+	READ c;
 
-    WHILE 1 = 1 DO
-        WRITE 1;
-    ENDWHILE
+	pom:=9;
+	WHILE pom>0 DO
+		pomj:=0;
+		WHILE pomj<pom DO
+			pomk:=0;
+			WHILE pomk<pomj DO
+				a := a + pomk;
+				c := pomk * pomj;
+				c := c + pom;
+				b := b + c;
+				pomk:=pomk+1;
+			ENDWHILE
+			pomj:=pomj+1;
+		ENDWHILE
+		pom:=pom-1;
+	ENDWHILE
+
+	WRITE a;
+	WRITE b;
+	WRITE c;
 END

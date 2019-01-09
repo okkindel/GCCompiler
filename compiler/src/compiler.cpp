@@ -457,16 +457,26 @@ void optymize() {
     }
     // run on machine if no reads, collect output and write
     if (!is_readed) {
-        ofstream file;
-        file.open("./out/out");
-        for (int cmd = 0; cmd < commands.size(); cmd++)
-            file << commands.at(cmd) << endl;
-        file.close();
+        string path = "interpreter/maszyna-rejestrowa";
+        bool interpreter = false;
 
-        if ( access( "../../interpreter/maszyna-rejestrowa", F_OK ) != -1 ) {
-            cout << "\n\n\e[1m\x1B[33m[ WARN ]\e[0m \e[1m\x1B[31m" << "Interpreter was not found.\e[0m\n" << endl;
-        } else {
-            unique_ptr<FILE, decltype(&pclose)> pipe(popen("../interpreter/maszyna-rejestrowa ./out/out", "r"), pclose);
+        // try to find interpreter
+        for (int ite = 0; ite < 3; ite ++) {
+            if ( access( path.c_str(), F_OK ) != -1) {
+                interpreter = true;
+                break;
+            } else {
+                path = "../" + path; 
+            }
+        }
+
+        if (interpreter) {
+            ofstream file;
+            file.open("/tmp/out");
+            for (int cmd = 0; cmd < commands.size(); cmd++)
+                file << commands.at(cmd) << endl;
+            file.close();
+            unique_ptr<FILE, decltype(&pclose)> pipe(popen((path + " /tmp/out").c_str(), "r"), pclose);
             array<char, 128> buffer;
             string result = "";
             vector<string> writes;
@@ -500,6 +510,8 @@ void optymize() {
                 }
                 insert("HALT");     
             }
+        } else {
+            cout << "\n\n\e[1m\x1B[33m[ WARN ]\e[0m \e[1m\x1B[31m" << "Interpreter was not found.\e[0m\n" << endl;
         }       
     }
 }

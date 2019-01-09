@@ -435,6 +435,7 @@ void optymize() {
             break;
         }
     }
+    // let empty program if no writes
     if (!is_written) {
         for (auto it = begin(commands); it != end(commands) - 1;) {
             char const *COMMANDS = commands.at(distance(commands.begin(), it)).c_str();
@@ -454,6 +455,7 @@ void optymize() {
             break;
         }
     }
+    // run on machine if no reads, collect output and write
     if (!is_readed) {
         ofstream file;
         file.open("./out/out");
@@ -472,7 +474,7 @@ void optymize() {
             int timeStart = clock();
             while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
                 result += buffer.data();
-                // kill if to long
+                // kill if to long computing
                 if ((clock() - timeStart) / CLOCKS_PER_SEC >= 1) {
                     killed = true; 
                     break;
@@ -488,7 +490,6 @@ void optymize() {
                     if (stringstream(temp) >> found) 
                         writes.push_back(to_string(found)); 
                     temp = ""; 
-
                 }
                 commands.clear();
                 cmdIndex = 0;

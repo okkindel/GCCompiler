@@ -1,32 +1,17 @@
-[ while.imp 
-  12 23 34
-  507 4379 0
-]
 DECLARE
-	a; b; c; pom; pomj; pomk;
+	a; b;
+	tab(10:20);
 IN
-	READ a;
-	READ b;
-	READ c;
+	b := 10;
+	tab(15) := 5;
 
-	pom:=9;
-	WHILE pom>0 DO
-		pomj:=0;
-		WHILE pomj<pom DO
-			pomk:=0;
-			WHILE pomk<pomj DO
-				a := a + pomk;
-				c := pomk * pomj;
-				c := c + pom;
-				b := b + c;
-				pomk:=pomk+1;
-			ENDWHILE
-			pomj:=pomj+1;
-		ENDWHILE
-		pom:=pom-1;
+	WHILE b > 0 DO
+		IF tab(15) > b THEN
+			WRITE 1;
+		ELSE
+			WRITE 0;
+		ENDIF
+		WRITE b;
+		b := b - 1;
 	ENDWHILE
-
-	WRITE a;
-	WRITE b;
-	WRITE c;
 END

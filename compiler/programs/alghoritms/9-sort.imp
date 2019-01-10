@@ -17,7 +17,7 @@ IN
 	FOR i FROM 1 TO m DO
 		WRITE tab(i);
 	ENDFOR
-	WRITE 1234567890;
+	[WRITE 1234567890;]
 	[sortowanie]
 	FOR i FROM 2 TO m DO
 		x := tab(i);

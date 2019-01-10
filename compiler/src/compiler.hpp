@@ -68,14 +68,15 @@ typedef struct {
 	Variable index;
 } Array;
 
+
 //////////////////////////////////
 //          Variables           //
 //////////////////////////////////
 
 extern map<string, Variable> variables;
-extern stack<Jump> jumps;
 extern stack<Array> arrays;
 extern stack<Loop> loops;
+extern stack<Jump> jumps;
 extern int memIndex;
 extern int cmdIndex;
 
@@ -202,6 +203,8 @@ void removeJump();
 //      Compiler functions      //
 //////////////////////////////////
 
+// reset registers
+void resetRegisters();
 // insert single command
 void insert(string str);
 // insert single command with registry

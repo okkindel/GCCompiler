@@ -1,0 +1,66 @@
+[
+    W pierwszej kolejności wpisz 3 liczby będące ziarnem dla losowej liczby.
+    Zgadujemy liczbę z przedziału (0, 100);
+
+    Wpisujemy liczbę. Program mówi nam czy liczba jest większa
+    > 77778
+    > 88877
+    > 77778
+    czy mniejsza
+    > 87777
+    > 77888
+    > 87777
+    po 6 próbach przegrywamy. Wygrana oznaczona jest
+    > 8888
+    > 8888
+    > 8888
+
+    Autor: Maciej Hajduk
+]
+DECLARE
+	a; b; c; ite; counter;
+IN
+	READ a;
+	READ b;
+	READ c;
+
+    a := a * b;
+    a := a + c;
+    a := a % 101;
+
+    ite := 0;
+    counter := 0;
+
+    DO
+        IF counter > 6 THEN
+            ite := 1;
+        ENDIF
+
+        IF ite = 0 THEN
+            READ b;
+
+            IF b < a THEN
+                WRITE 7778;
+                WRITE 8877;
+                WRITE 7778;
+
+            ENDIF
+
+            IF b > a THEN
+                WRITE 8777;
+                WRITE 7788;
+                WRITE 8777;
+            ENDIF
+
+            IF b = a THEN
+                WRITE 8888;
+                WRITE 8888;
+                WRITE 8888;
+                ite := 1;
+            ENDIF
+        ENDIF
+
+        counter := counter + 1;
+    WHILE ite = 0 ENDDO
+
+END

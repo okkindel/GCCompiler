@@ -29,6 +29,8 @@ void __condEq(char* a, char* b, int yylineno) {
 
     createJump();
     insert("JZERO", "G", "$bookmark");
+
+    resetRegisters();
 }
 
 void __condNotEq(char* a, char* b, int yylineno) {
@@ -51,6 +53,8 @@ void __condNotEq(char* a, char* b, int yylineno) {
 
     createJump();
     insert("JZERO", "G", "$bookmark");
+
+    resetRegisters();
 }
 
 void __condLowEq(char* a, char* b, int yylineno) {
@@ -74,6 +78,8 @@ void __condLowEq(char* a, char* b, int yylineno) {
 
     createJump();
     insert("JZERO", "G", "$bookmark");
+
+    resetRegisters();
 }
 
 void __condGreEq(char* a, char* b, int yylineno) {
@@ -97,6 +103,8 @@ void __condGreEq(char* a, char* b, int yylineno) {
 
     createJump();
     insert("JZERO", "G", "$bookmark");
+
+    resetRegisters();
 }
 
 void __condLow(char* a, char* b, int yylineno) {
@@ -118,6 +126,8 @@ void __condLow(char* a, char* b, int yylineno) {
 
     createJump();
     insert("JZERO", "G", "$bookmark");
+
+    resetRegisters();
 }
 
 void __condGre(char* a, char* b, int yylineno) {
@@ -128,7 +138,6 @@ void __condGre(char* a, char* b, int yylineno) {
 
     resetRegister("G");
     assignRegister("C", var1, "D", var2);
-
     insert("COPY", "E", "D");
     insert("SUB", "E", "C");
     insert("JZERO", "E", cmdIndex + 2);
@@ -139,4 +148,6 @@ void __condGre(char* a, char* b, int yylineno) {
 
     createJump();
     insert("JZERO", "G", "$bookmark");
+    
+    resetRegisters();
 }

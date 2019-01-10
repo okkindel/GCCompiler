@@ -132,6 +132,7 @@ int main(int argv, char* argc[]) {
     yyin = fopen(argc[1], "r");
     if (yyin == NULL)
         error(argc[1], 0, "File does not exist:");
+    resetRegisters();
 	yyparse();
     optymize();
     print(argc[2]);

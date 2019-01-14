@@ -59,13 +59,13 @@ void __condLowEq(char* a, char* b, int yylineno) {
     initError(var1, a, yylineno);
     initError(var2, b, yylineno);
 
-    assignRegister("C", var1, "D", var2);
+    assignRegister("C", var1, "G", var2);
 
-    insert("INC", "D");
-    insert("SUB", "D", "C");
+    insert("INC", "G");
+    insert("SUB", "G", "C");
 
     createJump();
-    insert("JZERO", "D", "$bookmark");
+    insert("JZERO", "G", "$bookmark");
 }
 
 void __condGreEq(char* a, char* b, int yylineno) {
@@ -74,13 +74,13 @@ void __condGreEq(char* a, char* b, int yylineno) {
     initError(var1, a, yylineno);
     initError(var2, b, yylineno);
 
-    assignRegister("C", var1, "D", var2);
+    assignRegister("G", var1, "D", var2);
 
-    insert("INC", "C");
-    insert("SUB", "C", "D");
+    insert("INC", "G");
+    insert("SUB", "G", "D");
 
     createJump();
-    insert("JZERO", "C", "$bookmark");
+    insert("JZERO", "G", "$bookmark");
 }
 
 void __condLow(char* a, char* b, int yylineno) {
@@ -89,11 +89,11 @@ void __condLow(char* a, char* b, int yylineno) {
     initError(var1, a, yylineno);
     initError(var2, b, yylineno);
 
-    assignRegister("C", var1, "D", var2);
-    insert("SUB", "D", "C");
+    assignRegister("C", var1, "G", var2);
+    insert("SUB", "G", "C");
 
     createJump();
-    insert("JZERO", "D", "$bookmark");
+    insert("JZERO", "G", "$bookmark");
 }
 
 void __condGre(char* a, char* b, int yylineno) {
@@ -102,9 +102,9 @@ void __condGre(char* a, char* b, int yylineno) {
     initError(var1, a, yylineno);
     initError(var2, b, yylineno);
 
-    assignRegister("C", var1, "D", var2);
-    insert("SUB", "C", "D");
+    assignRegister("G", var1, "D", var2);
+    insert("SUB", "G", "D");
 
     createJump();
-    insert("JZERO", "C", "$bookmark");
+    insert("JZERO", "G", "$bookmark");
 }

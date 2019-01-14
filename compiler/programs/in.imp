@@ -4,13 +4,8 @@ IN
 	READ a;
 	READ b;
 
-	IF a >= b THEN
-	
+	WHILE a <= b DO
 		WRITE 1;
-
-	ELSE
-
-		WRITE 0;
-
-	ENDIF
+		a := a + 1;
+	ENDWHILE
 END

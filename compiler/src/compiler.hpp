@@ -204,7 +204,9 @@ void removeJump();
 //////////////////////////////////
 
 // reset registers
-void resetRegisters();
+void expireRegisters();
+// reset registry
+void expireRegistry(string reg);
 // insert single command
 void insert(string str);
 // insert single command with registry

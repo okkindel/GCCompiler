@@ -26,6 +26,7 @@ void __expressionAdd (char* a, char* b, int yylineno) {
     Variable var2 = variables.at(b);
     initError(var1, a, yylineno);
     initError(var2, b, yylineno);
+    expireRegisters();
 
     if (var1.type == "NUM" && var1.name == "1") {
         assignRegister("B", var2);
@@ -54,6 +55,7 @@ void __expressionAdd (char* a, char* b, int yylineno) {
         if (var2.type == "NUM")
             removeIde(var2.name);
     }
+    expireRegisters();
 }
 
 void __expressionSub (char* a, char* b, int yylineno) {
@@ -61,6 +63,7 @@ void __expressionSub (char* a, char* b, int yylineno) {
     Variable var2 = variables.at(b);
     initError(var1, a, yylineno);
     initError(var2, b, yylineno);
+    expireRegisters();
 
     if (var2.type == "NUM" && stoll(var2.name) == 1) {
         assignRegister("B", var1);
@@ -81,6 +84,7 @@ void __expressionSub (char* a, char* b, int yylineno) {
         if (var2.type == "NUM")
             removeIde(var2.name);
     }
+    expireRegisters();
 }
 
 void __expressionMul (char* a, char* b, int yylineno) {
@@ -88,7 +92,7 @@ void __expressionMul (char* a, char* b, int yylineno) {
     Variable var2 = variables.at(b);
     initError(var1, a, yylineno);
     initError(var2, b, yylineno);
-    resetRegisters();
+    expireRegisters();
 
     if ((var1.type == "NUM" && var1.name == "0") || (var2.type == "NUM" && var2.name == "0")) {
         setRegister("B", 0);
@@ -125,7 +129,7 @@ void __expressionMul (char* a, char* b, int yylineno) {
         insert("JUMP", cmdIndex - 6);
 
     }
-    resetRegisters();
+    expireRegisters();
 }
 
 void __expressionDiv (char* a, char* b, int yylineno) {
@@ -133,7 +137,7 @@ void __expressionDiv (char* a, char* b, int yylineno) {
     Variable var2 = variables.at(b);
     initError(var1, a, yylineno);
     initError(var2, b, yylineno);
-    resetRegisters();
+    expireRegisters();
 
     if ((var1.type == "NUM" && var1.name == "0") || (var2.type == "NUM" && var2.name == "0")) {
         setRegister("B", 0);
@@ -184,7 +188,7 @@ void __expressionDiv (char* a, char* b, int yylineno) {
             removeIde(var2.name);
 
     }
-    resetRegisters();
+    expireRegisters();
 }
 
 void __expressionMod (char* a, char* b, int yylineno) {
@@ -192,8 +196,7 @@ void __expressionMod (char* a, char* b, int yylineno) {
     Variable var2 = variables.at(b);
     initError(var1, a, yylineno);
     initError(var2, b, yylineno);
-
-    resetRegisters();
+    expireRegisters();
 
     if ((var1.type == "NUM" && var1.name == "0") || (var2.type == "NUM" && var2.name == "0")) {
         setRegister("B", 0);
@@ -247,5 +250,5 @@ void __expressionMod (char* a, char* b, int yylineno) {
         if (var2.type == "NUM")
             removeIde(var2.name);
     }
-    resetRegisters();
+    expireRegisters();
 }

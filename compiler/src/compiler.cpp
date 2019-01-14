@@ -76,13 +76,12 @@ void __if_else() {
     assignJump(cmdIndex);
     assignRegister("G", jumps.top().value);
 
-    // negation
-    setRegister("H", 1);
-    insert("SUB", "H", "G");
-
     removeJump();
     createJump();
-    insert("JZERO", "H", "$bookmark");
+    // move to next index
+    jumps.top().index += 1;
+    insert("JZERO", "G", cmdIndex + 2);
+    insert("JUMP", "$bookmark");
 }
 
 void __end_if() {
@@ -105,7 +104,7 @@ void __end_while() {
 }
 
 void __end_do() {
-    resetRegisters();
+    expireRegisters();
     assignJump(cmdIndex);
     assignRegister("G", jumps.top().value);
     insert("JZERO", "G", cmdIndex + 2);
@@ -132,7 +131,7 @@ void __for(char* i, char* a, char* b, int yylineno) {
     Variable finish = variables.at(b);
 
     assignRegister("H", start, "F", finish);
-    resetRegisters();
+    expireRegisters();
     storeRegister("H", iterator);
     storeRegister("F", condition);
     createLoop(iterator, condition, cmdIndex);
@@ -140,7 +139,7 @@ void __for(char* i, char* a, char* b, int yylineno) {
 
 void __end_down_for() {
 
-    resetRegisters();
+    expireRegisters();
     Loop loop = loops.top();
     assignRegister("G", loop.condition, "H", loop.iterator);
 
@@ -158,7 +157,7 @@ void __end_down_for() {
 
 void __end_up_for() {
 
-    resetRegisters();
+    expireRegisters();
     Loop loop = loops.top();
     assignRegister("G", loop.condition, "H", loop.iterator);
 
@@ -264,29 +263,29 @@ void setRegister(string reg, long long int num) {
     
     cout << worth << " " << reg << " " << num << " " << lowest_reg << " " << lowest_diff << endl;
 
-        if (worth && (num - lowest_diff < 32)) {
+        if (worth && reg != "G") {
             if (reg != lowest_reg) {
                 insert("COPY", reg, lowest_reg);
             }
 
-            // if (num - lowest_diff < 32) {
+            if (num - lowest_diff < 24) {
                 for (long long int i = 0; i < num - lowest_diff; ++i) {
                     insert("INC", reg);
                 }
-            // } else {
-            //     string diff = decToBin(num - lowest_diff);
-            //     long long int size = diff.size();
-            //     insert("SUB", "G", "G");
-            //     for (long long int i = 0; i < size; ++i) {
-            //         if(diff[i] == '1') {
-            //             insert("INC", "G");
-            //         }
-            //         if(i < (size - 1)) {
-	        //             insert("ADD", "G", "G");
-            //         }
-            //     }
-            //     insert("ADD", reg, "G");
-            // }
+            } else {
+                string diff = decToBin(num - lowest_diff);
+                long long int size = diff.size();
+                insert("SUB", "G", "G");
+                for (long long int i = 0; i < size; ++i) {
+                    if(diff[i] == '1') {
+                        insert("INC", "G");
+                    }
+                    if(i < (size - 1)) {
+	                    insert("ADD", "G", "G");
+                    }
+                }
+                insert("ADD", reg, "G");
+            }
         } else {
             if (num < 10) {
                 resetRegister(reg);
@@ -321,6 +320,7 @@ void loadRegister(string reg, Variable var) {
 
 void assignMemory(Variable var) {
     if (var.type == "TAB") {
+        expireRegistry("A");
         assignRegister("H", arrays.top().index);
         setRegister("A", arrays.top().name.memory);
         insert("ADD", "A", "H");
@@ -333,8 +333,9 @@ void assignMemory(Variable var) {
 void assignRegister(string reg, Variable var) {
     if (var.type == "NUM")
         setRegister(reg, stoll(var.name));
-    else
+    else {
         loadRegister(reg, var);
+    }
 }
 
 void assignRegister(string reg1, Variable var1, string reg2, Variable var2) {
@@ -388,14 +389,14 @@ void removeIde(string key) {
 //////////////////////////////////
 
 void createLoop(int index) {
-    resetRegisters();
+    expireRegisters();
     Loop loop;
     loop.index = index;
     loops.push(loop);
 }
 
 void createLoop(Variable iterator, Variable condition, int index) {
-    resetRegisters();
+    expireRegisters();
     Loop loop;
     loop.iterator = iterator;
     loop.condition = condition;
@@ -407,7 +408,7 @@ void removeLoop() {
     removeIde(loops.top().iterator.name);
     removeIde(loops.top().condition.name);
     loops.pop();
-    resetRegisters();
+    expireRegisters();
 }
 
 //////////////////////////////////
@@ -415,7 +416,7 @@ void removeLoop() {
 //////////////////////////////////
 
 void createJump() {
-    resetRegisters();
+    expireRegisters();
     Variable value;
     createIde(&value, ("J" + cmdIndex), "VAR");
     insertIde(("J" + cmdIndex), value);
@@ -426,7 +427,7 @@ void createJump() {
     jump.index = cmdIndex;
     jump.value = value;
     jumps.push(jump);
-    resetRegisters();
+    expireRegisters();
 }
 
 void assignJump(int bookmark) {
@@ -436,14 +437,14 @@ void assignJump(int bookmark) {
 void removeJump() {
     removeIde(jumps.top().value.name);
     jumps.pop();
-    resetRegisters();
+    expireRegisters();
 }
 
 //////////////////////////////////
 //      Compiler functions      //
 //////////////////////////////////
 
-void resetRegisters() {
+void expireRegisters() {
     registers.clear();
 
     registers.insert(make_pair("A", -1));
@@ -456,6 +457,10 @@ void resetRegisters() {
     registers.insert(make_pair("H", -1));
 
     cout << "\tRESET" << endl;
+}
+
+void expireRegistry(string reg) {
+    registers.at(reg) = -1;
 }
 
 void insert(string cmd) {
@@ -472,9 +477,9 @@ void insert(string cmd, string reg) {
     if (cmd == "HALF")
         registers.at(reg) >> 1;
     if (cmd == "GET")
-        registers.at(reg) = -1;
+        expireRegistry(reg);
     if (cmd == "LOAD")
-        registers.at(reg) = -1;
+        expireRegistry(reg);
 
     cmd = cmd + " " + reg;
     commands.push_back(cmd);
@@ -483,7 +488,10 @@ void insert(string cmd, string reg) {
 
 void insert(string cmd, string reg1, string reg2) {
     if (cmd == "ADD")
-        registers.at(reg1) += registers.at(reg2);
+        if (registers.at(reg1) < LLONG_MAX / 2 && registers.at(reg2) < LLONG_MAX / 2)
+            registers.at(reg1) += registers.at(reg2);
+        else
+            expireRegistry(reg1);
     if (cmd == "SUB") {
         if (reg1 == reg2)
             registers.at(reg1) = 0;
@@ -595,7 +603,7 @@ void optymize() {
                 }
                 commands.clear();
                 cmdIndex = 0;
-                resetRegisters();
+                expireRegisters();
                 for (auto it = begin(writes) + 1; it != end(writes) - 1;) {
                     setRegister("B", stoll(*it));
                     insert("PUT", "B");

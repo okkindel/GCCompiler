@@ -47,6 +47,9 @@ void __expressionAdd (char* a, char* b, int yylineno) {
         setRegister("B", val);
         removeIde(var1.name);
         removeIde(var2.name);
+    } else if (var1.value != -1 && var2.value != -1) {
+        long long int val = var1.value + var2.value;
+        setRegister("B", val);
     } else {
         assignRegister("B", var1, "C", var2);
         insert("ADD", "B", "C");

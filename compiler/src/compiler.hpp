@@ -47,6 +47,7 @@ typedef struct {
 	string name;
 	string type;
 	int memory;
+	int value;
 	bool initialized;
 	int begin;
 	int size;
@@ -149,6 +150,8 @@ void __ideIdeNum(char* a, char* b, int yylineno);
 //      Register functions      //
 //////////////////////////////////
 
+// load const recursive
+void loadConst(string reg, long long int num);
 // sets register to given number
 void setRegister(string reg, long long int num);
 // stores register to memory

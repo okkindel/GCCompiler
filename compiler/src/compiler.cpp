@@ -105,6 +105,7 @@ void __end_while() {
 }
 
 void __end_do() {
+    resetRegisters();
     assignJump(cmdIndex);
     assignRegister("G", jumps.top().value);
     insert("JZERO", "G", cmdIndex + 2);
@@ -131,6 +132,7 @@ void __for(char* i, char* a, char* b, int yylineno) {
     Variable finish = variables.at(b);
 
     assignRegister("H", start, "F", finish);
+    resetRegisters();
     storeRegister("H", iterator);
     storeRegister("F", condition);
     createLoop(iterator, condition, cmdIndex);
@@ -138,6 +140,7 @@ void __for(char* i, char* a, char* b, int yylineno) {
 
 void __end_down_for() {
 
+    resetRegisters();
     Loop loop = loops.top();
     assignRegister("G", loop.condition, "H", loop.iterator);
 
@@ -155,6 +158,7 @@ void __end_down_for() {
 
 void __end_up_for() {
 
+    resetRegisters();
     Loop loop = loops.top();
     assignRegister("G", loop.condition, "H", loop.iterator);
 
@@ -260,7 +264,7 @@ void setRegister(string reg, long long int num) {
     
     cout << worth << " " << reg << " " << num << " " << lowest_reg << " " << lowest_diff << endl;
 
-        if (worth) {
+        if (worth && (num - lowest_diff < 32)) {
             if (reg != lowest_reg) {
                 insert("COPY", reg, lowest_reg);
             }
@@ -272,16 +276,16 @@ void setRegister(string reg, long long int num) {
             // } else {
             //     string diff = decToBin(num - lowest_diff);
             //     long long int size = diff.size();
-            //     insert("SUB", "B", "B");
+            //     insert("SUB", "G", "G");
             //     for (long long int i = 0; i < size; ++i) {
             //         if(diff[i] == '1') {
-            //             insert("INC", "B");
+            //             insert("INC", "G");
             //         }
             //         if(i < (size - 1)) {
-	        //             insert("ADD", "B", "B");
+	        //             insert("ADD", "G", "G");
             //         }
             //     }
-            //     insert("ADD", reg, "B");
+            //     insert("ADD", reg, "G");
             // }
         } else {
             if (num < 10) {
@@ -384,25 +388,26 @@ void removeIde(string key) {
 //////////////////////////////////
 
 void createLoop(int index) {
+    resetRegisters();
     Loop loop;
     loop.index = index;
     loops.push(loop);
-    resetRegisters();
 }
 
 void createLoop(Variable iterator, Variable condition, int index) {
+    resetRegisters();
     Loop loop;
     loop.iterator = iterator;
     loop.condition = condition;
     loop.index = index;
     loops.push(loop);
-    resetRegisters();
 }
 
 void removeLoop() {
     removeIde(loops.top().iterator.name);
     removeIde(loops.top().condition.name);
     loops.pop();
+    resetRegisters();
 }
 
 //////////////////////////////////
@@ -410,6 +415,7 @@ void removeLoop() {
 //////////////////////////////////
 
 void createJump() {
+    resetRegisters();
     Variable value;
     createIde(&value, ("J" + cmdIndex), "VAR");
     insertIde(("J" + cmdIndex), value);
@@ -420,6 +426,7 @@ void createJump() {
     jump.index = cmdIndex;
     jump.value = value;
     jumps.push(jump);
+    resetRegisters();
 }
 
 void assignJump(int bookmark) {
@@ -429,6 +436,7 @@ void assignJump(int bookmark) {
 void removeJump() {
     removeIde(jumps.top().value.name);
     jumps.pop();
+    resetRegisters();
 }
 
 //////////////////////////////////
@@ -554,50 +562,50 @@ void optymize() {
             }
         }
 
-        // if (interpreter) {
-        //     ofstream file;
-        //     file.open("/tmp/out");
-        //     for (int cmd = 0; cmd < commands.size(); cmd++)
-        //         file << commands.at(cmd) << endl;
-        //     file.close();
-        //     unique_ptr<FILE, decltype(&pclose)> pipe(popen((path + " /tmp/out").c_str(), "r"), pclose);
-        //     array<char, 128> buffer;
-        //     string result = "";
-        //     vector<string> writes;
-        //     bool killed = false;
-        //     int timeStart = clock();
-        //     while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
-        //         result += buffer.data();
-        //         // kill if to long computing
-        //         if ((clock() - timeStart) / CLOCKS_PER_SEC >= 1) {
-        //             killed = true; 
-        //             break;
-        //         }
-        //     }
-        //     if (!killed) {
-        //         stringstream ss;     
-        //         ss << result; 
-        //         string temp; 
-        //         long long int found;
-        //         while (!ss.eof()) { 
-        //             ss >> temp; 
-        //             if (stringstream(temp) >> found) 
-        //                 writes.push_back(to_string(found)); 
-        //             temp = ""; 
-        //         }
-        //         commands.clear();
-        //         cmdIndex = 0;
-        //         resetRegisters();
-        //         for (auto it = begin(writes) + 1; it != end(writes) - 1;) {
-        //             setRegister("B", stoll(*it));
-        //             insert("PUT", "B");
-        //             ++it;
-        //         }
-        //         insert("HALT");     
-        //     }
-        // } else {
-        //     cout << "\n\n\e[1m\x1B[33m[ WARN ]\e[0m \e[1m\x1B[31m" << "Interpreter was not found.\e[0m\n" << endl;
-        // }    
+        if (interpreter) {
+            ofstream file;
+            file.open("/tmp/out");
+            for (int cmd = 0; cmd < commands.size(); cmd++)
+                file << commands.at(cmd) << endl;
+            file.close();
+            unique_ptr<FILE, decltype(&pclose)> pipe(popen((path + " /tmp/out").c_str(), "r"), pclose);
+            array<char, 128> buffer;
+            string result = "";
+            vector<string> writes;
+            bool killed = false;
+            int timeStart = clock();
+            while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+                result += buffer.data();
+                // kill if to long computing
+                if ((clock() - timeStart) / CLOCKS_PER_SEC >= 1) {
+                    killed = true; 
+                    break;
+                }
+            }
+            if (!killed) {
+                stringstream ss;     
+                ss << result; 
+                string temp; 
+                long long int found;
+                while (!ss.eof()) { 
+                    ss >> temp; 
+                    if (stringstream(temp) >> found) 
+                        writes.push_back(to_string(found)); 
+                    temp = ""; 
+                }
+                commands.clear();
+                cmdIndex = 0;
+                resetRegisters();
+                for (auto it = begin(writes) + 1; it != end(writes) - 1;) {
+                    setRegister("B", stoll(*it));
+                    insert("PUT", "B");
+                    ++it;
+                }
+                insert("HALT");     
+            }
+        } else {
+            cout << "\n\n\e[1m\x1B[33m[ WARN ]\e[0m \e[1m\x1B[31m" << "Interpreter was not found.\e[0m\n" << endl;
+        }    
     }
 }
 

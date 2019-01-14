@@ -88,6 +88,7 @@ void __expressionMul (char* a, char* b, int yylineno) {
     Variable var2 = variables.at(b);
     initError(var1, a, yylineno);
     initError(var2, b, yylineno);
+    resetRegisters();
 
     if ((var1.type == "NUM" && var1.name == "0") || (var2.type == "NUM" && var2.name == "0")) {
         setRegister("B", 0);
@@ -121,8 +122,10 @@ void __expressionMul (char* a, char* b, int yylineno) {
         insert("ADD", "D", "D");
         insert("HALF", "C");
         insert("JZERO", "C", cmdIndex + 2);
-        insert("JUMP", cmdIndex - 6);      
+        insert("JUMP", cmdIndex - 6);
+
     }
+    resetRegisters();
 }
 
 void __expressionDiv (char* a, char* b, int yylineno) {
@@ -130,6 +133,7 @@ void __expressionDiv (char* a, char* b, int yylineno) {
     Variable var2 = variables.at(b);
     initError(var1, a, yylineno);
     initError(var2, b, yylineno);
+    resetRegisters();
 
     if ((var1.type == "NUM" && var1.name == "0") || (var2.type == "NUM" && var2.name == "0")) {
         setRegister("B", 0);
@@ -178,7 +182,9 @@ void __expressionDiv (char* a, char* b, int yylineno) {
             removeIde(var1.name);
         if (var2.type == "NUM")
             removeIde(var2.name);
+
     }
+    resetRegisters();
 }
 
 void __expressionMod (char* a, char* b, int yylineno) {
@@ -186,6 +192,8 @@ void __expressionMod (char* a, char* b, int yylineno) {
     Variable var2 = variables.at(b);
     initError(var1, a, yylineno);
     initError(var2, b, yylineno);
+
+    resetRegisters();
 
     if ((var1.type == "NUM" && var1.name == "0") || (var2.type == "NUM" && var2.name == "0")) {
         setRegister("B", 0);
@@ -239,4 +247,5 @@ void __expressionMod (char* a, char* b, int yylineno) {
         if (var2.type == "NUM")
             removeIde(var2.name);
     }
+    resetRegisters();
 }

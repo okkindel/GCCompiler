@@ -1,17 +1,16 @@
 DECLARE
 	a; b;
-	tab(10:20);
 IN
-	b := 10;
-	tab(15) := 5;
+	READ a;
+	READ b;
 
-	WHILE b > 0 DO
-		IF tab(15) > b THEN
-			WRITE 1;
-		ELSE
-			WRITE 0;
-		ENDIF
-		WRITE b;
-		b := b - 1;
-	ENDWHILE
+	IF a >= b THEN
+	
+		WRITE 1;
+
+	ELSE
+
+		WRITE 0;
+
+	ENDIF
 END

@@ -261,7 +261,7 @@ void setRegister(string reg, long long int num) {
         }
     }
     
-    cout << worth << " " << reg << " " << num << " " << lowest_reg << " " << lowest_diff << endl;
+    // cout << worth << " " << reg << " " << num << " " << lowest_reg << " " << lowest_diff << endl;
 
         if (worth && reg != "G") {
             if (reg != lowest_reg) {
@@ -455,8 +455,6 @@ void expireRegisters() {
     registers.insert(make_pair("F", -1));
     registers.insert(make_pair("G", -1));
     registers.insert(make_pair("H", -1));
-
-    cout << "\tRESET" << endl;
 }
 
 void expireRegistry(string reg) {

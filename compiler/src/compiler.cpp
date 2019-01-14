@@ -263,7 +263,7 @@ void setRegister(string reg, long long int num) {
     
     // cout << worth << " " << reg << " " << num << " " << lowest_reg << " " << lowest_diff << endl;
 
-        if (worth && reg != "G") {
+        if (worth && reg != "G" && (num - lowest_diff < 24)) {
             if (reg != lowest_reg) {
                 insert("COPY", reg, lowest_reg);
             }
@@ -272,7 +272,9 @@ void setRegister(string reg, long long int num) {
                 for (long long int i = 0; i < num - lowest_diff; ++i) {
                     insert("INC", reg);
                 }
-            } else {
+            } 
+            // should never be run
+            else {
                 string diff = decToBin(num - lowest_diff);
                 long long int size = diff.size();
                 insert("SUB", "G", "G");
@@ -467,8 +469,13 @@ void insert(string cmd) {
 }
 
 void insert(string cmd, string reg) {
-    if (cmd == "INC")
-        registers.at(reg) += 1;
+    if (cmd == "INC") {
+        if (registers.at(reg) < LLONG_MAX)
+            registers.at(reg) += 1;
+        else
+            expireRegistry(reg);
+        // expireRegistry(reg);
+    }
     if (cmd == "DEC")
         if (registers.at(reg) > 0)
             registers.at(reg) -= 1;

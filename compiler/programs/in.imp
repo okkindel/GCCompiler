@@ -1,11 +1,11 @@
 DECLARE
-	a; b;
+	a;
 IN
 	READ a;
-	READ b;
 
-	WHILE a <= b DO
-		WRITE 1;
-		a := a + 1;
+	WHILE a > 0 DO
+		a := a - 1;
+		WRITE a;
 	ENDWHILE
+	
 END

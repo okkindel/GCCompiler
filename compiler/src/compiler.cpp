@@ -264,16 +264,16 @@ void setRegister(string reg, long long int num) {
     long long int lowest_diff = LLONG_MAX;
     string lowest_reg = "X";
 
-    for (auto it = begin(registers); it != end(registers); ++it) {
-        if (num >= it->second && it->second >= 0) {
-            long long int diff = num - it->second;
-            if (diff < lowest_diff && diff < num) {
-                worth = true;
-                lowest_diff = it->second;
-                lowest_reg = it->first;
-            }
-        }
-    }
+    // for (auto it = begin(registers); it != end(registers); ++it) {
+    //     if (num >= it->second && it->second >= 0) {
+    //         long long int diff = num - it->second;
+    //         if (diff < lowest_diff && diff < num) {
+    //             worth = true;
+    //             lowest_diff = it->second;
+    //             lowest_reg = it->first;
+    //         }
+    //     }
+    // }
     
     DEBUG_MSG(worth << " " << reg << " " << num << " " << lowest_reg << " " << lowest_diff);
     // i dont know why D doesn't work

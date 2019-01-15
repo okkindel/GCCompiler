@@ -19,6 +19,7 @@ stack<Loop> loops;
 stack<Jump> jumps;
 vector<string> tabs;
 stack<Array> arrays;
+bool optimized = false;
 vector<string> commands;
 map<string, Variable> variables;
 map<string, long long int> registers;
@@ -264,20 +265,27 @@ void setRegister(string reg, long long int num) {
     long long int lowest_diff = LLONG_MAX;
     string lowest_reg = "X";
 
-    // for (auto it = begin(registers); it != end(registers); ++it) {
-    //     if (num >= it->second && it->second >= 0) {
-    //         long long int diff = num - it->second;
-    //         if (diff < lowest_diff && diff < num) {
-    //             worth = true;
-    //             lowest_diff = it->second;
-    //             lowest_reg = it->first;
-    //         }
-    //     }
-    // }
+    for (auto it = begin(registers); it != end(registers); ++it) {
+        if (num >= it->second && it->second >= 0) {
+            long long int diff = num - it->second;
+            if (diff < lowest_diff && diff < num && diff < 16) {
+                worth = true;
+                lowest_diff = it->second;
+                lowest_reg = it->first;
+            }
+        }
+    }
     
     DEBUG_MSG(worth << " " << reg << " " << num << " " << lowest_reg << " " << lowest_diff);
-    // i dont know why D doesn't work
-    if (worth && (num - lowest_diff < 16) && (reg != "D")) {
+    if (worth && optimized) {
+        if (reg != lowest_reg) {
+            insert("COPY", reg, lowest_reg);
+        }
+        for (long long int i = 0; i < num - lowest_diff; ++i) {
+            insert("INC", reg);
+        }
+    // some registers are breaking
+    } else if (worth && (reg != "B") && (reg != "C") && (reg != "D")) {
         if (reg != lowest_reg) {
             insert("COPY", reg, lowest_reg);
         }
@@ -602,6 +610,7 @@ void optymize() {
                 commands.clear();
                 cmdIndex = 0;
                 expireRegisters();
+                optimized = true;
                 for (auto it = begin(writes) + 1; it != end(writes) - 1;) {
                     setRegister("B", stoll(*it));
                     insert("PUT", "B");

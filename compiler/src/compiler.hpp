@@ -47,7 +47,7 @@ typedef struct {
 	string name;
 	string type;
 	int memory;
-	int value;
+	int value = -1;
 	bool initialized;
 	int begin;
 	int size;
@@ -206,6 +206,8 @@ void removeJump();
 //      Compiler functions      //
 //////////////////////////////////
 
+// create registers
+void createRegisters();
 // reset registers
 void expireRegisters();
 // reset registry

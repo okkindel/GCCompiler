@@ -31,33 +31,24 @@ void __expressionAdd (char* a, char* b, int yylineno) {
     if (var1.type == "NUM" && var1.name == "1") {
         assignRegister("B", var2);
         insert("INC", "B");
-        removeIde(var1.name);
     } else if (var2.type == "NUM" && var2.name == "1") {
         assignRegister("B", var1);
         insert("INC", "B");
-        removeIde(var2.name);
     } else if (var1.type == "NUM" && var1.name == "0") {
         assignRegister("B", var2);
-        removeIde(var1.name);
     } else if (var2.type == "NUM" && var2.name == "0") {
         assignRegister("B", var1);
-        removeIde(var2.name);
-    } else if (var1.type == "NUM" && var2.type == "NUM" && stoll(var1.name) < LLONG_MAX / 2 && stoll(var2.name) < LLONG_MAX / 2) {
-        long long int val = stoll(var1.name) + stoll(var2.name);
-        setRegister("B", val);
-        removeIde(var1.name);
-        removeIde(var2.name);
-    } else if (var1.value != -1 && var2.value != -1) {
+    } else if (var1.value != -1 && var2.value != -1 && var1.value < LLONG_MAX / 2 && var2.value < LLONG_MAX / 2) {
         long long int val = var1.value + var2.value;
         setRegister("B", val);
     } else {
         assignRegister("B", var1, "C", var2);
         insert("ADD", "B", "C");
-        if (var1.type == "NUM")
-            removeIde(var1.name);
-        if (var2.type == "NUM")
-            removeIde(var2.name);
     }
+    if (var1.type == "NUM")
+        removeIde(var1.name);
+    if (var2.type == "NUM")
+        removeIde(var2.name);
     expireRegisters();
 }
 
@@ -71,22 +62,19 @@ void __expressionSub (char* a, char* b, int yylineno) {
     if (var2.type == "NUM" && stoll(var2.name) == 1) {
         assignRegister("B", var1);
         insert("DEC", "B");
-        removeIde(var2.name);
-    } else if (var1.type == "NUM" && var2.type == "NUM") {
-        long long int val = stoll(var1.name) - stoll(var2.name);
+    } else if (var1.value != -1 && var2.value != -1) {
+        long long int val = var1.value - var2.value;
         if (val < 0)
             val = 0;
         setRegister("B", val);
-        removeIde(var1.name);
-        removeIde(var2.name);
     } else {
         assignRegister("B", var1, "C", var2);
         insert("SUB", "B", "C");
-        if (var1.type == "NUM")
-            removeIde(var1.name);
-        if (var2.type == "NUM")
-            removeIde(var2.name);
     }
+    if (var1.type == "NUM")
+        removeIde(var1.name);
+    if (var2.type == "NUM")
+        removeIde(var2.name);
     expireRegisters();
 }
 
@@ -99,27 +87,19 @@ void __expressionMul (char* a, char* b, int yylineno) {
 
     if ((var1.type == "NUM" && var1.name == "0") || (var2.type == "NUM" && var2.name == "0")) {
         setRegister("B", 0);
-        if (var1.type == "NUM")
-            removeIde(var1.name);
-        if (var2.type == "NUM")
-            removeIde(var2.name);
-    } else if (var1.type == "NUM" && var2.type == "NUM" && stoll(var1.name) < sqrt(LLONG_MAX) && stoll(var2.name) < sqrt(LLONG_MAX)) {
-        long long int val = stoll(var1.name) * stoll(var2.name);
+    } else if (var1.value != -1 && var2.value != -1 && var1.value < sqrt(LLONG_MAX) && var2.value < sqrt(LLONG_MAX)) {
+        long long int val = var1.value * var2.value;
         setRegister("B", val);
-        removeIde(var1.name);
-        removeIde(var2.name);
     // if power of two
     } else if (var1.type == "NUM" && ((stoll(var1.name) & (stoll(var1.name) - 1)) == 0)) {
         assignRegister("B", var2);
         for (int i = 0; i < log2(stoll(var1.name)); ++i)
             insert("ADD", "B", "B");
-        removeIde(var1.name);
     // if power of two
     } else if (var2.type == "NUM" && ((stoll(var2.name) & (stoll(var2.name) - 1)) == 0)) {
         assignRegister("B", var1);
         for (int i = 0; i < log2(stoll(var2.name)); ++i)
             insert("ADD", "B", "B");
-        removeIde(var2.name);
     } else {
         assignRegister("C", var1, "D", var2);
         resetRegister("B");
@@ -130,8 +110,11 @@ void __expressionMul (char* a, char* b, int yylineno) {
         insert("HALF", "C");
         insert("JZERO", "C", cmdIndex + 2);
         insert("JUMP", cmdIndex - 6);
-
     }
+    if (var1.type == "NUM")
+        removeIde(var1.name);
+    if (var2.type == "NUM")
+        removeIde(var2.name);
     expireRegisters();
 }
 
@@ -144,21 +127,14 @@ void __expressionDiv (char* a, char* b, int yylineno) {
 
     if ((var1.type == "NUM" && var1.name == "0") || (var2.type == "NUM" && var2.name == "0")) {
         setRegister("B", 0);
-        if (var1.type == "NUM")
-            removeIde(var1.name);
-        if (var2.type == "NUM")
-            removeIde(var2.name);
-    } else if (var1.type == "NUM" && var2.type == "NUM") {
-        long long int val = stoll(var1.name) / stoll(var2.name);
+    } else if (var1.value != -1 && var2.value != -1 && var1.value) {
+        long long int val = var1.value / var2.value;
         setRegister("B", val);
-        removeIde(var1.name);
-        removeIde(var2.name);
     // if power of two
     } else if (var2.type == "NUM" && ((stoll(var2.name) & (stoll(var2.name) - 1)) == 0)) {
         assignRegister("B", var1);
         for (int i = 0; i < log2(stoll(var2.name)); ++i)
             insert("HALF", "B");
-        removeIde(var2.name);
     } else {
         assignRegister("D", var1, "C", var2);
         resetRegister("B");
@@ -184,13 +160,11 @@ void __expressionDiv (char* a, char* b, int yylineno) {
         insert("COPY", "F", "C");
         insert("SUB", "F", "E");
         insert("JZERO", "F", cmdIndex - 12);
-
-        if (var1.type == "NUM")
-            removeIde(var1.name);
-        if (var2.type == "NUM")
-            removeIde(var2.name);
-
     }
+    if (var1.type == "NUM")
+        removeIde(var1.name);
+    if (var2.type == "NUM")
+        removeIde(var2.name);
     expireRegisters();
 }
 
@@ -203,22 +177,15 @@ void __expressionMod (char* a, char* b, int yylineno) {
 
     if ((var1.type == "NUM" && var1.name == "0") || (var2.type == "NUM" && var2.name == "0")) {
         setRegister("B", 0);
-        if (var1.type == "NUM")
-            removeIde(var1.name);
-        if (var2.type == "NUM")
-            removeIde(var2.name);
-    } else if (var1.type == "NUM" && var2.type == "NUM") {
-        long long int val = stoll(var1.name) % stoll(var2.name);
+    } else if (var1.value != -1 && var2.value != -1 && var1.value) {
+        long long int val = var1.value % var2.value;
         setRegister("B", val);
-        removeIde(var1.name);
-        removeIde(var2.name);
     } else if (var2.type == "NUM" && stoll(var2.name) == 2) {
         assignRegister("C", var1);
         resetRegister("B");
         insert("JODD", "C", cmdIndex + 2);
         insert("JUMP", cmdIndex + 2);
         insert("INC", "B");
-        removeIde(var2.name);
     } else {
         assignRegister("D", var1, "C", var2);
         insert("JZERO", "C", cmdIndex + 24);
@@ -247,11 +214,10 @@ void __expressionMod (char* a, char* b, int yylineno) {
         insert("JUMP", cmdIndex + 2);
         resetRegister("D");
         insert("COPY", "B", "D");
-
-        if (var1.type == "NUM")
-            removeIde(var1.name);
-        if (var2.type == "NUM")
-            removeIde(var2.name);
     }
+    if (var1.type == "NUM")
+        removeIde(var1.name);
+    if (var2.type == "NUM")
+        removeIde(var2.name);
     expireRegisters();
 }

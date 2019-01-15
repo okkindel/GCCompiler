@@ -1,11 +1,10 @@
 DECLARE
     a; b; c;
 IN
+	READ c;
+	b := 20;
+	a := b + 5;
+	a := a + c;
 
-	b:=5;	
-    READ a;
-	c:=7;
-	b:=b+c;
-	b:=b+a;
-	WRITE b;
+	WRITE a;
 END

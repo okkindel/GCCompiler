@@ -74,10 +74,10 @@ void __condGreEq(char* a, char* b, int yylineno) {
     initError(var1, a, yylineno);
     initError(var2, b, yylineno);
 
-    assignRegister("G", var1, "D", var2);
+    assignRegister("G", var1, "C", var2);
 
     insert("INC", "G");
-    insert("SUB", "G", "D");
+    insert("SUB", "G", "C");
 
     createJump();
     insert("JZERO", "G", "$bookmark");
@@ -102,8 +102,8 @@ void __condGre(char* a, char* b, int yylineno) {
     initError(var1, a, yylineno);
     initError(var2, b, yylineno);
 
-    assignRegister("G", var1, "D", var2);
-    insert("SUB", "G", "D");
+    assignRegister("G", var1, "C", var2);
+    insert("SUB", "G", "C");
 
     createJump();
     insert("JZERO", "G", "$bookmark");

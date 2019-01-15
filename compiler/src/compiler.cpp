@@ -15,6 +15,7 @@
 
 int cmdIndex = 0;
 int memIndex = 0;
+bool no_jump = true;
 stack<Loop> loops;
 stack<Jump> jumps;
 vector<string> tabs;
@@ -69,8 +70,9 @@ void __cmdAssign(char* a, int yylineno) {
     if (var.type == "ITE")
         error(a, yylineno, "Loop iterator modification:");
     variables.at(a).initialized = true;
-    variables.at(a).value = registers.at("B");
-    cout << variables.at(a).name << "\t" << variables.at(a).value << endl;
+    if (registers.at("B") != -1 && no_jump)
+        variables.at(a).value = registers.at("B");
+    DEBUG_MSG(variables.at(a).name << " :" << variables.at(a).value);
     storeRegister("B", var);
 }
 
@@ -277,8 +279,8 @@ void setRegister(string reg, long long int num) {
         }
     }
     
-    cout << worth << " " << reg << " " << num << " " << lowest_reg << " " << lowest_diff << endl;
-    if (worth && (num - lowest_diff < 16) && ((reg == lowest_reg && reg == "D") || (reg != "D"))) {
+    DEBUG_MSG(worth << " " << reg << " " << num << " " << lowest_reg << " " << lowest_diff);
+    if (worth && (num - lowest_diff < 16) && (reg != "D")) {
         if (reg != lowest_reg) {
             insert("COPY", reg, lowest_reg);
         }
@@ -303,7 +305,7 @@ void loadRegister(string reg, Variable var) {
 
 void assignMemory(Variable var) {
     if (var.type == "TAB") {
-        // expireRegistry("A");
+        expireRegistry("A");
         assignRegister("H", arrays.top().index);
         setRegister("A", arrays.top().name.memory);
         insert("ADD", "A", "H");
@@ -345,6 +347,8 @@ void createIde(Variable* var, string name, string type) {
     var->memory = memIndex;
     var->type = type;
     var->initialized = false;
+    if (type == "NUM")
+        var->value = stoll(name);
     var->size = 1;
 }
 
@@ -427,7 +431,7 @@ void removeJump() {
 //      Compiler functions      //
 //////////////////////////////////
 
-void expireRegisters() {
+void createRegisters() {
     registers.clear(); cout << "";
 
     registers.insert(make_pair("A", -1));
@@ -438,6 +442,16 @@ void expireRegisters() {
     registers.insert(make_pair("F", -1));
     registers.insert(make_pair("G", -1));
     registers.insert(make_pair("H", -1));
+}
+
+void expireRegisters() {
+    registers.at("A") = -1;
+    registers.at("C") = -1;
+    registers.at("D") = -1;
+    registers.at("E") = -1;
+    registers.at("F") = -1;
+    registers.at("G") = -1;
+    registers.at("H") = -1;
 }
 
 void expireRegistry(string reg) {
@@ -487,6 +501,8 @@ void insert(string cmd, string reg1, string reg2) {
     }
     if (cmd == "COPY")
         registers.at(reg1) = registers.at(reg2);
+    if (cmd == "JZERO")
+        no_jump = false;
 
     cmd = cmd + " " + reg1 + " " + reg2;
     commands.push_back(cmd);
@@ -494,12 +510,16 @@ void insert(string cmd, string reg1, string reg2) {
 }
 
 void insert(string cmd, string reg, int index) {
+    if (cmd == "JZERO")
+        no_jump = false;
     cmd = cmd + " " + reg + " " + to_string(index);
     commands.push_back(cmd);
     cmdIndex ++;
 }
 
 void insert(string cmd, int index) {
+    if (cmd == "JUMP")
+        no_jump = false;
     cmd = cmd + " " + to_string(index);
     commands.push_back(cmd);
     cmdIndex ++;

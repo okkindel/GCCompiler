@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -std=c++11 #-DDEBUG
+CFLAGS = -std=c++11 -DDEBUG
 SRC = ./src
 OUT = ../out/compiler
 FILES = lex.yy.c parser.tab.c compiler.cpp expressions.cpp conditions.cpp

@@ -47,7 +47,6 @@ typedef struct {
 	string name;
 	string type;
 	int memory;
-	int value = -1;
 	bool initialized;
 	int begin;
 	int size;
@@ -203,7 +202,7 @@ void assignJump(int bookmark);
 void removeJump();
 
 //////////////////////////////////
-//      Compiler functions      //
+//      Compiler registers      //
 //////////////////////////////////
 
 // create registers
@@ -212,6 +211,11 @@ void createRegisters();
 void expireRegisters();
 // reset registry
 void expireRegistry(string reg);
+
+//////////////////////////////////
+//      Compiler functions      //
+//////////////////////////////////
+
 // insert single command
 void insert(string str);
 // insert single command with registry

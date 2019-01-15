@@ -15,7 +15,6 @@
 
 int cmdIndex = 0;
 int memIndex = 0;
-bool no_jump = true;
 stack<Loop> loops;
 stack<Jump> jumps;
 vector<string> tabs;
@@ -70,9 +69,6 @@ void __cmdAssign(char* a, int yylineno) {
     if (var.type == "ITE")
         error(a, yylineno, "Loop iterator modification:");
     variables.at(a).initialized = true;
-    if (registers.at("B") != -1 && no_jump)
-        variables.at(a).value = registers.at("B");
-    DEBUG_MSG(variables.at(a).name << " :" << variables.at(a).value);
     storeRegister("B", var);
 }
 
@@ -280,6 +276,7 @@ void setRegister(string reg, long long int num) {
     }
     
     DEBUG_MSG(worth << " " << reg << " " << num << " " << lowest_reg << " " << lowest_diff);
+    // i dont know why D doesn't work
     if (worth && (num - lowest_diff < 16) && (reg != "D")) {
         if (reg != lowest_reg) {
             insert("COPY", reg, lowest_reg);
@@ -305,6 +302,7 @@ void loadRegister(string reg, Variable var) {
 
 void assignMemory(Variable var) {
     if (var.type == "TAB") {
+        // same here, no idea
         expireRegistry("A");
         assignRegister("H", arrays.top().index);
         setRegister("A", arrays.top().name.memory);
@@ -347,8 +345,6 @@ void createIde(Variable* var, string name, string type) {
     var->memory = memIndex;
     var->type = type;
     var->initialized = false;
-    if (type == "NUM")
-        var->value = stoll(name);
     var->size = 1;
 }
 
@@ -428,12 +424,10 @@ void removeJump() {
 }
 
 //////////////////////////////////
-//      Compiler functions      //
+//      Compiler registers      //
 //////////////////////////////////
 
 void createRegisters() {
-    registers.clear(); cout << "";
-
     registers.insert(make_pair("A", -1));
     registers.insert(make_pair("B", -1));
     registers.insert(make_pair("C", -1));
@@ -446,6 +440,7 @@ void createRegisters() {
 
 void expireRegisters() {
     registers.at("A") = -1;
+    registers.at("B") = -1;
     registers.at("C") = -1;
     registers.at("D") = -1;
     registers.at("E") = -1;
@@ -457,6 +452,10 @@ void expireRegisters() {
 void expireRegistry(string reg) {
     registers.at(reg) = -1;
 }
+
+//////////////////////////////////
+//      Compiler functions      //
+//////////////////////////////////
 
 void insert(string cmd) {
     commands.push_back(cmd);
@@ -501,8 +500,6 @@ void insert(string cmd, string reg1, string reg2) {
     }
     if (cmd == "COPY")
         registers.at(reg1) = registers.at(reg2);
-    if (cmd == "JZERO")
-        no_jump = false;
 
     cmd = cmd + " " + reg1 + " " + reg2;
     commands.push_back(cmd);
@@ -510,16 +507,12 @@ void insert(string cmd, string reg1, string reg2) {
 }
 
 void insert(string cmd, string reg, int index) {
-    if (cmd == "JZERO")
-        no_jump = false;
     cmd = cmd + " " + reg + " " + to_string(index);
     commands.push_back(cmd);
     cmdIndex ++;
 }
 
 void insert(string cmd, int index) {
-    if (cmd == "JUMP")
-        no_jump = false;
     cmd = cmd + " " + to_string(index);
     commands.push_back(cmd);
     cmdIndex ++;
@@ -561,65 +554,65 @@ void optymize() {
         }
     }
     // run on machine if no reads, collect output and write
-    // if (!is_readed) {
-    //     string path = "interpreter/maszyna-rejestrowa";
-    //     bool interpreter = false;
+    if (!is_readed) {
+        string path = "interpreter/maszyna-rejestrowa";
+        bool interpreter = false;
 
-    //     // try to find interpreter
-    //     for (int ite = 0; ite < 3; ite ++) {
-    //         if ( access( path.c_str(), F_OK ) != -1) {
-    //             interpreter = true;
-    //             break;
-    //         } else {
-    //             path = "../" + path; 
-    //         }
-    //     }
+        // try to find interpreter
+        for (int ite = 0; ite < 3; ite ++) {
+            if ( access( path.c_str(), F_OK ) != -1) {
+                interpreter = true;
+                break;
+            } else {
+                path = "../" + path; 
+            }
+        }
 
-    //     if (interpreter) {
-    //         ofstream file;
-    //         file.open("/tmp/out");
-    //         for (int cmd = 0; cmd < commands.size(); cmd++)
-    //             file << commands.at(cmd) << endl;
-    //         file.close();
-    //         unique_ptr<FILE, decltype(&pclose)> pipe(popen((path + " /tmp/out").c_str(), "r"), pclose);
-    //         array<char, 128> buffer;
-    //         string result = "";
-    //         vector<string> writes;
-    //         bool killed = false;
-    //         int timeStart = clock();
-    //         while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
-    //             result += buffer.data();
-    //             // kill if to long computing
-    //             if ((clock() - timeStart) / CLOCKS_PER_SEC >= 1) {
-    //                 killed = true; 
-    //                 break;
-    //             }
-    //         }
-    //         if (!killed) {
-    //             stringstream ss;     
-    //             ss << result; 
-    //             string temp; 
-    //             long long int found;
-    //             while (!ss.eof()) { 
-    //                 ss >> temp; 
-    //                 if (stringstream(temp) >> found) 
-    //                     writes.push_back(to_string(found)); 
-    //                 temp = ""; 
-    //             }
-    //             commands.clear();
-    //             cmdIndex = 0;
-    //             expireRegisters();
-    //             for (auto it = begin(writes) + 1; it != end(writes) - 1;) {
-    //                 setRegister("B", stoll(*it));
-    //                 insert("PUT", "B");
-    //                 ++it;
-    //             }
-    //             insert("HALT");     
-    //         }
-    //     } else {
-    //         cout << "\n\n\e[1m\x1B[33m[ WARN ]\e[0m \e[1m\x1B[31m" << "Interpreter was not found.\e[0m\n" << endl;
-    //     }    
-    // }
+        if (interpreter) {
+            ofstream file;
+            file.open("/tmp/out");
+            for (int cmd = 0; cmd < commands.size(); cmd++)
+                file << commands.at(cmd) << endl;
+            file.close();
+            unique_ptr<FILE, decltype(&pclose)> pipe(popen((path + " /tmp/out").c_str(), "r"), pclose);
+            array<char, 128> buffer;
+            string result = "";
+            vector<string> writes;
+            bool killed = false;
+            int timeStart = clock();
+            while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+                result += buffer.data();
+                // kill if to long computing
+                if ((clock() - timeStart) / CLOCKS_PER_SEC >= 1) {
+                    killed = true; 
+                    break;
+                }
+            }
+            if (!killed) {
+                stringstream ss;     
+                ss << result; 
+                string temp; 
+                long long int found;
+                while (!ss.eof()) { 
+                    ss >> temp; 
+                    if (stringstream(temp) >> found) 
+                        writes.push_back(to_string(found)); 
+                    temp = ""; 
+                }
+                commands.clear();
+                cmdIndex = 0;
+                expireRegisters();
+                for (auto it = begin(writes) + 1; it != end(writes) - 1;) {
+                    setRegister("B", stoll(*it));
+                    insert("PUT", "B");
+                    ++it;
+                }
+                insert("HALT");     
+            }
+        } else {
+            cout << "\n\n\e[1m\x1B[33m[ WARN ]\e[0m \e[1m\x1B[31m" << "Interpreter was not found.\e[0m\n" << endl;
+        }    
+    }
 }
 
 void print(char* out) {

@@ -38,8 +38,8 @@ void __expressionAdd (char* a, char* b, int yylineno) {
         assignRegister("B", var2);
     } else if (var2.type == "NUM" && var2.name == "0") {
         assignRegister("B", var1);
-    } else if (var1.value != -1 && var2.value != -1 && var1.value < LLONG_MAX / 2 && var2.value < LLONG_MAX / 2) {
-        long long int val = var1.value + var2.value;
+    } else if (var1.type == "NUM" && var2.type == "NUM" && stoll(var1.name) < LLONG_MAX / 2 && stoll(var2.name) < LLONG_MAX / 2) {
+        long long int val = stoll(var1.name) + stoll(var2.name);
         setRegister("B", val);
     } else {
         assignRegister("B", var1, "C", var2);
@@ -62,8 +62,8 @@ void __expressionSub (char* a, char* b, int yylineno) {
     if (var2.type == "NUM" && stoll(var2.name) == 1) {
         assignRegister("B", var1);
         insert("DEC", "B");
-    } else if (var1.value != -1 && var2.value != -1) {
-        long long int val = var1.value - var2.value;
+    } else if (var1.type == "NUM" && var2.type == "NUM") {
+        long long int val = stoll(var1.name) - stoll(var2.name);
         if (val < 0)
             val = 0;
         setRegister("B", val);
@@ -87,8 +87,8 @@ void __expressionMul (char* a, char* b, int yylineno) {
 
     if ((var1.type == "NUM" && var1.name == "0") || (var2.type == "NUM" && var2.name == "0")) {
         setRegister("B", 0);
-    } else if (var1.value != -1 && var2.value != -1 && var1.value < sqrt(LLONG_MAX) && var2.value < sqrt(LLONG_MAX)) {
-        long long int val = var1.value * var2.value;
+    } else if (var1.type == "NUM" && var2.type == "NUM" && stoll(var1.name) < sqrt(LLONG_MAX) && stoll(var2.name) < sqrt(LLONG_MAX)) {
+        long long int val = stoll(var1.name) * stoll(var2.name);
         setRegister("B", val);
     // if power of two
     } else if (var1.type == "NUM" && ((stoll(var1.name) & (stoll(var1.name) - 1)) == 0)) {
@@ -127,8 +127,8 @@ void __expressionDiv (char* a, char* b, int yylineno) {
 
     if ((var1.type == "NUM" && var1.name == "0") || (var2.type == "NUM" && var2.name == "0")) {
         setRegister("B", 0);
-    } else if (var1.value != -1 && var2.value != -1 && var1.value) {
-        long long int val = var1.value / var2.value;
+    } else if (var1.type == "NUM" && var2.type == "NUM") {
+        long long int val = stoll(var1.name) / stoll(var2.name);
         setRegister("B", val);
     // if power of two
     } else if (var2.type == "NUM" && ((stoll(var2.name) & (stoll(var2.name) - 1)) == 0)) {
@@ -177,8 +177,8 @@ void __expressionMod (char* a, char* b, int yylineno) {
 
     if ((var1.type == "NUM" && var1.name == "0") || (var2.type == "NUM" && var2.name == "0")) {
         setRegister("B", 0);
-    } else if (var1.value != -1 && var2.value != -1 && var1.value) {
-        long long int val = var1.value % var2.value;
+    } else if (var1.type == "NUM" && var2.type == "NUM") {
+        long long int val = stoll(var1.name) % stoll(var2.name);
         setRegister("B", val);
     } else if (var2.type == "NUM" && stoll(var2.name) == 2) {
         assignRegister("C", var1);

@@ -102,6 +102,11 @@ void __expressionMul (char* a, char* b, int yylineno) {
             insert("ADD", "B", "B");
     } else {
         assignRegister("C", var1, "D", var2);
+
+        // O(mult) is log for second argument
+        insert("COPY", "B", "D");
+        insert("SUB", "B", "C");
+        insert("JZERO", "B", cmdIndex + 10);
         resetRegister("B");
         insert("JODD", "C", cmdIndex + 2);
         insert("JUMP", cmdIndex + 2);
@@ -109,6 +114,15 @@ void __expressionMul (char* a, char* b, int yylineno) {
         insert("ADD", "D", "D");
         insert("HALF", "C");
         insert("JZERO", "C", cmdIndex + 2);
+        insert("JUMP", cmdIndex - 6);
+        insert("JUMP", cmdIndex + 9);
+        resetRegister("B");
+        insert("JODD", "D", cmdIndex + 2);
+        insert("JUMP", cmdIndex + 2);
+        insert("ADD", "B", "C");
+        insert("ADD", "C", "C");
+        insert("HALF", "D");
+        insert("JZERO", "D", cmdIndex + 2);
         insert("JUMP", cmdIndex - 6);
     }
     if (var1.type == "NUM")

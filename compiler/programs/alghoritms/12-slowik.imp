@@ -1,0 +1,16 @@
+DECLARE
+    j; k;
+IN
+    READ k;
+    FOR i FROM 0 TO k DO
+        IF i = 1 THEN
+            j := 1;
+        ENDIF
+        IF i > 1 THEN
+            j := j + j;
+        ENDIF
+    ENDFOR
+    IF k >= 1 THEN
+        WRITE j;
+    ENDIF
+END

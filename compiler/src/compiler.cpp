@@ -607,16 +607,18 @@ void optymize() {
                         writes.push_back(to_string(found)); 
                     temp = ""; 
                 }
-                commands.clear();
-                cmdIndex = 0;
-                expireRegisters();
-                optimized = true;
-                for (auto it = begin(writes) + 1; it != end(writes) - 1;) {
-                    setRegister("B", stoll(*it));
-                    insert("PUT", "B");
-                    ++it;
+                if (writes.size() > 1) {
+                    commands.clear();
+                    cmdIndex = 0;
+                    expireRegisters();
+                    optimized = true;
+                    for (auto it = begin(writes) + 1; it != end(writes) - 1;) {
+                        setRegister("B", stoll(*it));
+                        insert("PUT", "B");
+                        ++it;
+                    }
+                    insert("HALT");     
                 }
-                insert("HALT");     
             }
         } else {
             cout << "\n\n\e[1m\x1B[33m[ WARN ]\e[0m \e[1m\x1B[31m" << "Interpreter was not found.\e[0m\n" << endl;

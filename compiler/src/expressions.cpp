@@ -28,16 +28,18 @@ void __expressionAdd (char* a, char* b, int yylineno) {
     initError(var2, b, yylineno);
     expireRegisters();
 
-    if (var1.type == "NUM" && var1.name == "1") {
-        assignRegister("B", var2);
-        insert("INC", "B");
-    } else if (var2.type == "NUM" && var2.name == "1") {
-        assignRegister("B", var1);
-        insert("INC", "B");
-    } else if (var1.type == "NUM" && var1.name == "0") {
+    if (var1.type == "NUM" && var1.name == "0") {
         assignRegister("B", var2);
     } else if (var2.type == "NUM" && var2.name == "0") {
         assignRegister("B", var1);
+    } else if (var1.type == "NUM" && stoll(var1.name) < 10) {
+        assignRegister("B", var2);
+        for (int i = 0; i < stoll(var1.name); ++i)
+            insert("INC", "B");
+    } else if (var2.type == "NUM" && stoll(var2.name) < 10) {
+        assignRegister("B", var1);
+        for (int i = 0; i < stoll(var2.name); ++i)
+            insert("INC", "B");
     } else if (var1.type == "NUM" && var2.type == "NUM" && stoll(var1.name) < LLONG_MAX / 2 && stoll(var2.name) < LLONG_MAX / 2) {
         long long int val = stoll(var1.name) + stoll(var2.name);
         setRegister("B", val);
@@ -59,9 +61,14 @@ void __expressionSub (char* a, char* b, int yylineno) {
     initError(var2, b, yylineno);
     expireRegisters();
 
-    if (var2.type == "NUM" && stoll(var2.name) == 1) {
+    if (var1.type == "NUM" && var1.name == "0") {
+        assignRegister("B", var2);
+    } else if (var2.type == "NUM" && var2.name == "0") {
         assignRegister("B", var1);
-        insert("DEC", "B");
+    } else if (var2.type == "NUM" && stoll(var2.name) < 10) {
+        assignRegister("B", var1);
+        for (int i = 0; i < stoll(var2.name); ++i)
+            insert("DEC", "B");
     } else if (var1.type == "NUM" && var2.type == "NUM") {
         long long int val = stoll(var1.name) - stoll(var2.name);
         if (val < 0)

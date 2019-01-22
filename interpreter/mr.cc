@@ -39,8 +39,8 @@ void run_machine( std::vector< std::tuple<int,int,int> > & program )
       case PUT:		std::cout << "> " << r[std::get<1>(program[lr])] << std::endl; t+=100; lr++; break;
       case LOAD:	r[std::get<1>(program[lr])] = pam[r[0]]; t+=50; lr++; break;
       case STORE:	pam[r[0]] = r[std::get<1>(program[lr])]; t+=50; lr++; break;
-      case COPY:	if(r[std::get<1>(program[lr])] < LLONG_MAX) r[std::get<1>(program[lr])] = r[std::get<2>(program[lr])]; else exit(0); t+=5; lr++; break;
-      case ADD:		if(r[std::get<1>(program[lr])] < LLONG_MAX) r[std::get<1>(program[lr])] += r[std::get<2>(program[lr])]; else exit(0); t+=5; lr++; break;
+      case COPY:	if(r[std::get<1>(program[lr])] < LLONG_MAX) r[std::get<1>(program[lr])] = r[std::get<2>(program[lr])]; else exit(1); t+=5; lr++; break;
+      case ADD:		if(r[std::get<1>(program[lr])] < LLONG_MAX) r[std::get<1>(program[lr])] += r[std::get<2>(program[lr])]; else exit(1); t+=5; lr++; break;
       case SUB:		if( r[std::get<1>(program[lr])] >= r[std::get<2>(program[lr])] )
                           r[std::get<1>(program[lr])] -= r[std::get<2>(program[lr])];
                         else

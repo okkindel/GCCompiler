@@ -2,8 +2,7 @@ compiler/out/compiler
 compiler/src/lex.yy.c
 compiler/src/parser.tab.c
 compiler/src/parser.tab.h
-interpreter/maszyna-rejestrowa
-interpreter/maszyna-rejestrowa-cln
+interpreter/interpreter
 interpreter/parser.cc
 interpreter/parser.hh
 interpreter/lexer.cc

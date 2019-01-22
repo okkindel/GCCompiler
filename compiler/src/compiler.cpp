@@ -563,7 +563,7 @@ void optymize() {
     }
     // run on machine if no reads, collect output and write
     if (!is_readed) {
-        string path = "interpreter/maszyna-rejestrowa";
+        string path = "interpreter/interpreter";
         bool interpreter = false;
 
         // try to find interpreter
@@ -582,20 +582,27 @@ void optymize() {
             for (int cmd = 0; cmd < commands.size(); cmd++)
                 file << commands.at(cmd) << endl;
             file.close();
-            unique_ptr<FILE, decltype(&pclose)> pipe(popen((path + " /tmp/out").c_str(), "r"), pclose);
-            array<char, 128> buffer;
+            char buffer[128];
             string result = "";
+            FILE* pipe = popen((path + " /tmp/out").c_str(), "r");
             vector<string> writes;
             bool killed = false;
-            int timeStart = clock();
-            while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
-                result += buffer.data();
-                // kill if to long computing
-                if ((clock() - timeStart) / CLOCKS_PER_SEC >= 1) {
-                    killed = true; 
-                    break;
+            try {
+                int timeStart = clock();
+                while (fgets(buffer, sizeof buffer, pipe) != NULL) {
+                    result += buffer;
+                    // kill if to long computing
+                    if ((clock() - timeStart) / CLOCKS_PER_SEC >= 1) {
+                        killed = true; 
+                        break;
+                    }
                 }
+            } catch (...) {
+                killed = true;
             }
+            if (WEXITSTATUS(pclose(pipe)) == 1)
+                killed = true;
+            pclose(pipe);
             if (!killed) {
                 stringstream ss;     
                 ss << result; 
@@ -607,18 +614,16 @@ void optymize() {
                         writes.push_back(to_string(found)); 
                     temp = ""; 
                 }
-                if (writes.size() > 1) {
-                    commands.clear();
-                    cmdIndex = 0;
-                    expireRegisters();
-                    optimized = true;
-                    for (auto it = begin(writes) + 1; it != end(writes) - 1;) {
-                        setRegister("B", stoll(*it));
-                        insert("PUT", "B");
-                        ++it;
-                    }
-                    insert("HALT");     
+                commands.clear();
+                cmdIndex = 0;
+                expireRegisters();
+                optimized = true;
+                for (auto it = begin(writes) + 1; it != end(writes) - 1;) {
+                    setRegister("B", stoll(*it));
+                    insert("PUT", "B");
+                    ++it;
                 }
+                insert("HALT");     
             }
         } else {
             cout << "\n\n\e[1m\x1B[33m[ WARN ]\e[0m \e[1m\x1B[31m" << "Interpreter was not found.\e[0m\n" << endl;

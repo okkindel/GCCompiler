@@ -17,21 +17,21 @@ lexer: $(SRC)/lexer.l
 
 compiler: lexer parser
 	mkdir -p out
-	test -f ../interpreter/maszyna-rejestrowa || make interpreter
+	test -f ../interpreter/interpreter || make interpreter
 	cd $(SRC) && $(CC) $(CFLAGS) -o $(OUT) $(FILES)
 	make clean
 
 interpreter:
-	cd ../interpreter && make maszyna-rejestrowa
+	cd ../interpreter && make interpreter
 	cd ../interpreter && make clean
 
 debug: compiler
 	./out/compiler programs/$(RUN_ARGS) out/out
-	../interpreter/maszyna-rejestrowa out/out
+	../interpreter/interpreter out/out
 
 test: compiler
 	./out/compiler ./programs/tests/test$(RUN_ARGS) out/out
-	../interpreter/maszyna-rejestrowa out/out
+	../interpreter/interpreter out/out
 
 clean:
 	cd $(SRC) && rm -f lex.yy.c parser.tab.c parser.tab.h

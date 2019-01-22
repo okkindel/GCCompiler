@@ -122,8 +122,7 @@ void __expressionMul (char* a, char* b, int yylineno) {
         insert("HALF", "C");
         insert("JZERO", "C", cmdIndex + 2);
         insert("JUMP", cmdIndex - 6);
-        insert("JUMP", cmdIndex + 9);
-        resetRegister("B");
+        insert("JUMP", cmdIndex + 8);
         insert("JODD", "D", cmdIndex + 2);
         insert("JUMP", cmdIndex + 2);
         insert("ADD", "B", "C");

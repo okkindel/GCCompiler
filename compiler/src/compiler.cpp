@@ -531,7 +531,7 @@ void initError(Variable var, char* a, int yylineno) {
         error(a, yylineno, "An attempt to use an uninitialized variable:");
 }
 
-void optymize() {
+void optymize(string path) {
     bool is_written = false;
     for (int cmd = 0; cmd < commands.size(); cmd++) {
         char const *COMMANDS = commands.at(cmd).c_str();
@@ -563,18 +563,15 @@ void optymize() {
     }
     // run on machine if no reads, collect output and write
     if (!is_readed) {
-        string path = "interpreter/interpreter";
+        path = path.substr(0, path.find("out"));
+        path = path + "../interpreter/interpreter";
         bool interpreter = false;
 
         // try to find interpreter
-        for (int ite = 0; ite < 3; ite ++) {
-            if ( access( path.c_str(), F_OK ) != -1) {
-                interpreter = true;
-                break;
-            } else {
-                path = "../" + path; 
-            }
-        }
+        if ( access( path.c_str(), F_OK ) != -1)
+            interpreter = true;
+
+        replace(path, " ", "\\ ");
 
         if (interpreter) {
             ofstream file;

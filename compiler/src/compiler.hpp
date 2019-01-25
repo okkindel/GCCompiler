@@ -229,7 +229,7 @@ void insert(string str, string reg, int index);
 // check for initialized error
 void initError(Variable var, char* a, int yylineno);
 // optymize code, remove unused commands
-void optymize();
+void optymize(string path);
 // prints stack
 void print(char* output);
 // throws errors

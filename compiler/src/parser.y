@@ -134,7 +134,7 @@ int main(int argv, char* argc[]) {
         error(argc[1], 0, "File does not exist:");
     createRegisters();
 	yyparse();
-    optymize();
+    optymize(argc[0]);
     print(argc[2]);
     cout << "Compiled without errors •ᴗ•\n" << endl;
 	return 0;

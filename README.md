@@ -20,7 +20,7 @@ To compile compiler from sources, just run command `make` or `make compiler` in 
 You will find language documentation in `./compiler/docs/documentation.pdf` file. Sample programs are located in `./compiler/programs/` folder. Three games - _Tic Tac Toe_, _Tetris_ and _Guessing Game_ are located in `./compiler/programs/` as well. Have fun!
 
 To compile a program run command `./compiler input_file output_file`.
-Output file should appear. You can run your program using interpreter located in `./interpreter` directory. To compile interpreter, call `make maszyna-rejestrowa` in its catalogue. To run program, execute interpreter with your output file as an argument.
+Output file should appear. You can run your program using interpreter located in `./interpreter` directory. To compile interpreter, call `make interpreter` in its catalogue. To run program, execute interpreter with your output file as an argument.
 
 You can aslo use scripts embedded in makefile to run your programs. To compile and run the program at a time, use `make debug input_file` Input file must be located in `./programs` directory, output file will apper in `./out/out`. For testing the compiler, use `make test number`. Tests are located in `./programs/tests`.
 

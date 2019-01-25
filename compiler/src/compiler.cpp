@@ -75,8 +75,8 @@ void __cmdAssign(char* a, int yylineno) {
 
 void __if_else() {
     assignJump(cmdIndex);
+    expireRegistry("B");
     assignRegister("G", jumps.top().value);
-
     removeJump();
     createJump();
     // move to next index
@@ -285,7 +285,7 @@ void setRegister(string reg, long long int num) {
             insert("INC", reg);
         }
     // some registers are breaking
-    } else if (worth && (reg != "A") && (reg != "B") && (reg != "C") && (reg != "D")) {
+    } else if (worth && (reg != "B") && (reg != "C") && (reg != "D")) {
         if (reg != lowest_reg) {
             insert("COPY", reg, lowest_reg);
         }

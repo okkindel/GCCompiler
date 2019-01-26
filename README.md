@@ -1,6 +1,15 @@
 # G. C. Compiler
 
+```
+ _____     _       __        ver. 3.0
+|   __|___| |_ ___|  |   ___ ___ ___
+|  |  | -_| . | .'|  |__| .'|   | . |
+|_____|___|___|__,|_____|__,|_|_|_  |
+        ~                       |___|
+```
+
 Glang is a simple imperative programming language based on i have no idea what. Let me introduce a *a new georgus compiler* of this awesome language - **G. C. Compiler**.
+
 
 ## Building
 

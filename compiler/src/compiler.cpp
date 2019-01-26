@@ -576,51 +576,57 @@ void optymize(string path) {
         if (interpreter) {
             ofstream file;
             file.open("/tmp/out");
-            for (int cmd = 0; cmd < commands.size(); cmd++)
-                file << commands.at(cmd) << endl;
-            file.close();
-            char buffer[128];
-            string result = "";
-            FILE* pipe = popen((path + " /tmp/out").c_str(), "r");
-            vector<string> writes;
-            bool killed = false;
-            try {
-                int timeStart = clock();
-                while (fgets(buffer, sizeof buffer, pipe) != NULL) {
-                    result += buffer;
-                    // kill if to long computing
-                    if ((clock() - timeStart) / CLOCKS_PER_SEC >= 1) {
-                        killed = true; 
-                        break;
+            file << "#TEMPORARY FILE" << endl;
+            if ( access( "/tmp/out", F_OK ) != -1) {
+                for (int cmd = 0; cmd < commands.size(); cmd++)
+                    file << commands.at(cmd) << endl;
+                file.close();
+                char buffer[128];
+                string result = "";
+                FILE* pipe = popen((path + " /tmp/out").c_str(), "r");
+                vector<string> writes;
+                bool killed = false;
+                try {
+                    int timeStart = clock();
+                    while (fgets(buffer, sizeof buffer, pipe) != NULL) {
+                        result += buffer;
+                        // kill if to long computing
+                        if ((clock() - timeStart) / CLOCKS_PER_SEC >= 1) {
+                            killed = true; 
+                            break;
+                        }
                     }
+                } catch (...) {
+                    killed = true;
                 }
-            } catch (...) {
-                killed = true;
-            }
-            if (WEXITSTATUS(pclose(pipe)) == 1)
-                killed = true;
-            pclose(pipe);
-            if (!killed) {
-                stringstream ss;     
-                ss << result; 
-                string temp; 
-                long long int found;
-                while (!ss.eof()) { 
-                    ss >> temp; 
-                    if (stringstream(temp) >> found) 
-                        writes.push_back(to_string(found)); 
-                    temp = ""; 
+                if (WEXITSTATUS(pclose(pipe)) == 1)
+                    killed = true;
+                pclose(pipe);
+                if (!killed) {
+                    stringstream ss;     
+                    ss << result; 
+                    string temp; 
+                    long long int found;
+                    while (!ss.eof()) { 
+                        ss >> temp; 
+                        if (stringstream(temp) >> found) 
+                            writes.push_back(to_string(found)); 
+                        temp = ""; 
+                    }
+                    commands.clear();
+                    cmdIndex = 0;
+                    expireRegisters();
+                    optimized = true;
+                    for (auto it = begin(writes) + 1; it != end(writes) - 1;) {
+                        setRegister("B", stoll(*it));
+                        insert("PUT", "B");
+                        ++it;
+                    }
+                    insert("HALT");     
                 }
-                commands.clear();
-                cmdIndex = 0;
-                expireRegisters();
-                optimized = true;
-                for (auto it = begin(writes) + 1; it != end(writes) - 1;) {
-                    setRegister("B", stoll(*it));
-                    insert("PUT", "B");
-                    ++it;
-                }
-                insert("HALT");     
+            } else {
+                cout << "\n\n\e[1m\x1B[33m[ WARN ]\e[0m \e[1m\x1B[31m" << "No access to /tmp directory.\e[0m\n" << endl;
+                file.close();
             }
         } else {
             cout << "\n\n\e[1m\x1B[33m[ WARN ]\e[0m \e[1m\x1B[31m" << "Interpreter was not found.\e[0m\n" << endl;

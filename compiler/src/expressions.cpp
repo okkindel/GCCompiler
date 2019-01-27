@@ -62,7 +62,7 @@ void __expressionSub (char* a, char* b, int yylineno) {
     expireRegisters();
 
     if (var1.type == "NUM" && var1.name == "0") {
-        assignRegister("B", var2);
+        setRegister("B", 0);
     } else if (var2.type == "NUM" && var2.name == "0") {
         assignRegister("B", var1);
     } else if (var2.type == "NUM" && stoll(var2.name) < 10) {

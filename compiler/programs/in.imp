@@ -1,8 +1,8 @@
 DECLARE
     a; b;
 IN
-	READ a;
-	READ b;
-	b := a * b;
-	WRITE b;
+	a := 0;
+	b := 10;
+	a := 0 - b;
+	WRITE a;
 END
